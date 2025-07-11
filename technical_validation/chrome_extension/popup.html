@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 350px;
+      min-height: 400px;
+      margin: 0;
+      padding: 15px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 18px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .validation-section {
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      backdrop-filter: blur(10px);
+    }
+    
+    .validation-section h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      padding-bottom: 5px;
+    }
+    
+    .test-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 12px;
+    }
+    
+    .test-status {
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .test-status.success { color: #4CAF50; }
+    .test-status.error { color: #FF5252; }
+    .test-status.pending { color: #FFC107; }
+    
+    button {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 3px;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-1px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 10px;
+    }
+    
+    .results {
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 11px;
+      max-height: 100px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    
+    .loading {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🌊 WodiConsuke 技術検証</h1>
+    <p style="margin: 5px 0; font-size: 12px; opacity: 0.8;">Chrome拡張機能 実現可能性テスト</p>
+  </div>
+
+  <div class="validation-section">
+    <h3>🔍 Web監視系機能</h3>
+    <div class="test-item">
+      <span>ウディコン公式サイトアクセス</span>
+      <span id="site-access-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="test-item">
+      <span>CORS制約回避</span>
+      <span id="cors-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="test-item">
+      <span>HTML解析</span>
+      <span id="html-parse-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="button-group">
+      <button id="test-site-access">サイトアクセステスト</button>
+    </div>
+  </div>
+
+  <div class="validation-section">
+    <h3>💾 ストレージ機能</h3>
+    <div class="test-item">
+      <span>chrome.storage.local基本動作</span>
+      <span id="storage-basic-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="test-item">
+      <span>容量制限テスト</span>
+      <span id="storage-capacity-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="test-item">
+      <span>使用容量</span>
+      <span id="storage-usage">-</span>
+    </div>
+    <div class="button-group">
+      <button id="test-storage-basic">基本動作テスト</button>
+      <button id="test-storage-capacity">容量テスト</button>
+    </div>
+  </div>
+
+  <div class="validation-section">
+    <h3>📁 ローカルファイル連携</h3>
+    <div class="test-item">
+      <span>file://プロトコルアクセス</span>
+      <span id="file-protocol-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="test-item">
+      <span>権限設定状態</span>
+      <span id="file-permission-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="button-group">
+      <button id="test-file-protocol">file://テスト</button>
+    </div>
+  </div>
+
+  <div class="validation-section">
+    <h3>🔔 通知・アラーム機能</h3>
+    <div class="test-item">
+      <span>chrome.notifications</span>
+      <span id="notification-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="test-item">
+      <span>chrome.alarms</span>
+      <span id="alarm-status" class="test-status pending">⏳</span>
+    </div>
+    <div class="button-group">
+      <button id="test-notification">通知テスト</button>
+      <button id="test-alarm">アラームテスト</button>
+    </div>
+  </div>
+
+  <div class="validation-section">
+    <h3>📊 テスト結果</h3>
+    <div id="test-results" class="results">
+      テスト実行待機中...
+    </div>
+    <div class="button-group">
+      <button id="run-all-tests">全テスト実行</button>
+      <button id="clear-results">結果クリア</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "WodiConsuke Technical Validation",
+  "version": "0.1.0",
+  "description": "Technical validation for Wodicon Helper Chrome Extension",
+  
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications",
+    "activeTab",
+    "downloads"
+  ],
+  
+  "host_permissions": [
+    "https://silversecond.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["https://silversecond.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "WodiConsuke Validation"
+  },
+  
+  "options_page": "options.html",
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["assets/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

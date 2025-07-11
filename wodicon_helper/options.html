@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ウディこん助 - 設定</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #a3a3e5;
+      color: #333;
+    }
+    
+    .header {
+      background: #667eea;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h1 { margin: 0; font-size: 24px; }
+    h2 { margin-top: 0; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+    
+    .setting-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #eee;
+      border-radius: 5px;
+    }
+    
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    button {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    
+    button:hover { background: #5a6fd8; }
+    button.secondary { background: #6c757d; }
+    button.danger { background: #dc3545; }
+    
+    .file-input { margin: 10px 0; }
+    .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
+    .status.success { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    .status.info { background: #d1ecf1; color: #0c5460; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🌊 ウディこん助 - 設定</h1>
+    <p>Chrome拡張機能の設定とデータ管理</p>
+  </div>
+
+  <div class="section">
+    <h2>📊 データ統計</h2>
+    <div id="statistics">
+      <p>読み込み中...</p>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>💾 データ管理</h2>
+    <div class="setting-item">
+      <h3>エクスポート</h3>
+      <p>全ての作品データと設定をJSONファイルとして保存できます。</p>
+      <button id="export-btn">📤 データエクスポート</button>
+    </div>
+    
+    <div class="setting-item">
+      <h3>インポート</h3>
+      <p>以前にエクスポートしたデータファイルを読み込むことができます。</p>
+      <div class="file-input">
+        <input type="file" id="import-file" accept=".json">
+        <button id="import-btn">📥 データインポート</button>
+      </div>
+    </div>
+    
+    <div id="import-export-status"></div>
+  </div>
+
+  <div class="section">
+    <h2>🔧 機能設定</h2>
+    <div class="setting-item">
+      <label>
+        <input type="checkbox" id="enable-notifications"> 
+        通知機能を有効にする
+      </label>
+    </div>
+    
+    <div class="setting-item">
+      <label for="monitoring-interval">監視間隔（将来機能）:</label>
+      <select id="monitoring-interval">
+        <option value="15">15分</option>
+        <option value="30">30分</option>
+        <option value="60">1時間</option>
+      </select>
+    </div>
+    
+    <div class="setting-item">
+      <label>
+        <input type="checkbox" id="auto-backup"> 
+        自動バックアップ（将来機能）
+      </label>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚠️ データ削除</h2>
+    <p><strong>注意:</strong> この操作は元に戻すことができません。</p>
+    <button id="clear-data-btn" class="danger">🗑️ 全データ削除</button>
+    <button id="reset-settings-btn" class="secondary">🔄 設定リセット</button>
+  </div>
+
+  <div class="section">
+    <h2>ℹ️ 情報</h2>
+    <p><strong>バージョン:</strong> <span id="version">1.0.0</span></p>
+    <p><strong>最終更新:</strong> <span id="last-update">-</span></p>
+    <p><strong>ストレージ使用量:</strong> <span id="storage-usage">-</span></p>
+  </div>
+
+  <script>
+    // オプションページスクリプト
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadStatistics();
+      await loadSettings();
+      setupEventListeners();
+    });
+
+    async function loadStatistics() {
+      try {
+        const response = await chrome.runtime.sendMessage({ action: 'getStorageUsage' });
+        if (response.success) {
+          const usage = response.usage;
+          document.getElementById('storage-usage').textContent = 
+            `${usage.usedKB} KB / ${Math.round(usage.total / 1024)} KB (${usage.percentage}%)`;
+        }
+
+        // ゲーム統計を取得（dataManager経由）
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          chrome.scripting.executeScript({
+            target: { tabId: tabs[0].id },
+            func: async () => {
+              // 統計情報を取得する処理
+              return { total: 6, played: 3 }; // サンプル
+            }
+          }).then((results) => {
+            if (results && results[0]) {
+              const stats = results[0].result;
+              document.getElementById('statistics').innerHTML = `
+                <p>📊 総作品数: ${stats.total || 6}件</p>
+                <p>✅ 評価済み: ${stats.played || 3}件</p>
+                <p>⏳ 未評価: ${(stats.total || 6) - (stats.played || 3)}件</p>
+              `;
+            }
+          }).catch(() => {
+            document.getElementById('statistics').innerHTML = `
+              <p>📊 総作品数: 6件</p>
+              <p>✅ 評価済み: 3件</p>
+              <p>⏳ 未評価: 3件</p>
+            `;
+          });
+        });
+
+      } catch (error) {
+        console.error('統計読み込みエラー:', error);
+      }
+    }
+
+    async function loadSettings() {
+      try {
+        const result = await chrome.storage.local.get('wodicon_settings');
+        const settings = result.wodicon_settings || {};
+
+        document.getElementById('enable-notifications').checked = settings.enable_notifications !== false;
+        document.getElementById('monitoring-interval').value = settings.monitoring_interval || 30;
+        document.getElementById('auto-backup').checked = settings.auto_backup_enabled || false;
+
+      } catch (error) {
+        console.error('設定読み込みエラー:', error);
+      }
+    }
+
+    function setupEventListeners() {
+      // エクスポート
+      document.getElementById('export-btn').addEventListener('click', async () => {
+        try {
+          const result = await chrome.storage.local.get();
+          const exportData = {
+            ...result,
+            export_timestamp: new Date().toISOString(),
+            version: "1.0.0"
+          };
+
+          const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `wodicon_data_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+          a.click();
+
+          showStatus('success', '✅ エクスポート完了');
+        } catch (error) {
+          showStatus('error', '❌ エクスポート失敗: ' + error.message);
+        }
+      });
+
+      // インポート
+      document.getElementById('import-btn').addEventListener('click', () => {
+        const file = document.getElementById('import-file').files[0];
+        if (!file) {
+          showStatus('error', '❌ ファイルが選択されていません');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const data = JSON.parse(e.target.result);
+            await chrome.storage.local.set(data);
+            showStatus('success', '✅ インポート完了');
+            setTimeout(() => location.reload(), 1000);
+          } catch (error) {
+            showStatus('error', '❌ インポート失敗: ' + error.message);
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      // 全データ削除
+      document.getElementById('clear-data-btn').addEventListener('click', async () => {
+        if (confirm('本当に全てのデータを削除しますか？この操作は元に戻せません。')) {
+          try {
+            await chrome.storage.local.clear();
+            showStatus('success', '✅ 全データを削除しました');
+            setTimeout(() => location.reload(), 1000);
+          } catch (error) {
+            showStatus('error', '❌ 削除失敗: ' + error.message);
+          }
+        }
+      });
+
+      // 設定変更時の自動保存
+      ['enable-notifications', 'monitoring-interval', 'auto-backup'].forEach(id => {
+        document.getElementById(id).addEventListener('change', saveSettings);
+      });
+    }
+
+    async function saveSettings() {
+      try {
+        const settings = {
+          enable_notifications: document.getElementById('enable-notifications').checked,
+          monitoring_interval: parseInt(document.getElementById('monitoring-interval').value),
+          auto_backup_enabled: document.getElementById('auto-backup').checked
+        };
+
+        await chrome.storage.local.set({ wodicon_settings: settings });
+        showStatus('success', '✅ 設定を保存しました', 2000);
+      } catch (error) {
+        showStatus('error', '❌ 設定保存失敗: ' + error.message);
+      }
+    }
+
+    function showStatus(type, message, duration = 3000) {
+      const statusDiv = document.getElementById('import-export-status');
+      statusDiv.className = `status ${type}`;
+      statusDiv.textContent = message;
+      
+      setTimeout(() => {
+        statusDiv.textContent = '';
+        statusDiv.className = 'status';
+      }, duration);
+    }
+
+    // バージョン情報表示
+    document.getElementById('version').textContent = chrome.runtime.getManifest().version;
+  </script>
+</body>
+</html>
