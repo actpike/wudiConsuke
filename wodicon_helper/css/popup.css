@@ -183,6 +183,16 @@ body {
   font-size: 11px;
 }
 
+/* クリック可能な列のスタイル */
+.col-no, .col-title {
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.col-no:hover, .col-title:hover {
+  background-color: #f0f0f8;
+}
+
 .game-list thead {
   background: #f5f5f5;
   position: sticky;

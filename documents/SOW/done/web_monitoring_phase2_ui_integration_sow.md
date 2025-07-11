@@ -2,7 +2,7 @@
 
 ---
 project_name: "ウディこん助 - Web監視機能フェーズ2: UI統合・設定拡張"
-status: "Todo"
+status: "Done"
 owner: "Claude Code"
 created_at: "2025-07-11"
 estimated_effort: "2-3日"

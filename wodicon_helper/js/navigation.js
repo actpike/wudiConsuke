@@ -22,12 +22,23 @@ class NavigationController {
 
   // イベントリスナー設定
   setupEventListeners() {
-    // 詳細画面への遷移
+    // 詳細画面への遷移（Noまたはタイトルクリックのみ）
     document.addEventListener('click', (e) => {
-      const gameRow = e.target.closest('.game-row');
-      if (gameRow && this.currentView === 'main') {
-        const gameId = parseInt(gameRow.dataset.gameId);
-        this.showDetailView(gameId);
+      // チェックボックスや他の要素のクリックは除外
+      if (e.target.type === 'checkbox' || e.target.classList.contains('monitor-checkbox')) {
+        return;
+      }
+      
+      // No列またはタイトル列のクリックのみ処理
+      const isNoColumn = e.target.closest('.col-no');
+      const isTitleColumn = e.target.closest('.col-title');
+      
+      if ((isNoColumn || isTitleColumn) && this.currentView === 'main') {
+        const gameRow = e.target.closest('.game-row');
+        if (gameRow) {
+          const gameId = parseInt(gameRow.dataset.gameId);
+          this.showDetailView(gameId);
+        }
       }
     });
 
