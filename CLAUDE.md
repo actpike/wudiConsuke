@@ -29,15 +29,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Chrome拡張機能アーキテクチャ
 
 ### 主要機能モジュール
-- **Web監視系**: 作品更新通知、HTMLクローリング
-- **プレイ補助**: 既プレイチェックリスト、感想記録
+- **プレイ補助**: 既プレイチェックリスト、感想記録（✅完了）
+- **Web監視系**: 作品更新通知、HTMLクローリング（✅フェーズ1完了）
 - **ローカル連携**: フォルダ参照（file://制約あり）
 - **データ管理**: chrome.storage.local（5MB制限）
+
+### 実装済みコンポーネント
+- **基本UI**: SPA構成、6カテゴリ評価システム、自動保存
+- **Web監視基盤**: pageParser.js, webMonitor.js, updateManager.js
+- **Background Service Worker**: 定期監視、アラーム管理
+- **手動テスト機能**: 監視実行、状態確認ボタン
 
 ### 技術制約
 - 完全ローカル動作（外部API不使用）
 - HTMLクローリングベース（公式サイト構造変更リスク）
 - Chrome拡張セキュリティ制約への対応必須
+
+### 開発完了項目
+- 作品プレイ補助機能（評価・感想・管理システム）
+- Web監視機能フェーズ1（監視基盤・検出・通知システム）
 
 ## SOW作成ガイドライン
 
