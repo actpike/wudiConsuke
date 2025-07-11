@@ -283,7 +283,7 @@ class UpdateManager {
 
       const message = newWorks.length === 1
         ? `作者: ${newWorks[0].author || '不明'}`
-        : newWorks.slice(0, 3).map(work => `• ${work.title}`).join('\n') +
+        : newWorks.slice(0, 3).map(work => `• No.${String(work.no).padStart(2, '0')}_${work.title}`).join('\n') +
           (newWorks.length > 3 ? `\n...他${newWorks.length - 3}件` : '');
 
       await chrome.notifications.create(`new_works_${Date.now()}`, {
@@ -311,7 +311,7 @@ class UpdateManager {
 
       const message = updatedWorks.length === 1
         ? `変更内容: ${this.formatChangeType(updatedWorks[0].changeType)}`
-        : updatedWorks.slice(0, 3).map(work => `• ${work.title}`).join('\n') +
+        : updatedWorks.slice(0, 3).map(work => `• No.${String(work.no).padStart(2, '0')}_${work.title}`).join('\n') +
           (updatedWorks.length > 3 ? `\n...他${updatedWorks.length - 3}件` : '');
 
       await chrome.notifications.create(`updated_works_${Date.now()}`, {

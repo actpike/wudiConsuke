@@ -86,6 +86,41 @@ class GameDataManager {
     return true;
   }
 
+  // Web監視対象フラグ更新
+  async updateWebMonitoringFlag(gameId, enabled) {
+    try {
+      const games = await this.getGames();
+      const gameIndex = games.findIndex(game => game.id === gameId);
+      
+      if (gameIndex === -1) {
+        throw new Error(`Game with id ${gameId} not found`);
+      }
+      
+      games[gameIndex].web_monitoring_enabled = enabled;
+      games[gameIndex].updated_at = new Date().toISOString();
+      
+      await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+      await this.updateMetadata();
+      
+      console.log(`🔄 Web監視フラグ更新: Game ${gameId} -> ${enabled}`);
+      return true;
+    } catch (error) {
+      console.error('Failed to update web monitoring flag:', error);
+      return false;
+    }
+  }
+
+  // Web監視対象作品一覧取得
+  async getMonitoringEnabledGames() {
+    try {
+      const games = await this.getGames();
+      return games.filter(game => game.web_monitoring_enabled === true);
+    } catch (error) {
+      console.error('Failed to get monitoring enabled games:', error);
+      return [];
+    }
+  }
+
   // 検索・フィルタ
   async searchGames(query) {
     const games = await this.getGames();
@@ -301,7 +336,8 @@ class GameDataManager {
         updated_at: "2025-07-10T20:30:00.000Z",
         update_notification: true,
         bbs_check: true,
-        last_update_check: "2025-07-11T08:00:00.000Z"
+        last_update_check: "2025-07-11T08:00:00.000Z",
+        web_monitoring_enabled: false
       },
       {
         id: 2,
@@ -330,7 +366,8 @@ class GameDataManager {
         updated_at: "2025-07-11T15:45:00.000Z",
         update_notification: true,
         bbs_check: false,
-        last_update_check: "2025-07-11T08:00:00.000Z"
+        last_update_check: "2025-07-11T08:00:00.000Z",
+        web_monitoring_enabled: false
       },
       {
         id: 3,
@@ -359,7 +396,8 @@ class GameDataManager {
         updated_at: "2025-07-07T19:20:00.000Z",
         update_notification: false,
         bbs_check: false,
-        last_update_check: null
+        last_update_check: null,
+        web_monitoring_enabled: false
       },
       {
         id: 4,
@@ -388,7 +426,8 @@ class GameDataManager {
         updated_at: "2025-07-09T12:30:00.000Z",
         update_notification: true,
         bbs_check: true,
-        last_update_check: "2025-07-11T08:00:00.000Z"
+        last_update_check: "2025-07-11T08:00:00.000Z",
+        web_monitoring_enabled: false
       },
       {
         id: 5,
@@ -417,7 +456,8 @@ class GameDataManager {
         updated_at: "2025-07-11T12:15:00.000Z",
         update_notification: true,
         bbs_check: true,
-        last_update_check: "2025-07-11T08:00:00.000Z"
+        last_update_check: "2025-07-11T08:00:00.000Z",
+        web_monitoring_enabled: false
       },
       {
         id: 6,
@@ -446,7 +486,8 @@ class GameDataManager {
         updated_at: "2025-07-11T10:00:00.000Z",
         update_notification: true,
         bbs_check: false,
-        last_update_check: null
+        last_update_check: null,
+        web_monitoring_enabled: false
       }
     ];
 

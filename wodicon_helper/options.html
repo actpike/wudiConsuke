@@ -111,23 +111,112 @@
   </div>
 
   <div class="section">
-    <h2>🔧 機能設定</h2>
+    <h2>📡 Web監視設定</h2>
+    <div class="setting-item">
+      <label for="monitoring-mode">監視モード:</label>
+      <select id="monitoring-mode">
+        <option value="disabled">無効</option>
+        <option value="all">全作品</option>
+        <option value="selected">注目作品のみ</option>
+      </select>
+      <small>選択した監視モードに基づいて自動監視を実行します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label for="monitoring-interval">監視間隔:</label>
+      <select id="monitoring-interval">
+        <option value="0">監視しない</option>
+        <option value="15">15分</option>
+        <option value="30">30分</option>
+        <option value="60">1時間</option>
+        <option value="120">2時間</option>
+        <option value="240">4時間</option>
+      </select>
+      <small>短い間隔ほどリアルタイム性が向上しますが、リソースを消費します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label>
+        <input type="checkbox" id="monitor-on-startup"> 
+        ブラウザ起動時にチェック
+      </label>
+      <small>ブラウザ起動時に一度監視を実行します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label>最終監視時刻:</label>
+      <span id="last-monitor-time">未実行</span>
+      <button id="manual-monitor-now" class="secondary">今すぐ監視実行</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔔 通知設定</h2>
     <div class="setting-item">
       <label>
         <input type="checkbox" id="enable-notifications"> 
-        通知機能を有効にする
+        Chrome通知を有効にする
       </label>
     </div>
     
     <div class="setting-item">
-      <label for="monitoring-interval">監視間隔（将来機能）:</label>
-      <select id="monitoring-interval">
-        <option value="15">15分</option>
-        <option value="30">30分</option>
-        <option value="60">1時間</option>
-      </select>
+      <label>
+        <input type="checkbox" id="notify-new-works"> 
+        新規作品を通知
+      </label>
     </div>
     
+    <div class="setting-item">
+      <label>
+        <input type="checkbox" id="notify-updated-works"> 
+        更新作品を通知
+      </label>
+    </div>
+    
+    <div class="setting-item">
+      <label for="max-notifications">最大通知件数:</label>
+      <select id="max-notifications">
+        <option value="1">1件</option>
+        <option value="3">3件</option>
+        <option value="5">5件</option>
+        <option value="10">10件</option>
+      </select>
+      <small>一度に表示する通知の最大数です</small>
+    </div>
+    
+    <div class="setting-item">
+      <button id="test-notification" class="secondary">🔔 テスト通知送信</button>
+      <small>設定確認用のテスト通知を送信します</small>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📊 監視履歴・統計</h2>
+    <div class="setting-item">
+      <h3>最近の監視履歴</h3>
+      <div id="monitor-history">
+        <p>読み込み中...</p>
+      </div>
+    </div>
+    
+    <div class="setting-item">
+      <h3>統計情報</h3>
+      <div id="monitor-statistics">
+        <p>読み込み中...</p>
+      </div>
+    </div>
+    
+    <div class="setting-item">
+      <h3>更新マーカー管理</h3>
+      <div id="update-markers">
+        <p>読み込み中...</p>
+      </div>
+      <button id="clear-all-markers" class="secondary">全マーカークリア</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🔧 その他設定</h2>
     <div class="setting-item">
       <label>
         <input type="checkbox" id="auto-backup"> 
@@ -200,12 +289,31 @@
 
     async function loadSettings() {
       try {
-        const result = await chrome.storage.local.get('wodicon_settings');
+        // 基本設定
+        const result = await chrome.storage.local.get(['wodicon_settings', 'web_monitor_settings', 'update_manager_settings']);
         const settings = result.wodicon_settings || {};
+        const webMonitorSettings = result.web_monitor_settings || {};
+        const updateSettings = result.update_manager_settings || {};
 
+        // 基本設定
         document.getElementById('enable-notifications').checked = settings.enable_notifications !== false;
-        document.getElementById('monitoring-interval').value = settings.monitoring_interval || 30;
         document.getElementById('auto-backup').checked = settings.auto_backup_enabled || false;
+
+        // Web監視設定
+        document.getElementById('monitoring-mode').value = webMonitorSettings.mode || 'disabled';
+        document.getElementById('monitoring-interval').value = webMonitorSettings.interval || 30;
+        document.getElementById('monitor-on-startup').checked = webMonitorSettings.checkOnStartup || false;
+
+        // 通知設定
+        document.getElementById('notify-new-works').checked = updateSettings.showNewWorks !== false;
+        document.getElementById('notify-updated-works').checked = updateSettings.showUpdatedWorks !== false;
+        document.getElementById('max-notifications').value = updateSettings.maxNotifications || 5;
+
+        // 最終監視時刻の表示
+        updateLastMonitorTime(webMonitorSettings.lastCheckTime);
+
+        // 監視履歴・統計の読み込み
+        await loadMonitoringData();
 
       } catch (error) {
         console.error('設定読み込みエラー:', error);
@@ -271,21 +379,59 @@
         }
       });
 
+      // Web監視設定のイベントリスナー
+      document.getElementById('manual-monitor-now').addEventListener('click', performManualMonitoring);
+      document.getElementById('test-notification').addEventListener('click', sendTestNotification);
+      document.getElementById('clear-all-markers').addEventListener('click', clearAllMarkers);
+
       // 設定変更時の自動保存
-      ['enable-notifications', 'monitoring-interval', 'auto-backup'].forEach(id => {
+      ['enable-notifications', 'auto-backup', 'monitoring-mode', 'monitoring-interval', 
+       'monitor-on-startup', 'notify-new-works', 'notify-updated-works', 'max-notifications'].forEach(id => {
         document.getElementById(id).addEventListener('change', saveSettings);
       });
     }
 
     async function saveSettings() {
       try {
+        // 基本設定
         const settings = {
           enable_notifications: document.getElementById('enable-notifications').checked,
-          monitoring_interval: parseInt(document.getElementById('monitoring-interval').value),
           auto_backup_enabled: document.getElementById('auto-backup').checked
         };
 
-        await chrome.storage.local.set({ wodicon_settings: settings });
+        // Web監視設定
+        const webMonitorSettings = {
+          mode: document.getElementById('monitoring-mode').value,
+          interval: parseInt(document.getElementById('monitoring-interval').value),
+          checkOnStartup: document.getElementById('monitor-on-startup').checked,
+          lastCheckTime: null // 保持される値
+        };
+
+        // 通知設定
+        const updateManagerSettings = {
+          enabled: document.getElementById('enable-notifications').checked,
+          showNewWorks: document.getElementById('notify-new-works').checked,
+          showUpdatedWorks: document.getElementById('notify-updated-works').checked,
+          maxNotifications: parseInt(document.getElementById('max-notifications').value),
+          soundEnabled: false
+        };
+
+        await chrome.storage.local.set({ 
+          wodicon_settings: settings,
+          web_monitor_settings: webMonitorSettings,
+          update_manager_settings: updateManagerSettings
+        });
+
+        // Background Scriptに監視設定変更を通知
+        try {
+          await chrome.runtime.sendMessage({
+            action: webMonitorSettings.mode !== 'disabled' && webMonitorSettings.interval > 0 ? 'start_web_monitoring' : 'stop_web_monitoring',
+            settings: webMonitorSettings
+          });
+        } catch (bgError) {
+          console.log('Background Script通知スキップ:', bgError.message);
+        }
+
         showStatus('success', '✅ 設定を保存しました', 2000);
       } catch (error) {
         showStatus('error', '❌ 設定保存失敗: ' + error.message);
@@ -301,6 +447,123 @@
         statusDiv.textContent = '';
         statusDiv.className = 'status';
       }, duration);
+    }
+
+    // Web監視関連機能
+    async function performManualMonitoring() {
+      const button = document.getElementById('manual-monitor-now');
+      try {
+        button.disabled = true;
+        button.textContent = '監視実行中...';
+        
+        // Background Scriptに手動監視を要求
+        const response = await chrome.runtime.sendMessage({ action: 'perform_manual_monitoring' });
+        
+        if (response && response.success) {
+          showStatus('success', '✅ 監視完了: ' + (response.result?.summary || '結果なし'));
+          updateLastMonitorTime(new Date().toISOString());
+          await loadMonitoringData(); // 履歴を更新
+        } else {
+          showStatus('error', '❌ 監視失敗: ' + (response?.error || '不明なエラー'));
+        }
+      } catch (error) {
+        showStatus('error', '❌ 監視エラー: ' + error.message);
+      } finally {
+        button.disabled = false;
+        button.textContent = '今すぐ監視実行';
+      }
+    }
+
+    async function sendTestNotification() {
+      try {
+        await chrome.notifications.create('test_notification', {
+          type: 'basic',
+          iconUrl: '../icons/icon48.png',
+          title: '🔔 テスト通知',
+          message: 'Web監視の通知設定が正常に動作しています。\n新規：1件、更新：1件（No.02_謎解きカフェ事件簿 他）',
+          priority: 1
+        });
+        showStatus('success', '✅ テスト通知を送信しました');
+      } catch (error) {
+        showStatus('error', '❌ 通知送信失敗: ' + error.message);
+      }
+    }
+
+    async function clearAllMarkers() {
+      if (confirm('全ての更新マーカーをクリアしますか？')) {
+        try {
+          await chrome.storage.local.remove('update_markers');
+          showStatus('success', '✅ 全マーカーをクリアしました');
+          await loadMonitoringData(); // 表示を更新
+        } catch (error) {
+          showStatus('error', '❌ マーカークリア失敗: ' + error.message);
+        }
+      }
+    }
+
+    function updateLastMonitorTime(timestamp) {
+      const timeSpan = document.getElementById('last-monitor-time');
+      if (timestamp) {
+        timeSpan.textContent = new Date(timestamp).toLocaleString();
+      } else {
+        timeSpan.textContent = '未実行';
+      }
+    }
+
+    async function loadMonitoringData() {
+      try {
+        // 監視履歴
+        const historyResult = await chrome.storage.local.get('monitor_history');
+        const history = historyResult.monitor_history || [];
+        
+        const historyDiv = document.getElementById('monitor-history');
+        if (history.length === 0) {
+          historyDiv.innerHTML = '<p>監視履歴がありません</p>';
+        } else {
+          historyDiv.innerHTML = history.slice(0, 10).map(h => 
+            `<div class="history-item">
+              <strong>${new Date(h.timestamp).toLocaleString()}</strong>: 
+              新規${h.newWorks || 0}件, 更新${h.updatedWorks || 0}件
+              ${h.error ? ` <span style="color: red;">(エラー)</span>` : ''}
+            </div>`
+          ).join('');
+        }
+
+        // 統計情報
+        const statsDiv = document.getElementById('monitor-statistics');
+        const totalChecks = history.length;
+        const totalNew = history.reduce((sum, h) => sum + (h.newWorks || 0), 0);
+        const totalUpdated = history.reduce((sum, h) => sum + (h.updatedWorks || 0), 0);
+        const errorCount = history.filter(h => h.error).length;
+        
+        statsDiv.innerHTML = `
+          <p><strong>総監視回数:</strong> ${totalChecks}回</p>
+          <p><strong>検出新規作品:</strong> ${totalNew}件</p>
+          <p><strong>検出更新作品:</strong> ${totalUpdated}件</p>
+          <p><strong>エラー回数:</strong> ${errorCount}回</p>
+        `;
+
+        // 更新マーカー
+        const markersResult = await chrome.storage.local.get('update_markers');
+        const markers = markersResult.update_markers || {};
+        
+        const markersDiv = document.getElementById('update-markers');
+        const markerKeys = Object.keys(markers);
+        if (markerKeys.length === 0) {
+          markersDiv.innerHTML = '<p>未確認の更新はありません</p>';
+        } else {
+          markersDiv.innerHTML = markerKeys.map(workNo => {
+            const marker = markers[workNo];
+            return `<div class="marker-item">
+              <strong>No.${workNo}</strong>: ${marker.type} 
+              <span style="font-size: 0.9em; color: #666;">(${new Date(marker.timestamp).toLocaleString()})</span>
+            </div>`;
+          }).join('');
+        }
+
+      } catch (error) {
+        console.error('監視データ読み込みエラー:', error);
+      }
     }
 
     // バージョン情報表示

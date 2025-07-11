@@ -78,6 +78,13 @@ class GameListManager {
     document.getElementById('monitor-status-btn').addEventListener('click', () => {
       this.showMonitoringStatus();
     });
+
+    // 監視チェックボックス
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('monitor-checkbox')) {
+        this.handleMonitoringToggle(e.target);
+      }
+    });
   }
 
   // フィルタ設定
@@ -241,7 +248,7 @@ class GameListManager {
 
   // ゲーム行HTML生成
   createGameRowHTML(game) {
-    const checkIcon = game.is_played ? '☑' : '□';
+    const monitoringChecked = game.web_monitoring_enabled ? 'checked' : '';
     const versionIcon = this.getVersionIcon(game.version_status);
     const ratingDisplay = this.formatRatingDisplay(game.rating);
     const rowClass = game.is_played ? 'game-row played' : 'game-row';
@@ -249,7 +256,7 @@ class GameListManager {
     return `
       <tr class="${rowClass}" data-game-id="${game.id}">
         <td class="col-check">
-          <span class="check-icon">${checkIcon}</span>
+          <input type="checkbox" class="monitor-checkbox" data-game-id="${game.id}" ${monitoringChecked}>
         </td>
         <td class="col-no">${game.no}</td>
         <td class="col-title">
@@ -506,6 +513,41 @@ class GameListManager {
     }
 
     return lines.join('\n');
+  }
+
+  // 監視チェックボックス変更ハンドラー
+  async handleMonitoringToggle(checkbox) {
+    try {
+      const gameId = parseInt(checkbox.dataset.gameId);
+      const enabled = checkbox.checked;
+      
+      console.log(`🔄 監視設定変更: Game ${gameId} -> ${enabled}`);
+      
+      // データ更新
+      const success = await window.gameDataManager.updateWebMonitoringFlag(gameId, enabled);
+      
+      if (success) {
+        // 成功時の視覚的フィードバック
+        const statusSpan = document.getElementById('status-text');
+        const originalText = statusSpan.textContent;
+        statusSpan.textContent = `📡 監視設定更新: ${enabled ? 'ON' : 'OFF'}`;
+        statusSpan.style.color = enabled ? '#28a745' : '#6c757d';
+        
+        setTimeout(() => {
+          statusSpan.textContent = originalText;
+          statusSpan.style.color = '';
+        }, 2000);
+      } else {
+        // 失敗時はチェックボックスを元に戻す
+        checkbox.checked = !enabled;
+        this.showError('監視設定の更新に失敗しました');
+      }
+      
+    } catch (error) {
+      console.error('❌ 監視設定変更エラー:', error);
+      checkbox.checked = !checkbox.checked; // 元に戻す
+      this.showError('監視設定の変更でエラーが発生しました');
+    }
   }
 
   // ローディング表示

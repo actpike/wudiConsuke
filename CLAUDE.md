@@ -64,3 +64,57 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 3. 不明点は項目化してリスト形式で質問
 4. 新規SOWは`documents/SOW/backlog/`に配置
 5. 出力はMarkdown形式（YAMLフロントマター含む）
+
+## 開発コマンド
+
+### Chrome拡張機能の開発・テスト
+Chrome拡張機能には伝統的なbuild/lint/testコマンドはありません。以下の手順で開発します：
+
+1. **拡張機能のロード**
+   ```bash
+   # Chrome でchrome://extensions/ を開く
+   # 開発者モードを有効化
+   # 「パッケージ化されていない拡張機能を読み込む」で wodicon_helper/ フォルダを選択
+   ```
+
+2. **リロード・デバッグ**
+   ```bash
+   # 拡張機能ページで「リロード」ボタンをクリック
+   # ポップアップを右クリック → 「検証」でDevToolsを開く
+   # background.js のデバッグは chrome://extensions/ → 「service worker」リンク
+   ```
+
+3. **Web監視機能のテスト**
+   ```bash
+   # ポップアップ内の「🔍 手動監視実行」ボタンで基盤機能をテスト
+   # 「📊 監視状態確認」ボタンで設定・履歴を確認
+   ```
+
+4. **Git操作**
+   ```bash
+   git add .                    # 変更をステージング
+   git commit -m "説明"         # コミット
+   git push origin main         # リモートプッシュ
+   ```
+
+## アーキテクチャ
+
+### 全体設計
+Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content Script + Popup の3層構成で完全ローカル動作を実現。
+
+### データフロー
+1. **background.js** (Service Worker) がChrome Alarms APIで定期監視をスケジュール
+2. **pageParser.js** がsilversecond.comをfetchしてHTML解析、新規/更新作品を検出
+3. **updateManager.js** が検出結果を処理し、chrome.storage.localに保存、chrome.notifications.create()で通知
+4. **popup.js** がUI表示とユーザー操作を処理、dataManager.jsでCRUD操作
+
+### 重要な相互依存
+- 全モジュールはwindowオブジェクトにグローバルインスタンスを作成（例：window.gameDataManager）
+- popup.htmlで全JSファイルを順次読み込み、依存関係を解決
+- chrome.storage.localが唯一の永続化層（5MB制限）
+- Web監視系はService Workerとポップアップ間でchrome.runtime.onMessage通信
+
+### セキュリティ考慮
+- Host permissions: https://silversecond.com/* のみ
+- 外部API一切不使用、完全ローカル動作
+- HTMLクローリングのため、サイト構造変更リスクあり（複数パターンで対応）
