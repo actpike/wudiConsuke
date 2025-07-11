@@ -2,7 +2,7 @@
 
 ---
 project_name: "ウディこん助 - Web監視機能実装"
-status: "Todo"
+status: "Done"
 owner: "Claude Code"
 created_at: "2025-07-11"
 estimated_effort: "3-4日"

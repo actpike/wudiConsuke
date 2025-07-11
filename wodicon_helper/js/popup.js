@@ -69,6 +69,15 @@ class GameListManager {
         this.toggleSort(sortKey);
       });
     });
+
+    // Web監視テスト機能
+    document.getElementById('manual-monitor-btn').addEventListener('click', () => {
+      this.performManualMonitoring();
+    });
+
+    document.getElementById('monitor-status-btn').addEventListener('click', () => {
+      this.showMonitoringStatus();
+    });
   }
 
   // フィルタ設定
@@ -367,6 +376,136 @@ class GameListManager {
     `;
     
     alert(helpText);
+  }
+
+  // Web監視手動実行
+  async performManualMonitoring() {
+    const btn = document.getElementById('manual-monitor-btn');
+    const resultDiv = document.getElementById('monitor-result');
+    const contentDiv = document.getElementById('monitor-result-content');
+
+    try {
+      btn.disabled = true;
+      btn.textContent = '🔄 監視実行中...';
+      
+      console.log('🔍 手動Web監視開始');
+      
+      // Web監視実行
+      const result = await window.webMonitor.manualCheck();
+      
+      // 結果表示
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = this.formatMonitoringResult(result);
+      
+      // リスト更新
+      await this.refreshList();
+      
+      console.log('✅ 手動Web監視完了:', result);
+      
+    } catch (error) {
+      console.error('❌ 手動Web監視エラー:', error);
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = `エラー: ${error.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🔍 手動監視実行';
+    }
+  }
+
+  // 監視状態表示
+  async showMonitoringStatus() {
+    const resultDiv = document.getElementById('monitor-result');
+    const contentDiv = document.getElementById('monitor-result-content');
+
+    try {
+      // Web監視ステータス取得
+      const webStatus = window.webMonitor.getStatus();
+      const updateStatus = window.updateManager.getStatus();
+      const diagnostics = await window.webMonitor.getDiagnostics();
+
+      // ステータス情報をフォーマット
+      const statusText = this.formatStatusInfo(webStatus, updateStatus, diagnostics);
+      
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = statusText;
+      
+    } catch (error) {
+      console.error('❌ 監視状態取得エラー:', error);
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = `ステータス取得エラー: ${error.message}`;
+    }
+  }
+
+  // 監視結果フォーマット
+  formatMonitoringResult(result) {
+    if (!result) {
+      return '監視結果が取得できませんでした';
+    }
+
+    if (!result.success) {
+      return `監視エラー: ${result.error || '不明なエラー'}`;
+    }
+
+    const lines = [
+      `✅ 監視完了 [${result.checkId}]`,
+      `実行時間: ${new Date(result.timestamp).toLocaleString()}`,
+      '',
+      `🆕 新規作品: ${result.newWorks ? result.newWorks.length : 0}件`,
+      `🔄 更新作品: ${result.updatedWorks ? result.updatedWorks.length : 0}件`
+    ];
+
+    if (result.newWorks && result.newWorks.length > 0) {
+      lines.push('', '【新規作品】');
+      result.newWorks.forEach(work => {
+        lines.push(`• ${work.title} (No.${work.no})`);
+      });
+    }
+
+    if (result.updatedWorks && result.updatedWorks.length > 0) {
+      lines.push('', '【更新作品】');
+      result.updatedWorks.forEach(work => {
+        lines.push(`• ${work.title} (No.${work.no})`);
+      });
+    }
+
+    return lines.join('\n');
+  }
+
+  // ステータス情報フォーマット
+  formatStatusInfo(webStatus, updateStatus, diagnostics) {
+    const lines = [
+      '📊 Web監視ステータス',
+      '',
+      `監視状態: ${webStatus.isMonitoring ? '✅ 有効' : '❌ 無効'}`,
+      `監視間隔: ${webStatus.monitoringInterval}分`,
+      `監視モード: ${webStatus.monitoringMode}`,
+      `注目作品数: ${webStatus.selectedWorksCount}件`,
+      `最終チェック: ${webStatus.lastCheckTime ? new Date(webStatus.lastCheckTime).toLocaleString() : '未実行'}`,
+      `連続エラー: ${webStatus.consecutiveErrors}回`,
+      '',
+      '📬 通知設定',
+      `通知: ${updateStatus.notificationSettings.enabled ? '✅ 有効' : '❌ 無効'}`,
+      `新規作品通知: ${updateStatus.notificationSettings.showNewWorks ? '✅' : '❌'}`,
+      `更新作品通知: ${updateStatus.notificationSettings.showUpdatedWorks ? '✅' : '❌'}`,
+      `更新マーカー数: ${updateStatus.updateMarkersCount}件`,
+      ''
+    ];
+
+    if (diagnostics && diagnostics.recentHistory) {
+      lines.push('📈 最近の監視履歴');
+      if (diagnostics.recentHistory.length === 0) {
+        lines.push('履歴なし');
+      } else {
+        diagnostics.recentHistory.slice(0, 3).forEach(history => {
+          const time = new Date(history.timestamp).toLocaleTimeString();
+          const newCount = history.newWorks ? history.newWorks.length : 0;
+          const updateCount = history.updatedWorks ? history.updatedWorks.length : 0;
+          lines.push(`${time}: 新規${newCount}件, 更新${updateCount}件`);
+        });
+      }
+    }
+
+    return lines.join('\n');
   }
 
   // ローディング表示
