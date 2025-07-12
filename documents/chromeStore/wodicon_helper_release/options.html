@@ -123,79 +123,51 @@
   <div class="section">
     <h2>📡 Web監視設定</h2>
     <div class="setting-item">
-      <h3>⚠️ 注意: 従来のWeb自動監視機能について</h3>
-      <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
-        <p><strong>Chrome Manifest V3の制約により、従来のバックグラウンド自動監視機能は正常に動作しないことが判明しました。</strong></p>
-        <p>代わりに「実用的自動監視システム」（下記セクション）をご利用ください。</p>
-        <ul style="margin: 10px 0; padding-left: 20px;">
-          <li>ウディコンサイト訪問時の自動監視</li>
-          <li>拡張機能ポップアップ開時の定期監視</li>
-        </ul>
-        <p><small>これらの機能により、実用的な自動監視が可能です。</small></p>
-      </div>
-    </div>
-    
-    <div class="setting-item">
       <label for="contest-url">ウディコンページURL:</label>
       <input type="url" id="contest-url" placeholder="https://silversecond.com/WolfRPGEditor/Contest/entry.shtml">
       <small>監視対象となるウディコンページのURLを設定します</small>
     </div>
     
     <div class="setting-item">
+      <label for="monitoring-mode">監視モード:</label>
+      <select id="monitoring-mode">
+        <option value="disabled">無効</option>
+        <option value="all">全作品</option>
+        <option value="selected" selected>注目作品のみ</option>
+      </select>
+      <small>注目作品＝TOPの☑を付けた作品。選択した監視モードに基づいて自動監視を実行します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label for="monitoring-interval">監視間隔:</label>
+      <select id="monitoring-interval">
+        <option value="0" selected>監視しない</option>
+        <option value="15">15分</option>
+        <option value="30">30分</option>
+        <option value="60">1時間</option>
+        <option value="120">2時間</option>
+        <option value="240">4時間</option>
+      </select>
+      <small>短い間隔ほどリアルタイム性が向上しますが、リソースを消費します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label>
+        <input type="checkbox" id="monitor-on-startup" checked> 
+        ブラウザ起動時にチェック
+      </label>
+      <small>ブラウザ起動時に一度監視を実行します</small>
+    </div>
+    
+    <div class="setting-item">
       <label>最終監視時刻:</label>
       <span id="last-monitor-time">未実行</span>
       <button id="manual-monitor-now" class="secondary">今すぐ監視実行</button>
-      <small>手動監視は引き続き利用可能です</small>
     </div>
     
     <div class="setting-item">
       <h3>最近の監視履歴</h3>
       <div id="monitor-history">
-        <p>読み込み中...</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>🔄 実用的自動監視設定</h2>
-    <div class="setting-item">
-      <label>
-        <input type="checkbox" id="enable-auto-monitoring" checked> 
-        実用的自動監視を有効にする
-      </label>
-      <small>ウディコンサイト訪問時やポップアップ開時の自動監視機能です</small>
-    </div>
-    
-    <div class="setting-item">
-      <label>
-        <input type="checkbox" id="enable-content-auto-monitoring" checked> 
-        ウディコンサイト訪問時の自動監視
-      </label>
-      <small>ウディコンページを開いた際に自動的に監視を実行します（30分間隔制限）</small>
-    </div>
-    
-    <div class="setting-item">
-      <label for="popup-auto-interval">ポップアップ自動監視間隔:</label>
-      <select id="popup-auto-interval">
-        <option value="1" selected>1時間</option>
-        <option value="3">3時間</option>
-        <option value="6">6時間</option>
-        <option value="12">12時間</option>
-        <option value="24">24時間</option>
-      </select>
-      <small>拡張機能ポップアップを開いた際の自動監視間隔です</small>
-    </div>
-    
-    <div class="setting-item">
-      <label>最終自動監視時刻:</label>
-      <span id="last-auto-monitor-time">未実行</span>
-      <button id="clear-auto-monitor-time" class="secondary">履歴クリア</button>
-      <small>次回自動監視: ウディコンサイト訪問時またはポップアップ開時</small>
-    </div>
-    
-    <div class="setting-item">
-      <h4>📊 自動監視ステータス</h4>
-      <div id="auto-monitor-status">
         <p>読み込み中...</p>
       </div>
     </div>

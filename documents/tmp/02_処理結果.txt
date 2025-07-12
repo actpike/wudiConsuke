@@ -1,0 +1,35 @@
+🚀 バックグラウンド更新開始
+webMonitor.js:567 🚀 バックグラウンド更新開始 [bg_update_1752302553463]
+webMonitor.js:63 💾 Web監視設定保存完了
+webMonitor.js:575 📡 ウディコンページ取得中...
+webMonitor.js:655 🔄 ページ取得 実行: 試行 1/3
+webMonitor.js:239 📡 ページ取得中: https://silversecond.com/WolfRPGEditor/Contest/entry.shtml
+webMonitor.js:263 ✅ ページ取得成功: 7885 chars
+webMonitor.js:579 🔍 ページ解析実行中...
+pageParser.js:43 🔍 ページ解析開始: https://silversecond.com/WolfRPGEditor/Contest/entry.shtml
+pageParser.js:44 📄 HTML サイズ: 7885 chars
+pageParser.js:45 📄 HTML プレビュー: <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML LANG="ja">
+<HEAD>
+<meta name="viewport" content="width=700">
+<META http-equiv="Content-
+pageParser.js:49 📋 パターンentryPageで解析試行
+pageParser.js:120 📊 entryPage: 3個の要素を検出
+pageParser.js:125   要素0: "�y�����i���X�g�z �N���b�N�ŃW�����v�ł��܂�"
+pageParser.js:125   要素1: "1.�Г��E�ҁi���ذ���{�j[6/24]"
+pageParser.js:125   要素2: "�G���g���[�ԍ��y1�z
+�w�Г��E�ҁi���ذ���{�j�x
+ �y�_�E�����[�h�z [6/24]
+�@  
+��� : SmokingWOLF
+�v���C����"
+pageParser.js:53 ✅ パターンentryPageで2件の作品を検出
+pageParser.js:56 📊 取得された作品情報詳細:
+pageParser.js:58 作品1: {no: '1', title: '1Eij', author: undefined, lastUpdate: undefined, url: undefined, …}
+pageParser.js:58 作品2: {no: undefined, title: 'wEijx', author: undefined, lastUpdate: undefined, url: undefined, …}
+webMonitor.js:586 📊 解析完了: 2件の作品を検出
+pageParser.js:371 📊 差分検出結果: 新規0件, 更新1件, 変更なし0件
+webMonitor.js:605 ✅ バックグラウンド更新完了 [bg_update_1752302553463]: {newWorks: 0, updatedWorks: 1, totalWorks: 2, pattern: 'entryPage'}
+webMonitor.js:622 🔄 更新検出作品:
+webMonitor.js:624 1. No.1 1Eij (title, author)
+popup.js:1012 ✅ バックグラウンド更新成功: {checkId: 'bg_update_1752302553463', timestamp: '2025-07-12T06:42:33.513Z', newWorks: Array(0), updatedWorks: Array(0), success: true, …}

@@ -1,0 +1,26 @@
+with open("11_HTML結果.txt", "r", encoding="shift_jis") as f:
+    html = f.read()
+
+pattern = re.compile(
+    r"エントリー番号【(?P<no>\d+)】\s*<BR>\s*"
+    r"<font class=title>『(?P<title>[^』]+)』</font>.*?"
+    r"【ダウンロード】.*?\[(?P<date>.*?)\].*?"
+    r"作者\s*:\s*<B><a [^>]+>(?P<author>[^<]+)</a>",
+    re.DOTALL
+)
+
+for match in pattern.finditer(html):
+    print(f"1. {match.group('no')}")
+    print(f"2. {match.group('title')}")
+    print(f"3. {match.group('author')}")
+    print(f"4. [{match.group('date')}]")
+    print("---")
+
+
+
+#### output例
+1. 7
+2. 世界のはじまり
+3. 柊ミカン
+4. [v1.1.0 更新 7/12]
+---

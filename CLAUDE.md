@@ -30,15 +30,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 主要機能モジュール
 - **プレイ補助**: 既プレイチェックリスト、感想記録（✅完了）
-- **Web監視系**: 作品更新通知、HTMLクローリング（✅フェーズ1完了）
+- **実用的自動監視**: サイト訪問時・ポップアップ開時の自動監視（✅完了）
 - **ローカル連携**: フォルダ参照（file://制約あり）
 - **データ管理**: chrome.storage.local（5MB制限）
 
 ### 実装済みコンポーネント
 - **基本UI**: SPA構成、6カテゴリ評価システム、自動保存
 - **Web監視基盤**: pageParser.js, webMonitor.js, updateManager.js
-- **Background Service Worker**: 定期監視、アラーム管理
-- **手動テスト機能**: 監視実行、状態確認ボタン
+- **実用的自動監視**: content.js（サイト訪問時）、popup.js（ポップアップ開時）
+- **手動監視機能**: 従来通りの手動監視、状態確認ボタン
+- **紹介ページ**: website/release/ 実用的自動監視対応済み
 
 ### 技術制約
 - 完全ローカル動作（外部API不使用）
@@ -47,7 +48,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 開発完了項目
 - 作品プレイ補助機能（評価・感想・管理システム）
-- Web監視機能フェーズ1（監視基盤・検出・通知システム）
+- 実用的自動監視システム（Chrome Manifest V3制約対応）
+- 紹介ページリニューアル（一般利用者向け説明）
 
 ## SOW作成ガイドライン
 

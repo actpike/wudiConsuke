@@ -12,91 +12,12 @@ class GameListManager {
   // 初期化
   async initialize() {
     await window.gameDataManager.initialize();
-    
-    // ポップアップ開時の自動監視チェック
-    await this.performPopupAutoMonitoring();
-    
     this.setupEventListeners();
     this.updateSortHeaders();
     await this.refreshList();
     
     // 初期化完了後にステータスバーのデフォルトテキストを設定
     this.setDefaultStatusText();
-  }
-
-  // ポップアップ開時の自動監視実行
-  async performPopupAutoMonitoring() {
-    try {
-      console.log('🔍 ポップアップ自動監視チェック開始');
-      
-      // 自動監視設定確認
-      const settings = await chrome.storage.local.get(['auto_monitor_settings', 'last_auto_monitor_time']);
-      const autoMonitorSettings = settings.auto_monitor_settings || { enabled: true, popupInterval: 1 };
-      
-      if (!autoMonitorSettings.enabled) {
-        console.log('📴 自動監視が無効に設定されています');
-        return;
-      }
-      
-      // 前回実行からの経過時間確認
-      const lastTime = settings.last_auto_monitor_time;
-      const now = Date.now();
-      const requiredInterval = (autoMonitorSettings.popupInterval || 1) * 60 * 60 * 1000; // 時間をミリ秒に変換
-      
-      if (lastTime && (now - new Date(lastTime).getTime()) < requiredInterval) {
-        const nextCheck = new Date(new Date(lastTime).getTime() + requiredInterval);
-        console.log(`⏰ まだ自動監視間隔内です。次回: ${nextCheck.toLocaleString()}`);
-        return;
-      }
-      
-      console.log('🎯 ポップアップ自動監視を実行します');
-      
-      // ステータス表示
-      this.updateStatusBar('🔄 自動監視実行中...', 'processing', 0);
-      
-      // Web監視実行
-      if (window.webMonitor) {
-        const result = await window.webMonitor.executeBackgroundUpdate();
-        
-        // 実行時刻記録
-        await chrome.storage.local.set({
-          last_auto_monitor_time: new Date().toISOString()
-        });
-        
-        if (result.success) {
-          const newCount = result.newWorks?.length || 0;
-          const updateCount = result.updatedWorks?.length || 0;
-          
-          if (newCount > 0 || updateCount > 0) {
-            this.updateStatusBar(`🔔 自動監視完了: 新規${newCount}件、更新${updateCount}件`, 'success', 5000);
-            
-            // 通知表示
-            if (chrome.notifications) {
-              chrome.notifications.create('popup-auto-monitor', {
-                type: 'basic',
-                iconUrl: 'images/WudiConsuke_top.png',
-                title: 'ウディこん助 自動監視',
-                message: `新規${newCount}件、更新${updateCount}件の作品を検出しました`
-              });
-            }
-          } else {
-            this.updateStatusBar('✅ 自動監視完了: 更新なし', 'info', 3000);
-          }
-          
-          console.log('✅ ポップアップ自動監視完了:', result);
-        } else {
-          this.updateStatusBar('❌ 自動監視でエラーが発生しました', 'error', 5000);
-          console.error('❌ ポップアップ自動監視エラー:', result.error);
-        }
-      } else {
-        console.warn('⚠️ WebMonitorが利用できません');
-        this.updateStatusBar('⚠️ 監視システムが初期化されていません', 'warning', 3000);
-      }
-      
-    } catch (error) {
-      console.error('❌ ポップアップ自動監視処理エラー:', error);
-      this.updateStatusBar('❌ 自動監視処理でエラーが発生しました', 'error', 5000);
-    }
   }
 
   // デフォルトステータステキスト設定

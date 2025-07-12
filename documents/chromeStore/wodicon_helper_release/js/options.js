@@ -43,11 +43,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadBasicSettings() {
   try {
     // 基本設定
-    const result = await chrome.storage.local.get(['wodicon_settings', 'web_monitor_settings', 'update_manager_settings', 'auto_monitor_settings', 'last_auto_monitor_time']);
+    const result = await chrome.storage.local.get(['wodicon_settings', 'web_monitor_settings', 'update_manager_settings']);
     const settings = result.wodicon_settings || {};
     const webMonitorSettings = result.web_monitor_settings || {};
     const updateSettings = result.update_manager_settings || {};
-    const autoMonitorSettings = result.auto_monitor_settings || { enabled: true, contentEnabled: true, popupInterval: 1 };
 
     // ウディコンページURL設定
     const contestUrl = document.getElementById('contest-url');
@@ -72,13 +71,10 @@ async function loadBasicSettings() {
     // 基本設定
     setElementValue('enable-notifications', settings.enable_notifications !== false);
 
-    // Web監視設定（廃止済み機能のため基本のみ）
-    // 従来のWeb自動監視機能は廃止されました
-
-    // 実用的自動監視設定
-    setElementValue('enable-auto-monitoring', autoMonitorSettings.enabled !== false);
-    setElementValue('enable-content-auto-monitoring', autoMonitorSettings.contentEnabled !== false);
-    setElementValue('popup-auto-interval', autoMonitorSettings.popupInterval || 1, 'value');
+    // Web監視設定（新しい初期値）
+    setElementValue('monitoring-mode', webMonitorSettings.mode || 'selected', 'value');  // 注目作品のみ
+    setElementValue('monitoring-interval', webMonitorSettings.interval || 0, 'value');    // 監視しない
+    setElementValue('monitor-on-startup', webMonitorSettings.checkOnStartup !== false);   // チェックする
 
     // 通知設定（新しい初期値）
     setElementValue('notify-new-works', updateSettings.showNewWorks !== false);           // チェックする
@@ -87,12 +83,6 @@ async function loadBasicSettings() {
 
     // 最終監視時刻の表示
     updateLastMonitorTime(webMonitorSettings.lastCheckTime);
-
-    // 最終自動監視時刻の表示
-    updateLastAutoMonitorTime(result.last_auto_monitor_time);
-
-    // 自動監視ステータス表示
-    updateAutoMonitorStatus(autoMonitorSettings, result.last_auto_monitor_time);
 
   } catch (error) {
     console.error('基本設定読み込みエラー:', error);
@@ -295,9 +285,9 @@ function setupEventListeners() {
     addButtonListener('test-notification', sendTestNotification, 'Test notification');
   
 
-    // 設定変更時の自動保存（Web自動監視設定を除外）
-    ['enable-notifications', 'notify-new-works', 'notify-updated-works', 'max-notifications',
-     'enable-auto-monitoring', 'enable-content-auto-monitoring', 'popup-auto-interval'].forEach(id => {
+    // 設定変更時の自動保存
+    ['enable-notifications', 'monitoring-mode', 'monitoring-interval', 
+     'monitor-on-startup', 'notify-new-works', 'notify-updated-works', 'max-notifications'].forEach(id => {
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', saveSettings);
@@ -305,9 +295,6 @@ function setupEventListeners() {
         console.warn(`設定要素が見つかりません: ${id}`);
       }
     });
-
-    // 自動監視履歴クリアボタン
-    addButtonListener('clear-auto-monitor-time', clearAutoMonitorTime, 'Clear auto monitor time');
     
     console.log('✅ All event listeners setup completed');
     
@@ -324,12 +311,11 @@ async function saveSettings() {
       enable_notifications: document.getElementById('enable-notifications').checked
     };
 
-    // Web監視設定（基本設定のみ保持、自動監視機能は無効化）
+    // Web監視設定
     const webMonitorSettings = {
-      mode: 'disabled',
-      interval: 0,
-      checkOnStartup: false,
-      contest_url: document.getElementById('contest-url').value,
+      mode: document.getElementById('monitoring-mode').value,
+      interval: parseInt(document.getElementById('monitoring-interval').value),
+      checkOnStartup: document.getElementById('monitor-on-startup').checked,
       lastCheckTime: null // 保持される値
     };
 
@@ -342,28 +328,16 @@ async function saveSettings() {
       soundEnabled: false
     };
 
-    // 自動監視設定
-    const autoMonitorSettings = {
-      enabled: document.getElementById('enable-auto-monitoring').checked,
-      contentEnabled: document.getElementById('enable-content-auto-monitoring').checked,
-      popupInterval: parseInt(document.getElementById('popup-auto-interval').value)
-    };
-
     await chrome.storage.local.set({ 
       wodicon_settings: settings,
       web_monitor_settings: webMonitorSettings,
-      update_manager_settings: updateManagerSettings,
-      auto_monitor_settings: autoMonitorSettings
+      update_manager_settings: updateManagerSettings
     });
 
-    // 自動監視ステータス表示更新
-    const result = await chrome.storage.local.get('last_auto_monitor_time');
-    updateAutoMonitorStatus(autoMonitorSettings, result.last_auto_monitor_time);
-
-    // Background Scriptに監視停止を通知（Web自動監視機能廃止）
+    // Background Scriptに監視設定変更を通知
     try {
       await chrome.runtime.sendMessage({
-        action: 'stop_web_monitoring',
+        action: webMonitorSettings.mode !== 'disabled' && webMonitorSettings.interval > 0 ? 'start_web_monitoring' : 'stop_web_monitoring',
         settings: webMonitorSettings
       });
     } catch (bgError) {
@@ -518,75 +492,6 @@ async function loadMonitoringData() {
   }
 }
 
-
-// 最終自動監視時刻表示更新
-function updateLastAutoMonitorTime(timestamp) {
-  const timeSpan = document.getElementById('last-auto-monitor-time');
-  if (timeSpan) {
-    if (timestamp) {
-      timeSpan.textContent = new Date(timestamp).toLocaleString();
-    } else {
-      timeSpan.textContent = '未実行';
-    }
-  }
-}
-
-// 自動監視ステータス表示更新
-function updateAutoMonitorStatus(settings, lastTime) {
-  const statusDiv = document.getElementById('auto-monitor-status');
-  if (!statusDiv) return;
-
-  const enabled = settings.enabled !== false;
-  const contentEnabled = settings.contentEnabled !== false;
-  const popupInterval = settings.popupInterval || 1;
-
-  let statusText = '';
-  
-  if (!enabled) {
-    statusText = '❌ 実用的自動監視は無効です';
-  } else {
-    const enabledFeatures = [];
-    if (contentEnabled) {
-      enabledFeatures.push('ウディコンサイト訪問時');
-    }
-    enabledFeatures.push(`ポップアップ開時（${popupInterval}時間間隔）`);
-    
-    statusText = `✅ 有効 - ${enabledFeatures.join('、')}`;
-    
-    if (lastTime) {
-      const nextPopupCheck = new Date(new Date(lastTime).getTime() + popupInterval * 60 * 60 * 1000);
-      const now = new Date();
-      
-      if (nextPopupCheck > now) {
-        const minutesUntilNext = Math.ceil((nextPopupCheck - now) / (1000 * 60));
-        statusText += `<br><small>次回ポップアップ自動監視まで: ${minutesUntilNext}分</small>`;
-      } else {
-        statusText += '<br><small>次回ポップアップ開時に自動監視実行予定</small>';
-      }
-    }
-  }
-
-  statusDiv.innerHTML = `<p>${statusText}</p>`;
-}
-
-// 自動監視履歴クリア
-async function clearAutoMonitorTime() {
-  try {
-    await chrome.storage.local.remove('last_auto_monitor_time');
-    updateLastAutoMonitorTime(null);
-    
-    // ステータス更新
-    const result = await chrome.storage.local.get('auto_monitor_settings');
-    const autoMonitorSettings = result.auto_monitor_settings || {};
-    updateAutoMonitorStatus(autoMonitorSettings, null);
-    
-    showStatus('success', '✅ 自動監視履歴をクリアしました');
-    
-  } catch (error) {
-    console.error('自動監視履歴クリアエラー:', error);
-    showStatus('error', '❌ 履歴クリアに失敗しました');
-  }
-}
 
 // バージョン情報表示（DOMContentLoaded後に実行）
 function setVersionInfo() {

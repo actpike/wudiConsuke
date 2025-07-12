@@ -1,0 +1,12 @@
+✨ パターン3で2件検出、処理を終了
+pageParser.js:45 ✅ パターンentryPageで2件の作品を検出
+pageParser.js:48 📊 取得された作品情報詳細:
+pageParser.js:50 作品1: {no: 1, title: '片道勇者（ｴﾝﾄﾘｰ見本）', author: undefined, lastUpdate: undefined, url: 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1', …}
+pageParser.js:50 作品2: {no: 2, title: '片道勇者', author: undefined, lastUpdate: undefined, url: 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#2', …}
+webMonitor.js:592 📊 解析完了: 2件の作品を検出
+pageParser.js:475 📊 差分検出結果: 新規2件, 更新0件, 変更なし0件
+webMonitor.js:611 ✅ バックグラウンド更新完了 [bg_update_1752305759978]: {newWorks: 2, updatedWorks: 0, totalWorks: 2, pattern: 'entryPage'}
+webMonitor.js:620 🆕 新規検出作品:
+webMonitor.js:622 1. No.1 片道勇者（ｴﾝﾄﾘｰ見本） by undefined
+webMonitor.js:622 2. No.2 片道勇者 by undefined
+popup.js:1028 ✅ バックグラウンド更新成功: {checkId: 'bg_update_1752305759978', timestamp: '2025-07-12T07:36:00.031Z', newWorks: Array(0), updatedWorks: Array(0), success: true, …}

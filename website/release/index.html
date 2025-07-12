@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ウディこん助 (WodiConsuke) - WOLF RPGエディターコンテスト作品管理ツール</title>
+    <meta name="description" content="ウディコン作品のプレイ体験を向上させるChrome拡張機能。6カテゴリ評価システム、感想メモ、サイト訪問時自動監視機能でウディコンライフをもっと便利に。">
+    <meta name="keywords" content="ウディコン,WOLF RPGエディター,Chrome拡張機能,ゲーム管理,評価システム,自動監視,通知">
+    <meta name="author" content="ぴけ">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="ウディこん助 (WodiConsuke) - WOLF RPGエディターコンテスト作品管理ツール">
+    <meta property="og:description" content="ウディコン作品のプレイ体験を向上させるChrome拡張機能。6カテゴリ評価システム、感想メモ、サイト訪問時自動監視機能でウディコンライフをもっと便利に。">
+    <meta property="og:image" content="./images/WudiConsuke_top_640_400.png">
+    <meta property="og:image:width" content="640">
+    <meta property="og:image:height" content="400">
+    <meta property="og:image:alt" content="ウディこん助メイン画面 - 作品一覧と評価管理">
+    <meta property="og:url" content="">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="ウディこん助">
+    <meta property="og:locale" content="ja_JP">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ウディこん助 (WodiConsuke) - ウディコン作品管理ツール">
+    <meta name="twitter:description" content="ウディコン作品のプレイ体験を向上させるChrome拡張機能。評価管理、感想メモ、サイト訪問時自動監視機能でウディコンライフをサポート。">
+    <meta name="twitter:image" content="./images/WudiConsuke_top_640_400.png">
+    <meta name="twitter:image:alt" content="ウディこん助メイン画面">
+    <meta name="twitter:creator" content="@actpike">
+    <meta name="twitter:site" content="@actpike">
+    
+    <!-- Facebook App ID (必要に応じて) -->
+    <!-- <meta property="fb:app_id" content="your_app_id"> -->
+    
+    <!-- Additional OGP -->
+    <meta property="article:author" content="ぴけ">
+    <meta property="article:section" content="Tools">
+    <meta property="article:tag" content="ウディコン">
+    <meta property="article:tag" content="WOLF RPGエディター">
+    <meta property="article:tag" content="Chrome拡張機能">
+    <meta property="article:tag" content="ゲーム管理">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "ウディこん助 (WodiConsuke)",
+        "description": "WOLF RPGエディターコンテスト作品のプレイ体験を向上させるChrome拡張機能。サイト訪問時の自動監視機能付き",
+        "image": "./images/WudiConsuke_top_640_400.png",
+        "url": "",
+        "author": {
+            "@type": "Person",
+            "name": "ぴけ"
+        },
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Chrome Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "JPY"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "ratingCount": "1"
+        }
+    }
+    </script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./images/WudiConsuke_top.png">
+    
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="./images/WudiConsuke_top.png" alt="ウディこん助" class="logo-img">
+                    <h1>ウディこん助 <span class="sub-title">(WodiConsuke)</span></h1>
+                </div>
+                <p class="tagline">ウディコン作品プレイ体験をより快適・便利に</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h2 class="hero-title">ウディコンライフを<br>もっと便利に</h2>
+                        <p class="hero-description">
+                            WOLF RPGエディターコンテスト（ウディコン）の作品管理を効率化するChrome拡張機能です。
+                            プレイした作品の評価・感想管理や、ウディコンサイト訪問時の自動チェックで
+                            新規作品・バージョン更新を逃さずキャッチ。あなたのウディコン体験をワンランクアップさせます。
+                        </p>
+                        <div class="hero-buttons">
+                            <a href="#download" class="btn btn-primary">
+                                <span class="btn-icon">🔗</span>
+                                Chrome Web Store
+                                <span class="coming-soon">Coming Soon...</span>
+                            </a>
+                            <a href="#features" class="btn btn-secondary">
+                                <span class="btn-icon">✨</span>
+                                機能を見る
+                            </a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <img src="./images/WudiConsuke_top.png" alt="ウディこん助メイン画面" class="hero-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">主な機能</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>評価・感想管理</h3>
+                        <p>ウディコン公式の6カテゴリ評価システムに対応。プレイした作品の評価と感想を一元管理。各評価の平均値表示で、あなたの評価傾向も把握できます。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📝</div>
+                        <h3>感想メモ機能</h3>
+                        <p>作品ごとに詳細な感想を記録。文字数カウント機能付きで、コメント投稿時の参考にも最適。大切な作品の印象を忘れずに保存できます。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔔</div>
+                        <h3>自動監視・通知</h3>
+                        <p>ウディコンサイトを開いた時に自動で新規作品・更新をチェック。バージョン更新や新規投稿を見逃すことなく、デスクトップ通知でお知らせします。</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <h3>データ管理</h3>
+                        <p>評価・感想データのエクスポート・インポート機能。大切なデータを安全に保護します。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Screenshots Section -->
+        <section class="screenshots">
+            <div class="container">
+                <h2 class="section-title">スクリーンショット</h2>
+                <div class="screenshots-grid">
+                    <div class="screenshot-item">
+                        <img src="./images/WudiConsuke_top.png" alt="メイン画面" class="screenshot-img">
+                        <h3>メイン画面</h3>
+                        <p>作品一覧と評価状況を一目で確認</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="./images/WudiConsuke_titles.png" alt="詳細画面" class="screenshot-img">
+                        <h3>詳細画面</h3>
+                        <p>6カテゴリ評価と感想入力</p>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="./images/WudiConsuke_notification.png" alt="デスクトップ通知" class="screenshot-img">
+                        <h3>自動通知</h3>
+                        <p>新規作品・更新検知時のデスクトップ通知</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download Section -->
+        <section id="download" class="download">
+            <div class="container">
+                <div class="download-content">
+                    <h2 class="section-title">ダウンロード</h2>
+                    <p class="download-description">
+                        Chrome Web Storeでの公開準備中です。<br>
+                        もうしばらくお待ちください。
+                    </p>
+                    <div class="download-button">
+                        <button class="btn btn-primary btn-large" disabled>
+                            <span class="btn-icon">🔗</span>
+                            Chrome Web Store
+                            <span class="coming-soon">Coming Soon...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Banner Section -->
+        <section class="banner">
+            <div class="container">
+                <div class="banner-content">
+                    <h3>WOLF RPGエディターコンテスト開催中</h3>
+                    <p>ウディコンに参加して、素晴らしい作品を発見しよう！</p>
+                    <a href="https://www.silversecond.com/WolfRPGEditor/Contest/" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="banner-link">
+                        <img src="https://www.silversecond.com/WolfRPGEditor/Contest/banner.png" 
+                             alt="WOLF RPGエディターコンテスト - ウディコン" 
+                             class="banner-img">
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>&copy; 2025 ウディこん助 (WodiConsuke)</p>
+                    <p>WOLF RPGエディターコンテスト作品管理ツール</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://portfolio-works-one.vercel.app/" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="footer-link">
+                        Developer Portfolio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/main.js"></script>
+</body>
+</html>

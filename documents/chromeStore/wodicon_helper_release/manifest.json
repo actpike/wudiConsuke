@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "ウディこん助 (WodiConsuke)",
+  "version": "1.0.0",
+  "description": "ウディコン作品プレイ体験をより快適・便利にするChrome拡張機能",
+  
+  "permissions": [
+    "storage",
+    "alarms", 
+    "notifications",
+    "activeTab",
+    "downloads",
+    "scripting"
+  ],
+  
+  "host_permissions": [
+    "https://silversecond.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["https://silversecond.com/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ウディこん助",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  
+  "options_page": "options.html"
+  
+  
+}

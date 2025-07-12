@@ -1,0 +1,7 @@
+TOPの高さを60px拡張し、バナーを配置する
+
+リンク先URL：
+https://www.silversecond.com/WolfRPGEditor/Contest/
+
+支援バナー(468x60)：
+https://www.silversecond.com/WolfRPGEditor/Contest/banner.png
