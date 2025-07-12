@@ -158,8 +158,12 @@ class WebMonitor {
       // ページ取得（リトライ付き）
       const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
       
+      // 設定からURLを取得
+      const settings = await chrome.storage.local.get('web_monitor_settings');
+      const contestUrl = settings.web_monitor_settings?.contest_url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+      
       // 解析実行
-      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
+      const parseResult = await window.pageParser.parseContestPage(html, contestUrl);
       
       if (!parseResult.success) {
         throw new Error(`ページ解析失敗: ${parseResult.error}`);
@@ -232,7 +236,10 @@ class WebMonitor {
 
   // コンテストページ取得
   async fetchContestPage() {
-    const targetUrls = window.pageParser.getTargetUrls();
+    // 設定からURLを取得
+    const settings = await chrome.storage.local.get('web_monitor_settings');
+    const configuredUrl = settings.web_monitor_settings?.contest_url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+    const targetUrls = [configuredUrl];
     
     for (const url of targetUrls) {
       try {

@@ -73,9 +73,6 @@ class GameListManager {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
     });
 
-    document.getElementById('export-btn').addEventListener('click', () => {
-      this.exportData();
-    });
 
     document.getElementById('help-btn').addEventListener('click', () => {
       this.showHelp();
@@ -89,22 +86,6 @@ class GameListManager {
       });
     });
 
-    // Web監視テスト機能
-    document.getElementById('manual-monitor-btn').addEventListener('click', () => {
-      this.performManualMonitoring();
-    });
-
-    document.getElementById('monitor-status-btn').addEventListener('click', () => {
-      this.showMonitoringStatus();
-    });
-
-    document.getElementById('parse-info-btn').addEventListener('click', () => {
-      this.showParsingInfo();
-    });
-
-    document.getElementById('integration-test-btn').addEventListener('click', () => {
-      this.performIntegrationTest();
-    });
 
 
     // 監視チェックボックス

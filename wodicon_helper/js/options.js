@@ -48,6 +48,12 @@ async function loadBasicSettings() {
     const webMonitorSettings = result.web_monitor_settings || {};
     const updateSettings = result.update_manager_settings || {};
 
+    // ウディコンページURL設定
+    const contestUrl = document.getElementById('contest-url');
+    if (contestUrl) {
+      contestUrl.value = webMonitorSettings.contest_url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+    }
+
     // DOM要素存在確認付きで設定
     const setElementValue = (id, value, type = 'checked') => {
       const element = document.getElementById(id);
@@ -65,14 +71,14 @@ async function loadBasicSettings() {
     // 基本設定
     setElementValue('enable-notifications', settings.enable_notifications !== false);
 
-    // Web監視設定
-    setElementValue('monitoring-mode', webMonitorSettings.mode || 'disabled', 'value');
-    setElementValue('monitoring-interval', webMonitorSettings.interval || 30, 'value');
-    setElementValue('monitor-on-startup', webMonitorSettings.checkOnStartup || false);
+    // Web監視設定（新しい初期値）
+    setElementValue('monitoring-mode', webMonitorSettings.mode || 'selected', 'value');  // 注目作品のみ
+    setElementValue('monitoring-interval', webMonitorSettings.interval || 0, 'value');    // 監視しない
+    setElementValue('monitor-on-startup', webMonitorSettings.checkOnStartup !== false);   // チェックする
 
-    // 通知設定
-    setElementValue('notify-new-works', updateSettings.showNewWorks !== false);
-    setElementValue('notify-updated-works', updateSettings.showUpdatedWorks !== false);
+    // 通知設定（新しい初期値）
+    setElementValue('notify-new-works', updateSettings.showNewWorks !== false);           // チェックする
+    setElementValue('notify-updated-works', updateSettings.showUpdatedWorks !== false);  // チェックする
     setElementValue('max-notifications', updateSettings.maxNotifications || 5, 'value');
 
     // 最終監視時刻の表示
@@ -113,6 +119,30 @@ function setupEventListeners() {
     console.log('🔍 Critical buttons check:', buttonStatus);
     console.log(`✅ Found ${foundButtons}/${criticalButtons.length} critical buttons`);
   
+  // ウディコンページURL設定
+  const contestUrlInput = document.getElementById('contest-url');
+  if (contestUrlInput) {
+    contestUrlInput.addEventListener('change', async () => {
+      try {
+        const webMonitorSettings = await chrome.storage.local.get('web_monitor_settings') || {};
+        const currentSettings = webMonitorSettings.web_monitor_settings || {};
+        
+        currentSettings.contest_url = contestUrlInput.value;
+        
+        await chrome.storage.local.set({
+          web_monitor_settings: currentSettings
+        });
+        
+        console.log('✅ Contest URL updated:', contestUrlInput.value);
+        showStatus('ウディコンページURLを保存しました', 'success');
+        
+      } catch (error) {
+        console.error('❌ Contest URL save error:', error);
+        showStatus('URL保存エラー: ' + error.message, 'error');
+      }
+    });
+  }
+
   // エクスポート
   document.getElementById('export-btn').addEventListener('click', async () => {
     console.log('📤 Export button clicked');
