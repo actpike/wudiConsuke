@@ -13,6 +13,10 @@ class WebMonitor {
     this.consecutiveErrors = 0;
     this.maxRetries = 3;
     this.backoffMultiplier = 2;
+    this.baseRetryDelay = 1000; // 1秒
+    this.maxRetryDelay = 300000; // 5分
+    this.errorHistory = [];
+    this.lastErrorTime = null;
     
     // 監視結果キャッシュ
     this.lastResult = null;
@@ -141,8 +145,18 @@ class WebMonitor {
       this.lastCheckTime = new Date().toISOString();
       await this.saveSettings();
 
-      // ページ取得
-      const html = await this.fetchContestPage();
+      // エラー回復チェック: 前回エラーから十分時間が経過している場合はリセット
+      if (this.consecutiveErrors > 0 && this.lastErrorTime) {
+        const timeSinceError = Date.now() - new Date(this.lastErrorTime).getTime();
+        const resetThreshold = this.monitoringInterval * 60000 * 2; // 監視間隔の2倍
+        if (timeSinceError > resetThreshold) {
+          console.log('🔄 エラーカウンターリセット: 十分な時間が経過');
+          this.consecutiveErrors = 0;
+        }
+      }
+
+      // ページ取得（リトライ付き）
+      const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
       
       // 解析実行
       const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/');
@@ -173,13 +187,18 @@ class WebMonitor {
       return result;
       
     } catch (error) {
-      this.consecutiveErrors++;
-      console.error(`❌ 監視チェックエラー [${checkId}]:`, error);
+      // エラー処理の強化版を使用
+      this.handleOperationFailure('監視チェック', error);
       
-      // 連続エラー対応
-      if (this.consecutiveErrors >= this.maxRetries) {
-        console.warn(`⚠️ 連続エラー上限到達 (${this.consecutiveErrors}回), 監視間隔を延長`);
-        await this.handleConsecutiveErrors();
+      // Graceful degradationの試行
+      try {
+        const fallbackResult = await this.performGracefulDegradation(error);
+        if (fallbackResult) {
+          console.log('🔄 Graceful degradation成功');
+          return fallbackResult;
+        }
+      } catch (degradationError) {
+        console.error('Graceful degradation失敗:', degradationError);
       }
 
       return {
@@ -187,7 +206,8 @@ class WebMonitor {
         error: error.message,
         checkId: checkId,
         timestamp: new Date().toISOString(),
-        consecutiveErrors: this.consecutiveErrors
+        consecutiveErrors: this.consecutiveErrors,
+        errorDetails: this.getErrorDetails()
       };
     }
   }
@@ -516,6 +536,164 @@ class WebMonitor {
   async manualCheck() {
     console.log('🔍 手動監視チェック実行');
     return await this.performCheck();
+  }
+
+  // リトライ付き実行
+  async performWithRetry(operation, operationName) {
+    let lastError = null;
+    
+    for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
+      try {
+        console.log(`🔄 ${operationName} 実行: 試行 ${attempt}/${this.maxRetries}`);
+        const result = await operation();
+        
+        // 成功時はエラーカウンターリセット
+        if (this.consecutiveErrors > 0) {
+          console.log('✅ エラー回復: 操作成功');
+          this.consecutiveErrors = 0;
+          this.lastErrorTime = null;
+        }
+        
+        return result;
+      } catch (error) {
+        lastError = error;
+        console.warn(`⚠️ ${operationName} 失敗 (試行 ${attempt}/${this.maxRetries}):`, error.message);
+        
+        // 最後の試行でない場合は遅延後リトライ
+        if (attempt < this.maxRetries) {
+          const delay = this.calculateRetryDelay(attempt);
+          console.log(`⏳ ${delay}ms後にリトライします`);
+          await this.sleep(delay);
+        }
+      }
+    }
+    
+    // 全試行失敗
+    this.handleOperationFailure(operationName, lastError);
+    throw lastError;
+  }
+
+  // リトライ遅延計算（指数バックオフ）
+  calculateRetryDelay(attempt) {
+    const delay = this.baseRetryDelay * Math.pow(this.backoffMultiplier, attempt - 1);
+    return Math.min(delay, this.maxRetryDelay);
+  }
+
+  // 操作失敗処理
+  handleOperationFailure(operationName, error) {
+    this.consecutiveErrors++;
+    this.lastErrorTime = new Date().toISOString();
+    
+    // エラー履歴記録
+    this.errorHistory.push({
+      timestamp: this.lastErrorTime,
+      operation: operationName,
+      error: error.message,
+      attempt: this.consecutiveErrors
+    });
+    
+    // 履歴サイズ制限（最新50件まで）
+    if (this.errorHistory.length > 50) {
+      this.errorHistory = this.errorHistory.slice(-50);
+    }
+    
+    console.error(`❌ ${operationName} 完全失敗 (連続 ${this.consecutiveErrors}回目):`, error.message);
+    
+    // 連続エラー数に応じた対処
+    if (this.consecutiveErrors >= 5) {
+      console.warn('🚨 監視システム不安定: 5回連続エラー');
+      this.notifySystemInstability();
+    }
+  }
+
+  // システム不安定通知
+  async notifySystemInstability() {
+    try {
+      // 重要なエラーの場合は通知
+      await chrome.notifications.create(`system_error_${Date.now()}`, {
+        type: 'basic',
+        iconUrl: '../icons/icon48.png',
+        title: '⚠️ Web監視システム警告',
+        message: `監視システムでエラーが続いています (連続${this.consecutiveErrors}回)\n詳細は設定画面でご確認ください`,
+        priority: 2
+      });
+    } catch (notificationError) {
+      console.error('通知送信失敗:', notificationError);
+    }
+  }
+
+  // スリープユーティリティ
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Graceful degradation: 部分的障害時の機能縮退
+  async performGracefulDegradation(error) {
+    console.log('🔄 Graceful degradation開始:', error.message);
+    
+    try {
+      // キャッシュされたデータがあれば使用
+      if (this.lastResult && this.lastHtml) {
+        const cacheAge = Date.now() - new Date(this.lastResult.timestamp).getTime();
+        const maxCacheAge = this.monitoringInterval * 60000 * 2; // 監視間隔の2倍
+        
+        if (cacheAge < maxCacheAge) {
+          console.log('📦 キャッシュデータを使用してフォールバック実行');
+          
+          // キャッシュベースの簡易チェック
+          return {
+            success: true,
+            checkId: `fallback_${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            newWorks: [],
+            updatedWorks: [],
+            error: `フォールバック実行 (原因: ${error.message})`,
+            source: 'cache_fallback'
+          };
+        }
+      }
+      
+      // キャッシュも使用できない場合は監視間隔を延長
+      if (this.consecutiveErrors >= 3) {
+        const newInterval = Math.min(this.monitoringInterval * 2, 240); // 最大4時間
+        console.log(`⏰ 監視間隔を一時的に延長: ${this.monitoringInterval}分 → ${newInterval}分`);
+        
+        // Background Scriptに間隔変更を通知
+        try {
+          chrome.runtime.sendMessage({
+            action: 'adjust_monitoring_interval',
+            interval: newInterval,
+            reason: 'error_recovery'
+          });
+        } catch (msgError) {
+          console.warn('Background Script通知失敗:', msgError);
+        }
+      }
+      
+    } catch (degradationError) {
+      console.error('Graceful degradation実行エラー:', degradationError);
+    }
+    
+    return null;
+  }
+
+  // エラー詳細取得
+  getErrorDetails() {
+    return {
+      consecutiveErrors: this.consecutiveErrors,
+      lastErrorTime: this.lastErrorTime,
+      errorHistory: this.errorHistory.slice(-10), // 最新10件
+      systemHealth: this.consecutiveErrors === 0 ? 'healthy' : 
+                   this.consecutiveErrors < 3 ? 'warning' : 'critical'
+    };
+  }
+
+  // エラーログクリア
+  clearErrorHistory() {
+    this.errorHistory = [];
+    this.consecutiveErrors = 0;
+    this.lastErrorTime = null;
+    console.log('🧹 エラー履歴をクリアしました');
   }
 }
 

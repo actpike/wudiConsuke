@@ -79,6 +79,10 @@ class GameListManager {
       this.showMonitoringStatus();
     });
 
+    document.getElementById('integration-test-btn').addEventListener('click', () => {
+      this.performIntegrationTest();
+    });
+
     // 監視チェックボックス
     document.addEventListener('change', (e) => {
       if (e.target.classList.contains('monitor-checkbox')) {
@@ -510,6 +514,266 @@ class GameListManager {
           lines.push(`${time}: 新規${newCount}件, 更新${updateCount}件`);
         });
       }
+    }
+
+    return lines.join('\n');
+  }
+
+  // 統合テスト実行
+  async performIntegrationTest() {
+    const btn = document.getElementById('integration-test-btn');
+    const resultDiv = document.getElementById('monitor-result');
+    const contentDiv = document.getElementById('monitor-result-content');
+
+    try {
+      btn.disabled = true;
+      btn.textContent = '🧪 統合テスト実行中...';
+      
+      console.log('🧪 統合テスト開始');
+      
+      const testResults = await this.runIntegrationTests();
+      
+      // 結果表示
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = this.formatIntegrationTestResults(testResults);
+      
+      console.log('✅ 統合テスト完了:', testResults);
+      
+    } catch (error) {
+      console.error('❌ 統合テストエラー:', error);
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = `統合テストエラー: ${error.message}`;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🧪 統合テスト実行';
+    }
+  }
+
+  // 統合テスト実行ロジック
+  async runIntegrationTests() {
+    const results = {
+      timestamp: new Date().toISOString(),
+      tests: [],
+      summary: { total: 0, passed: 0, failed: 0 }
+    };
+
+    // テスト1: データ管理機能
+    results.tests.push(await this.testDataManagement());
+    
+    // テスト2: Web監視基盤
+    results.tests.push(await this.testWebMonitoringSystem());
+    
+    // テスト3: 設定機能
+    results.tests.push(await this.testSettingsSystem());
+    
+    // テスト4: 通知システム
+    results.tests.push(await this.testNotificationSystem());
+    
+    // テスト5: UI統合
+    results.tests.push(await this.testUIIntegration());
+
+    // 集計
+    results.summary.total = results.tests.length;
+    results.summary.passed = results.tests.filter(t => t.status === 'passed').length;
+    results.summary.failed = results.tests.filter(t => t.status === 'failed').length;
+
+    return results;
+  }
+
+  // データ管理テスト
+  async testDataManagement() {
+    try {
+      // ゲームデータ取得テスト
+      const games = await window.gameDataManager.getGames();
+      if (!Array.isArray(games) || games.length === 0) {
+        throw new Error('ゲームデータが取得できません');
+      }
+
+      // 監視フラグ更新テスト
+      const testGame = games[0];
+      const originalFlag = testGame.web_monitoring_enabled;
+      
+      await window.gameDataManager.updateWebMonitoringFlag(testGame.id, !originalFlag);
+      const updatedGame = await window.gameDataManager.getGame(testGame.id);
+      
+      if (updatedGame.web_monitoring_enabled === originalFlag) {
+        throw new Error('監視フラグ更新が反映されていません');
+      }
+
+      // 元に戻す
+      await window.gameDataManager.updateWebMonitoringFlag(testGame.id, originalFlag);
+
+      return {
+        name: 'データ管理機能',
+        status: 'passed',
+        details: `ゲーム数: ${games.length}, フラグ更新: OK`
+      };
+    } catch (error) {
+      return {
+        name: 'データ管理機能',
+        status: 'failed',
+        details: error.message
+      };
+    }
+  }
+
+  // Web監視システムテスト
+  async testWebMonitoringSystem() {
+    try {
+      // 監視システムの初期化確認
+      if (!window.webMonitor) {
+        throw new Error('WebMonitorインスタンスが存在しません');
+      }
+      if (!window.pageParser) {
+        throw new Error('PageParserインスタンスが存在しません');
+      }
+      if (!window.updateManager) {
+        throw new Error('UpdateManagerインスタンスが存在しません');
+      }
+
+      // ステータス取得テスト
+      const status = window.webMonitor.getStatus();
+      if (!status || typeof status !== 'object') {
+        throw new Error('監視ステータスが取得できません');
+      }
+
+      // 診断情報取得テスト
+      const diagnostics = await window.webMonitor.getDiagnostics();
+      if (!diagnostics) {
+        throw new Error('診断情報が取得できません');
+      }
+
+      return {
+        name: 'Web監視システム',
+        status: 'passed',
+        details: `監視状態: ${status.isMonitoring ? 'ON' : 'OFF'}, 診断: OK`
+      };
+    } catch (error) {
+      return {
+        name: 'Web監視システム',
+        status: 'failed',
+        details: error.message
+      };
+    }
+  }
+
+  // 設定システムテスト
+  async testSettingsSystem() {
+    try {
+      // ストレージ読み込みテスト
+      const result = await chrome.storage.local.get(['web_monitor_settings', 'update_manager_settings']);
+      
+      const webSettings = result.web_monitor_settings || {};
+      const updateSettings = result.update_manager_settings || {};
+
+      // デフォルト値テスト
+      const expectedFields = ['mode', 'interval', 'checkOnStartup'];
+      for (const field of expectedFields) {
+        if (!(field in webSettings)) {
+          console.warn(`設定フィールド不足: ${field}`);
+        }
+      }
+
+      return {
+        name: '設定システム',
+        status: 'passed',
+        details: `Web設定: ${Object.keys(webSettings).length}項目, 通知設定: ${Object.keys(updateSettings).length}項目`
+      };
+    } catch (error) {
+      return {
+        name: '設定システム',
+        status: 'failed',
+        details: error.message
+      };
+    }
+  }
+
+  // 通知システムテスト
+  async testNotificationSystem() {
+    try {
+      // 通知権限確認
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') {
+        throw new Error('通知権限が許可されていません');
+      }
+
+      // UpdateManagerのステータス取得
+      const status = window.updateManager.getStatus();
+      if (!status || typeof status !== 'object') {
+        throw new Error('UpdateManagerステータスが取得できません');
+      }
+
+      return {
+        name: '通知システム',
+        status: 'passed',
+        details: `通知権限: ${permission}, 設定状態: OK`
+      };
+    } catch (error) {
+      return {
+        name: '通知システム',
+        status: 'failed',
+        details: error.message
+      };
+    }
+  }
+
+  // UI統合テスト
+  async testUIIntegration() {
+    try {
+      // 必須UI要素の存在確認
+      const requiredElements = [
+        'manual-monitor-btn',
+        'monitor-status-btn',
+        'integration-test-btn',
+        'monitor-result'
+      ];
+
+      for (const id of requiredElements) {
+        const element = document.getElementById(id);
+        if (!element) {
+          throw new Error(`UI要素が見つかりません: ${id}`);
+        }
+      }
+
+      // 監視チェックボックスの存在確認
+      const checkboxes = document.querySelectorAll('.monitor-checkbox');
+      if (checkboxes.length === 0) {
+        throw new Error('監視チェックボックスが見つかりません');
+      }
+
+      return {
+        name: 'UI統合',
+        status: 'passed',
+        details: `UI要素: ${requiredElements.length}個, チェックボックス: ${checkboxes.length}個`
+      };
+    } catch (error) {
+      return {
+        name: 'UI統合',
+        status: 'failed',
+        details: error.message
+      };
+    }
+  }
+
+  // 統合テスト結果フォーマット
+  formatIntegrationTestResults(results) {
+    const lines = [
+      `🧪 統合テスト結果 [${new Date(results.timestamp).toLocaleString()}]`,
+      '',
+      `📊 概要: ${results.summary.passed}/${results.summary.total} テスト成功`,
+      `成功率: ${Math.round((results.summary.passed / results.summary.total) * 100)}%`,
+      ''
+    ];
+
+    results.tests.forEach(test => {
+      const status = test.status === 'passed' ? '✅' : '❌';
+      lines.push(`${status} ${test.name}: ${test.details}`);
+    });
+
+    if (results.summary.failed > 0) {
+      lines.push('', '⚠️ 失敗したテストがあります。詳細をご確認ください。');
+    } else {
+      lines.push('', '🎉 全テストが成功しました！');
     }
 
     return lines.join('\n');

@@ -457,6 +457,53 @@ class UpdateManager {
     }
   }
 
+  // パフォーマンス最適化: メモリクリーンアップ
+  performMemoryCleanup() {
+    try {
+      // 大きなオブジェクトの参照を削除
+      this.updateQueue = [];
+      
+      // 更新マーカーサイズ制限
+      if (this.updateMarkers.size > 100) {
+        const markersArray = Array.from(this.updateMarkers.entries());
+        markersArray.sort((a, b) => new Date(b[1].timestamp) - new Date(a[1].timestamp));
+        
+        this.updateMarkers.clear();
+        markersArray.slice(0, 50).forEach(([key, value]) => {
+          this.updateMarkers.set(key, value);
+        });
+        
+        console.log('🧹 更新マーカーメモリ最適化: 50件に制限');
+      }
+      
+      // ガベージコレクションの促進
+      if (global.gc) {
+        global.gc();
+      }
+      
+    } catch (error) {
+      console.error('❌ メモリクリーンアップエラー:', error);
+    }
+  }
+
+  // バッチ処理による効率化
+  async processBatch(items, processor, batchSize = 10) {
+    const results = [];
+    
+    for (let i = 0; i < items.length; i += batchSize) {
+      const batch = items.slice(i, i + batchSize);
+      const batchResults = await Promise.all(batch.map(processor));
+      results.push(...batchResults);
+      
+      // バッチ間の小休止（CPU負荷軽減）
+      if (i + batchSize < items.length) {
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+    }
+    
+    return results;
+  }
+
   // 設定メソッド群
   async setNotificationEnabled(enabled) {
     this.notificationSettings.enabled = !!enabled;
