@@ -3,31 +3,32 @@
 class PageParser {
   constructor() {
     this.targetUrls = [
-      'https://silversecond.com/WolfRPGEditor/Contest/',
-      'https://silversecond.com/WolfRPGEditor/Contest/index.shtml'
+      'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml'
     ];
     this.parsePatterns = {
-      // 複数の解析パターンを定義（HTML構造変更に対応）
-      pattern1: {
+      // entry.shtml専用パターン（No、作品名、更新日時、バージョン対応）
+      entryPage: {
+        listSelector: 'table tr, .entry-row, [class*="entry"]',
+        titleSelector: 'a, .title, td:nth-child(2)',
+        noSelector: 'a[href*="#"], td:nth-child(1), .number',
+        updateSelector: 'td:nth-child(3), .date, .updated, [class*="update"]',
+        versionSelector: 'td:nth-child(4), .version, [class*="version"]',
+        linkSelector: 'a[href*="#"]'
+      },
+      // 従来パターン（フォールバック用）
+      legacy1: {
         listSelector: 'table tr',
         titleSelector: 'a',
         authorSelector: 'td:nth-child(2)',
         updateSelector: 'td:nth-child(3)',
         linkSelector: 'a[href*="entry.shtml"]'
       },
-      pattern2: {
-        listSelector: '.work-entry',
-        titleSelector: '.title',
+      legacy2: {
+        listSelector: '.work-entry, [class*="entry"]',
+        titleSelector: '.title, a',
         authorSelector: '.author',
-        updateSelector: '.updated',
+        updateSelector: '.updated, [class*="update"], [class*="date"]',
         linkSelector: 'a'
-      },
-      pattern3: {
-        listSelector: '[class*="entry"]',
-        titleSelector: 'a, .title',
-        authorSelector: '[class*="author"]',
-        updateSelector: '[class*="update"], [class*="date"]',
-        linkSelector: 'a[href*="entry"]'
       }
     };
   }
@@ -48,6 +49,24 @@ class PageParser {
         const works = await this.parseWithPattern(doc, pattern, patternName);
         if (works.length > 0) {
           console.log(`✅ パターン${patternName}で${works.length}件の作品を検出`);
+          
+          // 詳細情報出力
+          console.group('📊 取得された作品情報詳細:');
+          works.slice(0, 3).forEach((work, i) => {
+            console.log(`作品${i+1}:`, {
+              no: work.no,
+              title: work.title,
+              author: work.author,
+              lastUpdate: work.lastUpdate,
+              url: work.url,
+              extractedAt: work.extractedAt
+            });
+          });
+          if (works.length > 3) {
+            console.log(`... 他${works.length - 3}件`);
+          }
+          console.groupEnd();
+          
           return {
             success: true,
             works: works,
@@ -60,10 +79,20 @@ class PageParser {
       
       // 全パターンで失敗した場合
       console.warn('⚠️ 全ての解析パターンで作品を検出できませんでした');
+      
+      // 診断情報を出力
+      const diagnosis = await this.diagnoseParsingIssues(html);
+      console.group('🔍 ページ構造診断:');
+      console.log('基本情報:', diagnosis.info);
+      console.log('検出された問題:', diagnosis.issues);
+      console.log('推奨対策:', diagnosis.suggestions);
+      console.groupEnd();
+      
       return {
         success: false,
         works: [],
         error: 'No works detected with any pattern',
+        diagnosis: diagnosis,
         timestamp: new Date().toISOString(),
         sourceUrl: sourceUrl
       };
@@ -113,16 +142,30 @@ class PageParser {
       extractedAt: new Date().toISOString()
     };
 
+    // 作品番号抽出（専用セレクタがある場合は優先）
+    if (pattern.noSelector) {
+      const noElement = element.querySelector(pattern.noSelector);
+      if (noElement) {
+        if (noElement.href) {
+          work.no = this.extractWorkNumber(noElement.href);
+        } else {
+          work.no = this.extractWorkNumberFromText(noElement.textContent);
+        }
+      }
+    }
+
     // タイトル抽出
     const titleElement = element.querySelector(pattern.titleSelector);
     if (titleElement) {
       work.title = this.sanitizeText(titleElement.textContent);
     }
 
-    // 作者名抽出
-    const authorElement = element.querySelector(pattern.authorSelector);
-    if (authorElement) {
-      work.author = this.sanitizeText(authorElement.textContent);
+    // 作者名抽出（存在する場合のみ）
+    if (pattern.authorSelector) {
+      const authorElement = element.querySelector(pattern.authorSelector);
+      if (authorElement) {
+        work.author = this.sanitizeText(authorElement.textContent);
+      }
     }
 
     // 更新日時抽出
@@ -132,21 +175,31 @@ class PageParser {
       work.updateTimestamp = this.parseUpdateDate(work.lastUpdate);
     }
 
-    // リンクURL抽出
-    const linkElement = element.querySelector(pattern.linkSelector);
-    if (linkElement && linkElement.href) {
-      work.url = linkElement.href;
-      work.no = this.extractWorkNumber(work.url);
+    // バージョン抽出（存在する場合のみ）
+    if (pattern.versionSelector) {
+      const versionElement = element.querySelector(pattern.versionSelector);
+      if (versionElement) {
+        work.version = this.sanitizeText(versionElement.textContent);
+      }
     }
 
-    // 最低限の情報が揃っているかチェック
-    if (!work.title || !work.no) {
+    // リンクURL抽出（作品番号が未取得の場合）
+    if (!work.no) {
+      const linkElement = element.querySelector(pattern.linkSelector);
+      if (linkElement && linkElement.href) {
+        work.url = linkElement.href;
+        work.no = this.extractWorkNumber(work.url);
+      }
+    }
+
+    // 最低限の情報が揃っているかチェック（作品名は必須、作品番号は可能であれば）
+    if (!work.title || work.title.length < 2) {
       return null;
     }
 
-    // 作品番号を正規化（001形式）
+    // 作品番号を文字列として保持（ゼロパディングなし）
     if (work.no) {
-      work.no = String(work.no).padStart(3, '0');
+      work.no = String(work.no);
     }
 
     return work;
@@ -161,7 +214,7 @@ class PageParser {
                .substring(0, 200); // 長すぎるテキストを制限
   }
 
-  // 作品番号抽出
+  // 作品番号抽出（URL）
   extractWorkNumber(url) {
     if (!url) return null;
     
@@ -175,6 +228,29 @@ class PageParser {
     
     for (const pattern of patterns) {
       const match = url.match(pattern);
+      if (match) {
+        return parseInt(match[1]);
+      }
+    }
+    
+    return null;
+  }
+
+  // 作品番号抽出（テキスト）
+  extractWorkNumberFromText(text) {
+    if (!text) return null;
+    
+    // テキストから数字を抽出（No.1、1番、001など）
+    const patterns = [
+      /No\.?(\d+)/i,      // No.1, No1
+      /(\d+)番/,          // 1番
+      /^(\d+)$/,          // 001（数字のみ）
+      /第(\d+)作/,        // 第1作
+      /作品(\d+)/         // 作品1
+    ];
+    
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
       if (match) {
         return parseInt(match[1]);
       }

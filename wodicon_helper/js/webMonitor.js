@@ -159,7 +159,7 @@ class WebMonitor {
       const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
       
       // 解析実行
-      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/');
+      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
       
       if (!parseResult.success) {
         throw new Error(`ページ解析失敗: ${parseResult.error}`);
@@ -180,8 +180,26 @@ class WebMonitor {
       console.log(`✅ 監視チェック完了 [${checkId}]:`, {
         newWorks: changes.newWorks.length,
         updatedWorks: changes.updatedWorks.length,
-        totalWorks: parseResult.works.length
+        totalWorks: parseResult.works.length,
+        pattern: parseResult.pattern
       });
+
+      // 詳細情報出力
+      if (changes.newWorks.length > 0) {
+        console.group('🆕 新規検出作品:');
+        changes.newWorks.forEach((work, i) => {
+          console.log(`${i+1}. No.${work.no} ${work.title} by ${work.author}`);
+        });
+        console.groupEnd();
+      }
+
+      if (changes.updatedWorks.length > 0) {
+        console.group('🔄 更新検出作品:');
+        changes.updatedWorks.forEach((work, i) => {
+          console.log(`${i+1}. No.${work.no} ${work.title} (${work.changeType?.join(', ')})`);
+        });
+        console.groupEnd();
+      }
 
       this.lastResult = result;
       return result;
@@ -292,6 +310,16 @@ class WebMonitor {
       // 監視結果をストレージに保存
       await this.saveMonitoringResult(result);
 
+      // 更新管理システムに結果を通知
+      if (window.updateManager && (result.newWorks.length > 0 || result.updatedWorks.length > 0)) {
+        try {
+          await window.updateManager.processUpdates(changes, checkId);
+          console.log('📢 更新管理システムに通知完了');
+        } catch (error) {
+          console.error('❌ 更新管理システム通知エラー:', error);
+        }
+      }
+
       return result;
       
     } catch (error) {
@@ -318,44 +346,39 @@ class WebMonitor {
   // 新規作品追加
   async addNewWork(workData) {
     try {
-      const newWork = {
-        id: Date.now() + Math.random(), // 一意ID生成
-        no: workData.no,
+      console.log('🆕 新規作品を自動追加:', workData.title);
+      
+      // gameDataManagerを使用して作品を追加
+      const newGame = {
+        no: workData.no || String(Date.now()).slice(-3),
         title: workData.title,
         author: workData.author || '不明',
-        genre: 'その他', // デフォルト
-        description: '',
-        wodicon_url: workData.url || '',
-        local_folder_path: '',
-        is_played: false,
-        rating: {
-          熱中度: 1, 斬新さ: 1, 物語性: 1,
-          画像音声: 1, 遊びやすさ: 1, その他: 1,
-          total: 6
-        },
-        review: '',
-        review_length: 0,
-        version_status: 'new',
-        last_played: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        update_notification: true,
-        web_monitoring: {
-          detected_at: new Date().toISOString(),
-          last_update: workData.updateTimestamp,
-          source_url: workData.url
-        }
+        genre: workData.genre || 'その他',
+        description: workData.description || '',
+        url: workData.url || '',
+        version: workData.version || '1.0',
+        lastUpdate: workData.lastUpdate,
+        source: 'auto_monitoring',
+        addedAt: new Date().toISOString()
       };
 
-      // データベースに追加
-      const success = await window.gameDataManager.addGame(newWork);
-      
-      if (success) {
-        console.log(`➕ 新規作品追加: ${newWork.title} (No.${newWork.no})`);
-        return newWork;
+      // 重複チェック
+      const existing = await window.gameDataManager.getGameByNo(newGame.no);
+      if (existing) {
+        console.log('⚠️ 作品番号重複のため追加をスキップ:', newGame.no);
+        return null;
       }
+
+      // データベースに追加
+      await window.gameDataManager.addGame(newGame);
       
-      return null;
+      console.log('✅ 新規作品追加完了:', newGame.title);
+      
+      return {
+        ...newGame,
+        action: 'added',
+        timestamp: new Date().toISOString()
+      };
       
     } catch (error) {
       console.error('❌ 新規作品追加エラー:', error);

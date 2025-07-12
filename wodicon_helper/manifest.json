@@ -24,7 +24,9 @@
   "content_scripts": [
     {
       "matches": ["https://silversecond.com/*"],
-      "js": ["js/content.js"]
+      "js": ["js/content.js"],
+      "run_at": "document_end",
+      "all_frames": false
     }
   ],
   

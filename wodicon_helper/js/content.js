@@ -70,39 +70,92 @@ function analyzeWodiconPage() {
   }
 }
 
-// 作品一覧抽出（将来実装用スケルトン）
+// 作品一覧抽出
 function extractWorksList() {
   const works = [];
   
   try {
-    // 複数のセレクタパターンを試行
-    const selectors = [
-      'table tr',           // テーブル形式
-      '.work-item',         // 作品アイテムクラス
-      '[class*="entry"]',   // entry含むクラス
-      'a[href*="entry"]'    // 作品詳細へのリンク
-    ];
+    console.log('🔍 作品一覧抽出開始');
     
-    for (const selector of selectors) {
-      const elements = document.querySelectorAll(selector);
-      if (elements.length > 0) {
-        console.log(`セレクタ "${selector}" で ${elements.length} 件の要素を検出`);
+    // entry.shtml専用の解析
+    const tables = document.querySelectorAll('table');
+    console.log(`テーブル数: ${tables.length}`);
+    
+    if (tables.length > 0) {
+      // メインテーブルを特定（最も行数が多いテーブル）
+      let mainTable = tables[0];
+      let maxRows = 0;
+      
+      tables.forEach(table => {
+        const rows = table.querySelectorAll('tr');
+        if (rows.length > maxRows) {
+          maxRows = rows.length;
+          mainTable = table;
+        }
+      });
+      
+      console.log(`メインテーブル選択: ${maxRows}行`);
+      
+      // テーブル行を解析
+      const rows = mainTable.querySelectorAll('tr');
+      console.log('🔍 テーブル行の詳細解析:');
+      
+      rows.forEach((row, index) => {
+        const rowText = row.textContent?.trim();
+        console.log(`行${index}: "${rowText}"`);
         
-        elements.forEach((element, index) => {
-          const workData = extractWorkFromElement(element, index);
-          if (workData && workData.title) {
+        const workData = extractWorkFromElement(row, index);
+        if (workData) {
+          console.log(`抽出データ:`, workData);
+          
+          if (workData.title && workData.title !== '不明') {
+            console.log(`✅ 作品抽出成功: No.${workData.no} ${workData.title}`);
             works.push(workData);
+          } else {
+            console.log(`❌ タイトル無効: "${workData.title}"`);
           }
-        });
-        
-        if (works.length > 0) {
-          break; // 有効なデータが取得できたらループを抜ける
+        } else {
+          console.log(`❌ データ抽出失敗`);
+        }
+      });
+    }
+    
+    // フォールバック: 他のセレクタも試行
+    if (works.length === 0) {
+      console.log('📋 フォールバック解析を実行');
+      
+      const fallbackSelectors = [
+        '.work-item',
+        '[class*="entry"]',
+        'div:contains("No.")',
+        'p:contains("No.")'
+      ];
+      
+      for (const selector of fallbackSelectors) {
+        try {
+          const elements = document.querySelectorAll(selector);
+          if (elements.length > 0) {
+            console.log(`フォールバック "${selector}": ${elements.length}件`);
+            
+            elements.forEach((element, index) => {
+              const workData = extractWorkFromElement(element, index);
+              if (workData && workData.title) {
+                works.push(workData);
+              }
+            });
+            
+            if (works.length > 0) break;
+          }
+        } catch (e) {
+          // セレクタエラーは無視
         }
       }
     }
     
+    console.log(`📊 最終結果: ${works.length}件の作品を抽出`);
+    
   } catch (error) {
-    console.error('作品一覧抽出エラー:', error);
+    console.error('❌ 作品一覧抽出エラー:', error);
   }
   
   return works;
@@ -111,51 +164,154 @@ function extractWorksList() {
 // 要素から作品データ抽出
 function extractWorkFromElement(element, index) {
   try {
-    // タイトル抽出
-    const titleSelectors = ['a', '.title', '[class*="title"]', 'td:nth-child(2)'];
-    let title = '';
+    // 全てのテキスト内容を取得
+    const fullText = element.textContent?.trim() || '';
     
-    for (const selector of titleSelectors) {
-      const titleElement = element.querySelector(selector);
-      if (titleElement) {
-        title = titleElement.textContent?.trim();
-        if (title && title.length > 2) break;
+    // 除外対象パターン（応募作品リストなど）
+    const excludePatterns = [
+      /【応募作品リスト】/,
+      /クリックでジャンプできます/,
+      /^\s*No\.\d+\s*$/,  // 番号のみ
+      /^[\s\d\.]*$/       // 数字と記号のみ
+    ];
+    
+    for (const pattern of excludePatterns) {
+      if (pattern.test(fullText)) {
+        console.log('除外対象:', fullText);
+        return null;
       }
     }
     
-    if (!title) return null;
+    // 作品番号とタイトルを解析
+    let no = '';
+    let title = '';
+    let author = '';
+    let version = '';
+    let lastUpdate = '';
+    
+    // パターン1: "No.2 1.片道勇者（ｴﾝﾄﾘｰ見本）" 形式
+    console.log(`パターン1解析: "${fullText}"`);
+    
+    // 複数のパターンを試行
+    const patterns = [
+      // ウディコン専用パターン
+      /エントリー番号【(\d+)】[\s\S]*?『(.+?)』[\s\S]*?【ダウンロード】\s*(.+?)[\s\S]*?作者\s*:\s*(.+?)(?:\n|$)/,
+      // テーブル行パターン  
+      /(\d+)\.(.+?)(?:\[(.+?)\])?$/,
+      // 従来パターン
+      /No\.(\d+)\s+(\d+)\.(.+?)(?:\s*\((.+?)\))?.*$/,
+      /No\.(\d+)\s+(\d+)\.(.+)/
+    ];
+    
+    let titleMatch = null;
+    patterns.forEach((pattern, i) => {
+      if (!titleMatch) {
+        const match = fullText.match(pattern);
+        if (match) {
+          console.log(`パターン1-${i+1}マッチ:`, match);
+          titleMatch = match;
+          
+          switch (i) {
+            case 0: // ウディコン専用パターン
+              no = match[1];
+              title = match[2]?.trim();
+              lastUpdate = match[3]?.trim(); // 【ダウンロード】後の日付
+              author = match[4]?.trim();
+              version = lastUpdate; // 更新日付兼バージョン
+              break;
+              
+            case 1: // テーブル行パターン  
+              no = match[1];
+              title = match[2]?.trim();
+              if (match[3]) {
+                lastUpdate = match[3];
+                version = match[3]; // [6/24] 形式
+              }
+              break;
+              
+            case 2: // 従来パターン1
+              const workNo2 = parseInt(match[2]);
+              no = String(workNo2 - 1);
+              title = match[3]?.trim();
+              if (match[4]) version = match[4];
+              break;
+              
+            case 3: // 従来パターン2
+              const workNo3 = parseInt(match[2]);
+              no = String(workNo3 - 1);
+              title = match[3]?.trim();
+              break;
+          }
+        }
+      }
+    });
+    
+    if (titleMatch) {
+      console.log(`パターン1結果: No.${no}, Title: "${title}", Author: "${author}", Version: "${version}", Update: "${lastUpdate}"`);
+    } else {
+      console.log('パターン1全て不一致');
+    }
+    
+    // パターン2: テーブル形式での詳細抽出
+    const cells = element.querySelectorAll('td');
+    if (cells.length >= 2 && !title) {
+      // 1列目から作品番号、2列目からタイトル
+      const noCell = cells[0]?.textContent?.trim();
+      const titleCell = cells[1]?.textContent?.trim();
+      
+      if (noCell && titleCell) {
+        const noMatch = noCell.match(/No\.(\d+)/);
+        if (noMatch) {
+          const cellNo = parseInt(noMatch[1]);
+          if (cellNo >= 2) { // No.2以降が実際の作品
+            no = String(cellNo - 1);
+            title = titleCell;
+          }
+        }
+      }
+      
+      // 3列目以降から作者、更新日時などを抽出
+      if (cells.length >= 3) {
+        author = cells[2]?.textContent?.trim() || '';
+      }
+      if (cells.length >= 4) {
+        lastUpdate = cells[3]?.textContent?.trim() || '';
+      }
+      if (cells.length >= 5) {
+        version = cells[4]?.textContent?.trim() || '';
+      }
+    }
+    
+    // タイトルが取得できない場合は除外
+    if (!title || title.length < 2) {
+      return null;
+    }
     
     // URL抽出
-    const linkElement = element.querySelector('a[href*="entry"]');
+    const linkElement = element.querySelector('a[href*="#"]');
     const url = linkElement ? linkElement.href : '';
     
-    // 作品番号抽出
-    let no = '';
-    if (url) {
-      const match = url.match(/#(\d+)/);
-      if (match) {
-        no = match[1].padStart(3, '0');
+    // URLから作品番号を再確認
+    if (url && !no) {
+      const urlMatch = url.match(/#(\d+)/);
+      if (urlMatch) {
+        no = urlMatch[1];
       }
     }
     
-    // 作者名抽出（可能な場合）
-    let author = '';
-    const authorSelectors = ['.author', '[class*="author"]', 'td:nth-child(3)'];
-    for (const selector of authorSelectors) {
-      const authorElement = element.querySelector(selector);
-      if (authorElement) {
-        author = authorElement.textContent?.trim();
-        if (author) break;
-      }
-    }
-    
-    return {
-      no: no || String(index + 1).padStart(3, '0'),
+    // 最終結果の整理
+    const result = {
+      no: no || String(index),
       title: title,
       author: author || '不明',
+      version: version || '',
+      lastUpdate: lastUpdate || '',
       url: url,
       extractedAt: new Date().toISOString()
     };
+    
+    console.log('最終抽出結果:', result);
+    return result;
     
   } catch (error) {
     console.error('要素からの作品データ抽出エラー:', error);
@@ -171,7 +327,7 @@ function extractWorkDetail() {
     
     // 作品番号抽出
     const match = window.location.href.match(/#(\d+)/);
-    const no = match ? match[1].padStart(3, '0') : '';
+    const no = match ? match[1] : ''; // ゼロパディングなし
     
     // 作者名抽出
     const authorSelectors = ['.author', '[class*="author"]', 'td:contains("作者")', 'th:contains("作者")'];
@@ -276,10 +432,53 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         title: document.title
       });
       break;
+
+    case 'parse_current_page':
+      // ページ解析情報表示機能対応
+      try {
+        const pageInfo = {
+          url: window.location.href,
+          title: document.title,
+          isWodiconPage: isWodiconPage(),
+          timestamp: new Date().toISOString()
+        };
+
+        if (isWodiconPage()) {
+          const works = extractWorksList();
+          pageInfo.works = works;
+          pageInfo.success = works.length > 0;
+          
+          // 診断情報追加
+          const diagnosis = {
+            info: {
+              tables: document.querySelectorAll('table').length,
+              tableRows: document.querySelectorAll('table tr').length,
+              links: document.querySelectorAll('a').length,
+              entryLinks: document.querySelectorAll('a[href*="entry"]').length
+            }
+          };
+          pageInfo.diagnosis = diagnosis;
+        } else {
+          pageInfo.success = false;
+          pageInfo.error = 'Not a Wodicon page';
+        }
+
+        sendResponse(pageInfo);
+      } catch (error) {
+        sendResponse({
+          success: false,
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
+      break;
       
     default:
       sendResponse({ success: false, error: 'Unknown action' });
   }
+
+  // 非同期レスポンスを有効にする
+  return true;
 });
 
 // ページアンロード時の処理

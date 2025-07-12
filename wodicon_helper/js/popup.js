@@ -79,6 +79,10 @@ class GameListManager {
       this.showMonitoringStatus();
     });
 
+    document.getElementById('parse-info-btn').addEventListener('click', () => {
+      this.showParsingInfo();
+    });
+
     document.getElementById('integration-test-btn').addEventListener('click', () => {
       this.performIntegrationTest();
     });
@@ -519,6 +523,114 @@ class GameListManager {
     return lines.join('\n');
   }
 
+  // ページ解析情報表示
+  async showParsingInfo() {
+    const resultDiv = document.getElementById('monitor-result');
+    const contentDiv = document.getElementById('monitor-result-content');
+
+    try {
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = '🔍 ページ解析情報を取得中...';
+
+      // 現在のタブ情報取得
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const currentTab = tabs[0];
+
+      let parseInfo = {
+        currentUrl: currentTab?.url || 'Unknown',
+        title: currentTab?.title || 'Unknown',
+        isWodiconPage: false,
+        parseResult: null,
+        error: null
+      };
+
+      // ウディコンページかチェック
+      if (currentTab?.url?.includes('silversecond.com')) {
+        parseInfo.isWodiconPage = true;
+        
+        try {
+          // Content Scriptに解析を依頼
+          const result = await chrome.tabs.sendMessage(currentTab.id, {
+            action: 'parse_current_page'
+          });
+          
+          parseInfo.parseResult = result;
+          
+        } catch (error) {
+          parseInfo.error = error.message;
+        }
+      }
+
+      // Web監視の最新結果も取得
+      const lastResult = window.webMonitor?.lastResult;
+
+      // 結果を表示
+      contentDiv.innerHTML = this.formatParsingInfo(parseInfo, lastResult);
+      
+    } catch (error) {
+      console.error('❌ 解析情報表示エラー:', error);
+      resultDiv.classList.remove('hidden');
+      contentDiv.textContent = `解析情報取得エラー: ${error.message}`;
+    }
+  }
+
+  // 解析情報フォーマット
+  formatParsingInfo(parseInfo, lastResult) {
+    const lines = [
+      '📋 ページ解析情報',
+      '',
+      `現在のURL: ${parseInfo.currentUrl}`,
+      `ページタイトル: ${parseInfo.title}`,
+      `ウディコンページ: ${parseInfo.isWodiconPage ? '✅' : '❌'}`,
+      ''
+    ];
+
+    if (parseInfo.error) {
+      lines.push('❌ 解析エラー:', parseInfo.error);
+    } else if (parseInfo.parseResult) {
+      const result = parseInfo.parseResult;
+      lines.push(
+        `解析結果: ${result.success ? '✅ 成功' : '❌ 失敗'}`,
+        `検出作品数: ${result.works?.length || 0}件`,
+        `解析時刻: ${result.timestamp ? new Date(result.timestamp).toLocaleString() : '不明'}`,
+        ''
+      );
+
+      if (result.works && result.works.length > 0) {
+        lines.push('📊 検出された作品 (最初の3件):');
+        result.works.slice(0, 3).forEach((work, i) => {
+          lines.push(
+            `${i+1}. No.${work.no || '---'} ${work.title || '無題'}`,
+            `   作者: ${work.author || '不明'}`,
+            `   URL: ${work.url || 'なし'}`,
+            ''
+          );
+        });
+        
+        if (result.works.length > 3) {
+          lines.push(`... 他 ${result.works.length - 3} 件`);
+        }
+      }
+
+      if (result.diagnosis) {
+        lines.push('', '🔍 診断情報:');
+        if (result.diagnosis.info) {
+          lines.push(`テーブル数: ${result.diagnosis.info.tables || 0}`);
+          lines.push(`テーブル行数: ${result.diagnosis.info.tableRows || 0}`);
+          lines.push(`リンク数: ${result.diagnosis.info.links || 0}`);
+          lines.push(`エントリーリンク数: ${result.diagnosis.info.entryLinks || 0}`);
+        }
+      }
+    }
+
+    if (lastResult) {
+      lines.push('', '🔍 最新監視結果:', `最終チェック: ${lastResult.timestamp ? new Date(lastResult.timestamp).toLocaleString() : '不明'}`);
+      lines.push(`新規: ${lastResult.newWorks?.length || 0}件, 更新: ${lastResult.updatedWorks?.length || 0}件`);
+    }
+
+    return `<pre style="white-space: pre-wrap; font-size: 11px;">${lines.join('\n')}</pre>`;
+  }
+
   // 統合テスト実行
   async performIntegrationTest() {
     const btn = document.getElementById('integration-test-btn');
@@ -603,10 +715,13 @@ class GameListManager {
       // 元に戻す
       await window.gameDataManager.updateWebMonitoringFlag(testGame.id, originalFlag);
 
+      // 作品番号正規化テスト
+      const normalizeResult = await window.gameDataManager.normalizeWorkNumbers();
+
       return {
         name: 'データ管理機能',
         status: 'passed',
-        details: `ゲーム数: ${games.length}, フラグ更新: OK`
+        details: `ゲーム数: ${games.length}, フラグ更新: OK, 正規化: ${normalizeResult ? '実行' : 'スキップ'}`
       };
     } catch (error) {
       return {
@@ -724,6 +839,7 @@ class GameListManager {
       const requiredElements = [
         'manual-monitor-btn',
         'monitor-status-btn',
+        'parse-info-btn',
         'integration-test-btn',
         'monitor-result'
       ];

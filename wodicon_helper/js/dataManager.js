@@ -32,6 +32,12 @@ class GameDataManager {
     return games.find(game => game.id === id) || null;
   }
 
+  // 作品番号でゲーム取得
+  async getGameByNo(no) {
+    const games = await this.getGames();
+    return games.find(game => game.no === no) || null;
+  }
+
   // ゲーム追加
   async addGame(gameData) {
     const games = await this.getGames();
@@ -40,7 +46,7 @@ class GameDataManager {
     const newGame = {
       ...gameData,
       id: newId,
-      no: String(newId).padStart(3, '0'),
+      no: gameData.no || String(newId),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -311,7 +317,7 @@ class GameDataManager {
     const sampleGames = [
       {
         id: 1,
-        no: "001",
+        no: "1",
         title: "ウディコン17回大会サンプル作品",
         author: "SmokingWOLF",
         genre: "その他",
@@ -347,12 +353,12 @@ class GameDataManager {
       },
       {
         id: 2,
-        no: "002",
+        no: "2",
         title: "謎解きカフェ事件簿",
         author: "DetectiveGamer",
         genre: "アドベンチャー",
         description: "小さなカフェで起こる日常の謎を解く推理アドベンチャー。プレイヤーの観察力と推理力が試される。",
-        wodicon_url: "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1",
+        wodicon_url: "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#2",
         local_folder_path: "",
         is_played: false,
         rating: {
@@ -377,7 +383,7 @@ class GameDataManager {
       },
       {
         id: 3,
-        no: "003",
+        no: "3",
         title: "スチームパンク大戦",
         author: "GearsOfWar",
         genre: "シミュレーション",
@@ -407,7 +413,7 @@ class GameDataManager {
       },
       {
         id: 4,
-        no: "004",
+        no: "4",
         title: "放課後の怪談話",
         author: "SchoolGhost",
         genre: "ホラー",
@@ -437,7 +443,7 @@ class GameDataManager {
       },
       {
         id: 5,
-        no: "005",
+        no: "5",
         title: "料理の達人への道",
         author: "ChefMaster",
         genre: "育成",
@@ -467,7 +473,7 @@ class GameDataManager {
       },
       {
         id: 6,
-        no: "006",
+        no: "6",
         title: "新作ファンタジーRPG",
         author: "FantasyMaker",
         genre: "RPG",
@@ -500,6 +506,38 @@ class GameDataManager {
     await chrome.storage.local.set({ [this.STORAGE_KEY]: sampleGames });
     await this.updateMetadata();
     console.log('Sample data initialized');
+  }
+
+  // 既存データの作品番号正規化（ゼロパディング削除）
+  async normalizeWorkNumbers() {
+    try {
+      const games = await this.getGames();
+      let updated = false;
+
+      for (const game of games) {
+        // "001" -> "1" 形式に変換
+        if (game.no && game.no.match(/^0+(\d+)$/)) {
+          const newNo = game.no.replace(/^0+/, '');
+          console.log(`🔄 作品番号正規化: ${game.no} -> ${newNo} (${game.title})`);
+          game.no = newNo;
+          game.updated_at = new Date().toISOString();
+          updated = true;
+        }
+      }
+
+      if (updated) {
+        await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+        await this.updateMetadata();
+        console.log('✅ 作品番号正規化完了');
+        return true;
+      } else {
+        console.log('ℹ️ 正規化が必要な作品番号はありませんでした');
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ 作品番号正規化エラー:', error);
+      return false;
+    }
   }
 }
 
