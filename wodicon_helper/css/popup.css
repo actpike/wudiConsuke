@@ -13,7 +13,7 @@ body {
   color: #333333;
   background-color: #a3a3e5;
   width: 550px;
-  height: 500px;
+  height: 540px;
   overflow: hidden;
 }
 
@@ -406,7 +406,7 @@ body {
 }
 
 .detail-section {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
   padding-bottom: 12px;
   border-bottom: 1px solid #eee;
 }
@@ -755,4 +755,35 @@ body {
   background: #f8d7da;
   border-color: #f5c6cb;
   color: #721c24;
+}
+
+/* ウディコンバナー */
+.wodicon-banner {
+  background: white;
+  border-top: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wodicon-banner a {
+  display: inline-block;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.wodicon-banner a:hover {
+  opacity: 0.8;
+}
+
+.wodicon-banner img {
+  max-width: 468px;
+  max-height: 60px;
+  width: auto;
+  height: auto;
+  border: none;
+  display: block;
 }
