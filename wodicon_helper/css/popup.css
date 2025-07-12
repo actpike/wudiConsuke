@@ -693,3 +693,66 @@ body {
 .error {
   color: #f44336 !important;
 }
+
+/* バックグラウンド更新ボタン */
+#background-update-btn {
+  transition: transform 0.2s ease;
+}
+
+#background-update-btn:hover {
+  transform: scale(1.1);
+}
+
+#background-update-btn.updating {
+  animation: rotate 1s linear infinite;
+  opacity: 0.8;
+}
+
+#background-update-btn.success {
+  color: #4caf50;
+  animation: pulse 0.5s ease;
+}
+
+#background-update-btn.error {
+  color: #f44336;
+  animation: shake 0.5s ease;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* 更新結果表示 */
+.update-result {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin: 8px 0;
+  font-size: 11px;
+}
+
+.update-result.success {
+  background: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.update-result.error {
+  background: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}

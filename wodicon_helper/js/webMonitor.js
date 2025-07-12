@@ -253,7 +253,13 @@ class WebMonitor {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const html = await response.text();
+        // Shift_JISエンコーディング対応（強化版）
+        const arrayBuffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('shift_jis', { 
+          fatal: false, 
+          ignoreBOM: true 
+        });
+        const html = decoder.decode(arrayBuffer);
         
         if (html.length < 1000) {
           console.warn('⚠️ レスポンスが短すぎます:', html.length, 'chars');
@@ -559,6 +565,233 @@ class WebMonitor {
   async manualCheck() {
     console.log('🔍 手動監視チェック実行');
     return await this.performCheck();
+  }
+
+  // バックグラウンド更新実行
+  async executeBackgroundUpdate() {
+    const updateId = `bg_update_${Date.now()}`;
+    console.log(`🚀 バックグラウンド更新開始 [${updateId}]`);
+
+    try {
+      // 現在時刻記録
+      this.lastCheckTime = new Date().toISOString();
+      await this.saveSettings();
+
+      // ページ取得（既存のfetchContestPageを使用）
+      console.log('📡 ウディコンページ取得中...');
+      const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
+      
+      // 解析実行（既存のpageParserを使用）
+      console.log('🔍 ページ解析実行中...');
+      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
+      
+      if (!parseResult.success) {
+        throw new Error(`ページ解析失敗: ${parseResult.error}`);
+      }
+
+      console.log(`📊 解析完了: ${parseResult.works.length}件の作品を検出`);
+
+      // 既存データ取得
+      const existingWorks = await window.gameDataManager.getGames();
+      
+      // 差分検出（既存のdetectChangesを使用）
+      const changes = await window.pageParser.detectChanges(parseResult.works, existingWorks);
+      
+      // 変更処理（既存のprocessChangesを使用）
+      const result = await this.processChanges(changes, updateId);
+      
+      // 成功結果を拡張
+      result.totalWorks = parseResult.works.length;
+      result.pattern = parseResult.pattern;
+      result.backgroundUpdate = true;
+
+      // エラーカウンタリセット
+      this.consecutiveErrors = 0;
+      
+      console.log(`✅ バックグラウンド更新完了 [${updateId}]:`, {
+        newWorks: changes.newWorks.length,
+        updatedWorks: changes.updatedWorks.length,
+        totalWorks: parseResult.works.length,
+        pattern: parseResult.pattern
+      });
+
+      // 詳細情報出力
+      if (changes.newWorks.length > 0) {
+        console.group('🆕 新規検出作品:');
+        changes.newWorks.forEach((work, i) => {
+          console.log(`${i+1}. No.${work.no} ${work.title} by ${work.author}`);
+        });
+        console.groupEnd();
+      }
+
+      if (changes.updatedWorks.length > 0) {
+        console.group('🔄 更新検出作品:');
+        changes.updatedWorks.forEach((work, i) => {
+          console.log(`${i+1}. No.${work.no} ${work.title} (${work.changeType?.join(', ')})`)
+        });
+        console.groupEnd();
+      }
+
+      this.lastResult = result;
+      return result;
+      
+    } catch (error) {
+      // エラー処理
+      this.handleOperationFailure('バックグラウンド更新', error);
+      
+      console.error(`❌ バックグラウンド更新失敗 [${updateId}]:`, error);
+      
+      return {
+        success: false,
+        error: error.message,
+        updateId: updateId,
+        timestamp: new Date().toISOString(),
+        consecutiveErrors: this.consecutiveErrors,
+        backgroundUpdate: true
+      };
+    }
+  }
+
+  // テスト用バックグラウンド更新（No.7登録）
+  async executeTestBackgroundUpdate() {
+    const updateId = `test_update_${Date.now()}`;
+    console.log(`🧪 テスト用バックグラウンド更新開始 [${updateId}] - No.7として登録`);
+
+    try {
+      // 現在時刻記録
+      this.lastCheckTime = new Date().toISOString();
+      await this.saveSettings();
+
+      // ページ取得（既存のfetchContestPageを使用）
+      console.log('📡 ウディコンページ取得中...');
+      const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
+      
+      // 解析実行（既存のpageParserを使用）
+      console.log('🔍 ページ解析実行中...');
+      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
+      
+      if (!parseResult.success) {
+        throw new Error(`ページ解析失敗: ${parseResult.error}`);
+      }
+
+      console.log(`📊 解析完了: ${parseResult.works.length}件の作品を検出`);
+
+      // テスト用処理：最初の作品をNo.7として登録
+      if (parseResult.works.length > 0) {
+        const workData = parseResult.works[0]; // 最初の作品を取得
+        
+        // No.7として強制設定
+        workData.no = "7";
+        
+        const testGameData = this.convertToGameFormat(workData);
+        
+        // 既存No.7のチェック
+        const existingGame = await window.gameDataManager.getGameByNo("7");
+        
+        let result;
+        if (existingGame) {
+          // 既存データを更新
+          console.log('⚠️ 既存No.7データを更新します');
+          await window.gameDataManager.updateGame(existingGame.id, {
+            ...testGameData,
+            updated_at: new Date().toISOString()
+          });
+          result = {
+            success: true,
+            updateId: updateId,
+            timestamp: new Date().toISOString(),
+            action: 'updated',
+            updatedWorks: [testGameData],
+            newWorks: [],
+            totalWorks: 1,
+            testMode: true
+          };
+        } else {
+          // 新規追加
+          console.log('✨ No.7として新規登録します');
+          await window.gameDataManager.addGame(testGameData);
+          result = {
+            success: true,
+            updateId: updateId,
+            timestamp: new Date().toISOString(),
+            action: 'added',
+            newWorks: [testGameData],
+            updatedWorks: [],
+            totalWorks: 1,
+            testMode: true
+          };
+        }
+
+        // エラーカウンタリセット
+        this.consecutiveErrors = 0;
+        
+        console.log(`✅ テスト用バックグラウンド更新完了 [${updateId}]:`, result);
+        
+        this.lastResult = result;
+        return result;
+        
+      } else {
+        throw new Error('解析結果に作品データが含まれていません');
+      }
+      
+    } catch (error) {
+      // エラー処理
+      this.handleOperationFailure('テスト用バックグラウンド更新', error);
+      
+      console.error(`❌ テスト用バックグラウンド更新失敗 [${updateId}]:`, error);
+      
+      return {
+        success: false,
+        error: error.message,
+        updateId: updateId,
+        timestamp: new Date().toISOString(),
+        consecutiveErrors: this.consecutiveErrors,
+        testMode: true
+      };
+    }
+  }
+
+  // 作品データをgameDataManager形式に変換
+  convertToGameFormat(workData) {
+    return {
+      no: workData.no,
+      title: workData.title || '取得失敗',
+      author: workData.author || '不明',
+      genre: 'その他',
+      description: 'バックグラウンド更新テストで自動取得された作品です。',
+      wodicon_url: workData.url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1',
+      local_folder_path: '',
+      is_played: false,
+      rating: {
+        熱中度: 1,
+        斬新さ: 1,
+        物語性: 1,
+        画像音声: 1,
+        遊びやすさ: 1,
+        その他: 1,
+        total: 6
+      },
+      review: '',
+      review_length: 0,
+      version_status: 'new',
+      last_played: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      update_notification: true,
+      bbs_check: false,
+      last_update_check: new Date().toISOString(),
+      web_monitoring_enabled: false,
+      web_monitoring: {
+        detected_at: new Date().toISOString(),
+        last_update: workData.lastUpdate || new Date().toISOString(),
+        source_url: workData.url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1',
+        detection_type: 'test_background_update'
+      },
+      // テスト識別用
+      source: 'test_background_update',
+      version: workData.version || workData.lastUpdate || '',
+      lastUpdate: workData.lastUpdate || ''
+    };
   }
 
   // リトライ付き実行

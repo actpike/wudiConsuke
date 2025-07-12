@@ -6,41 +6,35 @@ class PageParser {
       'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml'
     ];
     this.parsePatterns = {
-      // entry.shtml専用パターン（No、作品名、更新日時、バージョン対応）
+      // entry.shtml専用パターン（ウディコンページ対応）
       entryPage: {
-        listSelector: 'table tr, .entry-row, [class*="entry"]',
-        titleSelector: 'a, .title, td:nth-child(2)',
-        noSelector: 'a[href*="#"], td:nth-child(1), .number',
-        updateSelector: 'td:nth-child(3), .date, .updated, [class*="update"]',
-        versionSelector: 'td:nth-child(4), .version, [class*="version"]',
-        linkSelector: 'a[href*="#"]'
+        listSelector: 'body *',  // 全体をスキャン
+        titleSelector: '',       // 正規表現でパース
+        noSelector: '',          // 正規表現でパース
+        updateSelector: '',      // 正規表現でパース
+        versionSelector: '',     // 正規表現でパース
+        linkSelector: ''         // 正規表現でパース
       },
-      // 従来パターン（フォールバック用）
-      legacy1: {
-        listSelector: 'table tr',
-        titleSelector: 'a',
-        authorSelector: 'td:nth-child(2)',
-        updateSelector: 'td:nth-child(3)',
-        linkSelector: 'a[href*="entry.shtml"]'
-      },
-      legacy2: {
-        listSelector: '.work-entry, [class*="entry"]',
-        titleSelector: '.title, a',
-        authorSelector: '.author',
-        updateSelector: '.updated, [class*="update"], [class*="date"]',
-        linkSelector: 'a'
+      // テキストベースの直接解析（フォールバック）
+      textBased: {
+        useRegex: true  // 正規表現使用フラグ
       }
     };
   }
 
-  // メインの解析メソッド
+  // メインの解析メソッド（強化版）
   async parseContestPage(html, sourceUrl = '') {
     try {
+      console.log('🔍 ウディコンページ解析開始:', sourceUrl);
+      console.log('📄 HTML サイズ:', html.length, 'chars');
+      console.log('📄 HTML プレビュー:', html.substring(0, 200));
+      
+      // 文字エンコーディングクリーニング
+      const cleanedHtml = this.checkAndFixEncoding(html);
+      
       // DOMParserを使用してHTMLを解析
       const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      
-      console.log('🔍 ページ解析開始:', sourceUrl);
+      const doc = parser.parseFromString(cleanedHtml, 'text/html');
       
       // 複数パターンで解析を試行
       for (const [patternName, pattern] of Object.entries(this.parsePatterns)) {
@@ -81,7 +75,7 @@ class PageParser {
       console.warn('⚠️ 全ての解析パターンで作品を検出できませんでした');
       
       // 診断情報を出力
-      const diagnosis = await this.diagnoseParsingIssues(html);
+      const diagnosis = await this.diagnoseParsingIssues(cleanedHtml);
       console.group('🔍 ページ構造診断:');
       console.log('基本情報:', diagnosis.info);
       console.log('検出された問題:', diagnosis.issues);
@@ -114,17 +108,33 @@ class PageParser {
     const works = [];
     
     try {
-      const entries = doc.querySelectorAll(pattern.listSelector);
+      if (patternName === 'entryPage') {
+        // ウディコンページ専用の正規表現ベース解析
+        //return this.parseEntryPageWithRegex(doc.body.textContent || doc.body.innerHTML);
+        //return this.parseEntryPageWithRegex(doc.body.innerHTML);
+        //return this.parseEntryPageWithRegex(doc.documentElement.outerHTML);
+        return this.parseEntryPageWithRegex(doc.body.textContent);
+
+      } else if (patternName === 'textBased') {
+        // テキストベースの直接解析
+        return this.parseWithDirectText(doc.body.textContent || doc.body.innerHTML);
+      }
+      
+      // 従来のDOMベース解析（フォールバック）
+      const entries = doc.querySelectorAll('*');
       console.log(`📊 ${patternName}: ${entries.length}個の要素を検出`);
       
       entries.forEach((entry, index) => {
         try {
-          const work = this.extractWorkData(entry, pattern, index);
-          if (work && work.title && work.title.length > 2) {
-            works.push(work);
+          const text = entry.textContent?.trim();
+          if (text && text.length > 10 && text.includes('作品') && text.includes('作者')) {
+            const work = this.extractWorkDataFromText(text, index);
+            if (work && work.title && work.title.length > 2) {
+              works.push(work);
+            }
           }
         } catch (error) {
-          console.warn(`⚠️ 作品データ抽出エラー (${index}):`, error.message);
+          // エラーは静かに処理
         }
       });
       
@@ -135,90 +145,160 @@ class PageParser {
     return works;
   }
 
-  // 作品データ抽出
-  extractWorkData(element, pattern, index) {
-    const work = {
-      tempId: `temp_${Date.now()}_${index}`,
-      extractedAt: new Date().toISOString()
-    };
+  // ウディコンページの正規表現ベース解析
+  parseEntryPageWithRegex(htmlText) {
+    const works = [];
+    const seenTitles = new Set(); // 重複防止
+    // console.log("🧪 正規表現対象HTML冒頭:", htmlText.slice(0, 10000));
 
-    // 作品番号抽出（専用セレクタがある場合は優先）
-    if (pattern.noSelector) {
-      const noElement = element.querySelector(pattern.noSelector);
-      if (noElement) {
-        if (noElement.href) {
-          work.no = this.extractWorkNumber(noElement.href);
-        } else {
-          work.no = this.extractWorkNumberFromText(noElement.textContent);
+    try {
+      console.log('🔍 正規表現ベース解析開始 (プレーンテキストモード)');
+
+      // プレーンテキストからエントリー情報を抽出する正規表現
+      // 各エントリーの固まりを捉え、コメント欄などから誤って情報を取得するのを防ぐ
+      // 作者名の終わりを「プレイ時間」や「コメント:」で判断する
+      const entryPattern = /エントリー番号【(\d+)】\s*『(.*?)』\s*【ダウンロード】\s*(.*?)\s*作者\s*:\s*(.*?)(?=\s*プレイ時間|\s*コメント:|$)/gs;
+
+      let match;
+      let foundCount = 0;
+
+      while ((match = entryPattern.exec(htmlText)) !== null && foundCount < 100) { // 念のため上限
+        try {
+          const work = {
+            no: match[1],                                 // グループ1: エントリー番号
+            title: this.cleanText(match[2]),              // グループ2: タイトル
+            lastUpdate: this.cleanText(match[3]),         // グループ3: バージョン・日付
+            author: this.cleanText(match[4]),             // グループ4: 作者名
+            tempId: `regex_entry_${foundCount}`,
+            extractedAt: new Date().toISOString()
+          };
+
+          // 品質チェックと重複防止
+          if (work && work.title && work.no && !seenTitles.has(work.title)) {
+            seenTitles.add(work.title);
+            work.url = `https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#${work.no}`;
+            work.updateTimestamp = this.parseUpdateDate(work.lastUpdate);
+            works.push(work);
+            foundCount++;
+
+            console.log(`✅ 正規表現作品登録: No.${work.no} 『${work.title}』 [${work.lastUpdate}] 作者：${work.author}`);
+          } else if (seenTitles.has(work.title)) {
+            console.log(`🔄 重複タイトルでスキップ: 『${work.title}』`);
+          }
+
+        } catch (error) {
+          console.warn('⚠️ 作品データ処理エラー:', error.message, match);
         }
       }
-    }
 
-    // タイトル抽出
-    const titleElement = element.querySelector(pattern.titleSelector);
-    if (titleElement) {
-      work.title = this.sanitizeText(titleElement.textContent);
+      if (foundCount > 0) {
+        console.log(`✨ 正規表現で${foundCount}件検出`);
+      }
+      
+    } catch (error) {
+      console.error('❌ 正規表現解析エラー:', error);
     }
+    
+    return works;
+  }
+  
+  // テキストベースの直接解析（フォールバック）
+  parseWithDirectText(htmlText) {
+    const works = [];
+    console.log("🧪 1正規表現対象HTML冒頭:", htmlText.slice(0, 1000));
 
-    // 作者名抽出（存在する場合のみ）
-    if (pattern.authorSelector) {
-      const authorElement = element.querySelector(pattern.authorSelector);
-      if (authorElement) {
-        work.author = this.sanitizeText(authorElement.textContent);
+    
+    try {
+      console.log('🔍 テキストベース直接解析開始');
+      
+      // シンプルなテキストパターン
+      const lines = htmlText.split('\n');
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        // 数字で始まって日本語を含む行を探す
+        const match = line.match(/^(\d+)*(.+)/m);
+        if (match && match[2].length > 5) {
+          const work = {
+            no: match[1],
+            title: this.cleanText(match[2]),
+            tempId: `text_${i}`,
+            extractedAt: new Date().toISOString(),
+            url: `https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#${match[1]}`
+          };
+          
+          if (work.title.length > 2) {
+            works.push(work);
+            console.log(`✅ テキスト解析: No.${work.no} "${work.title}"`);
+          }
+        }
+      }
+      
+    } catch (error) {
+      console.error('❌ テキスト解析エラー:', error);
+    }
+    
+    return works;
+  }
+  
+  // テキストから作品データ抽出（既存コードとの互換性）
+  extractWorkDataFromText(text, index) {
+    const work = {
+      tempId: `text_extract_${Date.now()}_${index}`,
+      extractedAt: new Date().toISOString()
+    };
+    
+    // シンプルなパターンマッチング
+    const patterns = [
+      /(々々)\s*(.+?)\s*作者.*?(.+?)\s*\[(.+?)\]/i,
+      /(\d+)\s*(.+?)\s*\[(.+?)\]/i
+    ];
+    
+    for (const pattern of patterns) {
+      const match = text.match(pattern);
+      if (match) {
+        work.no = match[1];
+        work.title = this.cleanText(match[2]);
+        if (match[4]) {
+          work.lastUpdate = this.cleanText(match[4]);
+        } else if (match[3]) {
+          work.lastUpdate = this.cleanText(match[3]);
+        }
+        break;
       }
     }
-
-    // 更新日時抽出
-    const updateElement = element.querySelector(pattern.updateSelector);
-    if (updateElement) {
-      work.lastUpdate = this.sanitizeText(updateElement.textContent);
-      work.updateTimestamp = this.parseUpdateDate(work.lastUpdate);
-    }
-
-    // バージョン抽出（存在する場合のみ）
-    if (pattern.versionSelector) {
-      const versionElement = element.querySelector(pattern.versionSelector);
-      if (versionElement) {
-        work.version = this.sanitizeText(versionElement.textContent);
-      }
-    }
-
-    // リンクURL抽出（作品番号が未取得の場合）
-    if (!work.no) {
-      const linkElement = element.querySelector(pattern.linkSelector);
-      if (linkElement && linkElement.href) {
-        work.url = linkElement.href;
-        work.no = this.extractWorkNumber(work.url);
-      }
-    }
-
-    // 最低限の情報が揃っているかチェック（作品名は必須、作品番号は可能であれば）
-    if (!work.title || work.title.length < 2) {
-      return null;
-    }
-
-    // 作品番号を文字列として保持（ゼロパディングなし）
-    if (work.no) {
-      work.no = String(work.no);
-    }
-
-    return work;
+    
+    return work.title && work.title.length > 2 ? work : null;
   }
 
-  // テキストサニタイズ
+  // テキストサニタイズ（既存）
   sanitizeText(text) {
     if (!text) return '';
     return text.trim()
                .replace(/\s+/g, ' ')
                .replace(/[^\w\s\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u002D\u0028-\u0029]/g, '')
-               .substring(0, 200); // 長すぎるテキストを制限
+               .substring(0, 200);
+  }
+  
+  // テキストクリーニング（新規・文字化け対応）
+  cleanText(text) {
+    if (!text) return '';
+    
+    return text
+      .trim()
+      .replace(/[\x00-\x1f\x7f-\x9f]/g, '') // 制御文字削除
+      .replace(/\s+/g, ' ') // 連続空白正規化
+      .replace(/^[\s\u3000]*/, '') // 先頭空白削除
+      .replace(/[\s\u3000]*$/, '') // 末尾空白削除
+      .substring(0, 100); // 長さ制限
   }
 
   // 作品番号抽出（URL）
   extractWorkNumber(url) {
     if (!url) return null;
     
-    // #1, #001, entry.shtml?id=1 などのパターンに対応
+    // #1, entry.shtml?id=1 などのパターンに対応
     const patterns = [
       /#(\d+)/,           // #1
       /id=(\d+)/,         // ?id=1
@@ -244,7 +324,7 @@ class PageParser {
     const patterns = [
       /No\.?(\d+)/i,      // No.1, No1
       /(\d+)番/,          // 1番
-      /^(\d+)$/,          // 001（数字のみ）
+      /^(\d+)$/,          // 1（数字のみ）
       /第(\d+)作/,        // 第1作
       /作品(\d+)/         // 作品1
     ];
@@ -259,13 +339,15 @@ class PageParser {
     return null;
   }
 
-  // 更新日時パース
+  // 更新日時パース（強化版）
   parseUpdateDate(dateText) {
     if (!dateText) return null;
     
     try {
-      // 様々な日時フォーマットに対応
+      // ウディコン形式: [6/24] 等のパターンに対応
       const patterns = [
+        /\[(\d{1,2})\/(\d{1,2})\]/, // [6/24] 形式
+        /\[(\d{1,2})-(\d{1,2})\]/, // [6-24] 形式
         /(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/,  // 2025-01-01, 2025/1/1
         /(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/,  // 01-01-2025, 1/1/2025
         /(\d{4})年(\d{1,2})月(\d{1,2})日/       // 2025年1月1日
@@ -276,7 +358,12 @@ class PageParser {
         if (match) {
           let year, month, day;
           
-          if (pattern.source.startsWith('(\\d{4})')) {
+          if (pattern.source.includes('\\[')) {
+            // [6/24] 形式の場合、現在の年を使用
+            year = new Date().getFullYear();
+            month = parseInt(match[1]);
+            day = parseInt(match[2]);
+          } else if (pattern.source.startsWith('(\\d{4})')) {
             [, year, month, day] = match;
           } else if (pattern.source.includes('年')) {
             [, year, month, day] = match;
@@ -383,6 +470,30 @@ class PageParser {
     return changes.length > 0 ? changes : null;
   }
 
+  // シフトJISエンコーディングチェック・修正
+  checkAndFixEncoding(html) {
+    try {
+      // 文字化けの一般的なパターンを検出
+      const garbledPatterns = [
+        /[\ufffd\u0080-\u009f]/g, // 置換文字や制御文字
+        /[ -]/g, // NULL文字等
+      ];
+      
+      let cleanedHtml = html;
+      
+      for (const pattern of garbledPatterns) {
+        cleanedHtml = cleanedHtml.replace(pattern, '');
+      }
+      
+      console.log('🧽 文字エンコーディングクリーニング完了');
+      return cleanedHtml;
+      
+    } catch (error) {
+      console.warn('⚠️ エンコーディングクリーニング失敗:', error);
+      return html;
+    }
+  }
+  
   // エラー診断
   async diagnoseParsingIssues(html) {
     const diagnosis = {
@@ -411,23 +522,32 @@ class PageParser {
         entryLinks: doc.querySelectorAll('a[href*="entry"]').length
       };
 
-      // 一般的な要素の存在チェック
-      const commonSelectors = [
-        'table tr',
-        '.work-entry',
-        '[class*="entry"]',
-        'a[href*="entry"]'
+      // ウディコン固有のパターンチェック
+      const wodIconSelectors = [
+        'エントリー番号', // ウディコン特有テキスト
+        '作者', // 作者情報
+        'WolfRPGEditor', // サイト名
+        'Contest' // コンテスト情報
       ];
-
-      commonSelectors.forEach(selector => {
-        const elements = doc.querySelectorAll(selector);
-        if (elements.length === 0) {
-          diagnosis.issues.push(`No elements found for selector: ${selector}`);
+      
+      diagnosis.info.wodIconElements = {};
+      wodIconSelectors.forEach(keyword => {
+        const found = html.includes(keyword);
+        diagnosis.info.wodIconElements[keyword] = found;
+        if (!found) {
+          diagnosis.issues.push(`ウディコンキーワードが見つかりません: ${keyword}`);
         }
       });
-
+      
+      // 文字化けチェック
+      const garbledChars = html.match(/[\ufffd\u0080-\u009f]/g);
+      if (garbledChars) {
+        diagnosis.issues.push(`文字化けを検出: ${garbledChars.length}文字`);
+        diagnosis.suggestions.push('シフトJISエンコーディングの見直しが必要');
+      }
+      
       if (diagnosis.issues.length === 0) {
-        diagnosis.suggestions.push('HTML structure seems valid, check parsing logic');
+        diagnosis.suggestions.push('ページ構造は正常、解析ロジックを確認してください');
       }
 
     } catch (error) {
@@ -456,4 +576,4 @@ class PageParser {
 // グローバルインスタンス
 window.pageParser = new PageParser();
 
-console.log('🔍 PageParser loaded successfully');
+console.log('🔍 PageParser 強化版読み込み完了 - ウディコンページ対応');

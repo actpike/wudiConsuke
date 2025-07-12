@@ -50,6 +50,10 @@ class GameListManager {
     });
 
     // ヘッダーボタン
+    document.getElementById('background-update-btn').addEventListener('click', () => {
+      this.performBackgroundUpdate();
+    });
+
     document.getElementById('settings-btn').addEventListener('click', () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
     });
@@ -85,6 +89,18 @@ class GameListManager {
 
     document.getElementById('integration-test-btn').addEventListener('click', () => {
       this.performIntegrationTest();
+    });
+
+    document.getElementById('test-bg-update-btn').addEventListener('click', () => {
+      this.performTestBackgroundUpdate();
+    });
+
+    document.getElementById('cleanup-test-data-btn').addEventListener('click', () => {
+      this.cleanupTestData();
+    });
+
+    document.getElementById('show-html-btn').addEventListener('click', () => {
+      this.showHtmlData();
     });
 
     // 監視チェックボックス
@@ -967,11 +983,330 @@ class GameListManager {
       statusText.style.color = '#666';
     }, 5000);
   }
+
+  // バックグラウンド更新実行
+  async performBackgroundUpdate() {
+    const btn = document.getElementById('background-update-btn');
+    const originalClass = btn.className;
+    const statusText = document.getElementById('status-text');
+    const originalStatusText = statusText.textContent;
+
+    try {
+      // 更新中の視覚的フィードバック
+      btn.classList.add('updating');
+      btn.disabled = true;
+      statusText.textContent = '🔄 バックグラウンド更新中...';
+      statusText.style.color = '#2196F3';
+
+      console.log('🚀 バックグラウンド更新開始');
+
+      // 依存関係チェック
+      if (!window.webMonitor) {
+        throw new Error('WebMonitor が初期化されていません');
+      }
+      if (!window.pageParser) {
+        throw new Error('PageParser が初期化されていません');
+      }
+
+      // WebMonitorのバックグラウンド更新を実行
+      const result = await window.webMonitor.executeBackgroundUpdate();
+
+      if (result.success) {
+        // 成功時の処理
+        btn.className = originalClass;
+        btn.classList.add('success');
+        btn.disabled = false;
+
+        const newWorksCount = result.newWorks?.length || 0;
+        const updatedWorksCount = result.updatedWorks?.length || 0;
+
+        statusText.textContent = `✅ 更新完了: 新規${newWorksCount}件, 更新${updatedWorksCount}件`;
+        statusText.style.color = '#4CAF50';
+
+        // リスト更新
+        await this.refreshList();
+
+        // 結果詳細を表示
+        this.showUpdateResult(result);
+
+        console.log('✅ バックグラウンド更新成功:', result);
+
+      } else {
+        throw new Error(result.error || 'バックグラウンド更新に失敗しました');
+      }
+
+    } catch (error) {
+      // エラー時の処理
+      console.error('❌ バックグラウンド更新エラー:', error);
+      
+      btn.className = originalClass;
+      btn.classList.add('error');
+      btn.disabled = false;
+
+      statusText.textContent = `❌ 更新エラー: ${error.message}`;
+      statusText.style.color = '#F44336';
+
+      this.showUpdateError(error);
+
+    } finally {
+      // 3秒後にUIを元に戻す
+      setTimeout(() => {
+        btn.className = originalClass;
+        statusText.textContent = originalStatusText;
+        statusText.style.color = '#666';
+      }, 3000);
+    }
+  }
+
+  // テスト用バックグラウンド更新実行
+  async performTestBackgroundUpdate() {
+    const btn = document.getElementById('test-bg-update-btn');
+    const originalClass = btn.className;
+    const statusText = document.getElementById('status-text');
+    const originalStatusText = statusText.textContent;
+
+    try {
+      // 依存関係チェック
+      if (!window.webMonitor) {
+        throw new Error('WebMonitor が初期化されていません');
+      }
+
+      // 更新中の視覚的フィードバック
+      btn.classList.add('updating');
+      btn.disabled = true;
+      statusText.textContent = '🧪 テスト更新中(No.7登録)...';
+      statusText.style.color = '#FF9800';
+
+      console.log('🧪 テスト用バックグラウンド更新開始');
+
+      // WebMonitorのテスト用バックグラウンド更新を実行
+      const result = await window.webMonitor.executeTestBackgroundUpdate();
+
+      if (result.success) {
+        // 成功時の処理
+        btn.className = originalClass;
+        btn.classList.add('success');
+        btn.disabled = false;
+
+        const action = result.action || 'processed';
+        statusText.textContent = `✅ テスト完了: No.7を${action === 'added' ? '新規登録' : '更新'}しました`;
+        statusText.style.color = '#4CAF50';
+
+        // リスト更新
+        await this.refreshList();
+
+        console.log('✅ テスト用バックグラウンド更新成功:', result);
+
+      } else {
+        throw new Error(result.error || 'テスト更新に失敗しました');
+      }
+
+    } catch (error) {
+      // エラー時の処理
+      console.error('❌ テスト用バックグラウンド更新エラー:', error);
+      
+      btn.className = originalClass;
+      btn.classList.add('error');
+      btn.disabled = false;
+
+      statusText.textContent = `❌ テストエラー: ${error.message}`;
+      statusText.style.color = '#F44336';
+
+    } finally {
+      // 3秒後にUIを元に戻す
+      setTimeout(() => {
+        btn.className = originalClass;
+        statusText.textContent = originalStatusText;
+        statusText.style.color = '#666';
+      }, 3000);
+    }
+  }
+
+  // HTMLデータ表示
+  async showHtmlData() {
+    const btn = document.getElementById('show-html-btn');
+    const originalClass = btn.className;
+    const statusText = document.getElementById('status-text');
+    const originalStatusText = statusText.textContent;
+
+    try {
+      // 取得中の視覚的フィードバック
+      btn.classList.add('updating');
+      btn.disabled = true;
+      statusText.textContent = '📡 HTMLデータ取得中...';
+      statusText.style.color = '#2196F3';
+
+      console.log('📄 HTMLデータ取得開始');
+
+      // 依存関係チェック
+      if (!window.webMonitor) {
+        throw new Error('WebMonitor が初期化されていません');
+      }
+
+      // WebMonitorでページ取得
+      const html = await window.webMonitor.fetchContestPage();
+
+      // 新しいタブでHTMLを表示
+      const newWindow = window.open('', '_blank');
+      if (newWindow) {
+        newWindow.document.write(`
+          <html>
+            <head>
+              <title>ウディコンページ HTMLデータ</title>
+              <style>
+                body { font-family: monospace; margin: 20px; }
+                .info { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+                .content { white-space: pre-wrap; word-wrap: break-word; }
+              </style>
+            </head>
+            <body>
+              <div class="info">
+                <h2>📄 ウディコンページ HTMLデータ</h2>
+                <p><strong>取得時刻:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>データサイズ:</strong> ${html.length.toLocaleString()} 文字</p>
+                <p><strong>URL:</strong> https://silversecond.com/WolfRPGEditor/Contest/entry.shtml</p>
+              </div>
+              <div class="content">${html.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+            </body>
+          </html>
+        `);
+        newWindow.document.close();
+      }
+
+      // 成功時の処理
+      btn.className = originalClass;
+      btn.classList.add('success');
+      btn.disabled = false;
+
+      statusText.textContent = `✅ HTMLデータを新しいタブで表示しました (${html.length}文字)`;
+      statusText.style.color = '#4CAF50';
+
+      console.log(`✅ HTMLデータ表示完了: ${html.length}文字`);
+
+    } catch (error) {
+      // エラー時の処理
+      console.error('❌ HTMLデータ取得エラー:', error);
+      
+      btn.className = originalClass;
+      btn.classList.add('error');
+      btn.disabled = false;
+
+      statusText.textContent = `❌ HTML取得エラー: ${error.message}`;
+      statusText.style.color = '#F44336';
+
+    } finally {
+      // 3秒後にUIを元に戻す
+      setTimeout(() => {
+        btn.className = originalClass;
+        statusText.textContent = originalStatusText;
+        statusText.style.color = '#666';
+      }, 3000);
+    }
+  }
+
+  // 更新結果表示
+  showUpdateResult(result) {
+    // 既存の結果表示を削除
+    const existingResult = document.querySelector('.update-result');
+    if (existingResult) {
+      existingResult.remove();
+    }
+
+    // 新しい結果表示を作成
+    const resultDiv = document.createElement('div');
+    resultDiv.className = 'update-result success';
+    
+    const newWorksCount = result.newWorks?.length || 0;
+    const updatedWorksCount = result.updatedWorks?.length || 0;
+    const totalWorks = result.totalWorks || 0;
+
+    let content = `📊 更新完了: 全${totalWorks}作品中、新規${newWorksCount}件・更新${updatedWorksCount}件を検出`;
+
+    if (newWorksCount > 0) {
+      content += '\n🆕 新規作品:';
+      result.newWorks.slice(0, 3).forEach(work => {
+        content += `\n• No.${work.no} ${work.title}`;
+      });
+      if (newWorksCount > 3) {
+        content += `\n... 他${newWorksCount - 3}件`;
+      }
+    }
+
+    if (updatedWorksCount > 0) {
+      content += '\n🔄 更新作品:';
+      result.updatedWorks.slice(0, 3).forEach(work => {
+        content += `\n• No.${work.no} ${work.title}`;
+      });
+      if (updatedWorksCount > 3) {
+        content += `\n... 他${updatedWorksCount - 3}件`;
+      }
+    }
+
+    resultDiv.innerHTML = `<pre style="white-space: pre-wrap; margin: 0;">${content}</pre>`;
+
+    // ステータスバーの上に挿入
+    const statusBar = document.querySelector('.status-bar');
+    statusBar.parentNode.insertBefore(resultDiv, statusBar);
+
+    // 10秒後に自動削除
+    setTimeout(() => {
+      if (resultDiv.parentNode) {
+        resultDiv.remove();
+      }
+    }, 10000);
+  }
+
+  // 更新エラー表示
+  showUpdateError(error) {
+    // 既存の結果表示を削除
+    const existingResult = document.querySelector('.update-result');
+    if (existingResult) {
+      existingResult.remove();
+    }
+
+    // エラー表示を作成
+    const resultDiv = document.createElement('div');
+    resultDiv.className = 'update-result error';
+    resultDiv.innerHTML = `
+      <div>❌ バックグラウンド更新エラー</div>
+      <div style="margin-top: 4px; font-size: 10px;">${error.message}</div>
+    `;
+
+    // ステータスバーの上に挿入
+    const statusBar = document.querySelector('.status-bar');
+    statusBar.parentNode.insertBefore(resultDiv, statusBar);
+
+    // 8秒後に自動削除
+    setTimeout(() => {
+      if (resultDiv.parentNode) {
+        resultDiv.remove();
+      }
+    }, 8000);
+  }
 }
 
 // アプリケーション初期化
 document.addEventListener('DOMContentLoaded', async () => {
   try {
+    // 依存関係の待機（最大5秒）
+    let retries = 0;
+    const maxRetries = 50; // 100ms × 50 = 5秒
+    
+    while ((!window.pageParser || !window.webMonitor || !window.gameDataManager) && retries < maxRetries) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      retries++;
+    }
+    
+    if (!window.pageParser) {
+      console.warn('⚠️ PageParser の初期化待機がタイムアウトしました');
+    }
+    if (!window.webMonitor) {
+      console.warn('⚠️ WebMonitor の初期化待機がタイムアウトしました');
+    }
+    if (!window.gameDataManager) {
+      throw new Error('GameDataManager の初期化に失敗しました');
+    }
+    
     // グローバルマネージャー初期化
     window.gameListManager = new GameListManager();
     
