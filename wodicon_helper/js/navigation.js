@@ -271,7 +271,15 @@ class NavigationController {
       const slider = document.querySelector(`[data-category="${category}"]`);
       if (slider) {
         const average = averages[category] || 0;
-        const position = ((average - 1) / 9) * 100; // 1-10を0-100%に変換
+        
+        // 値を1-10の範囲に制限
+        const clampedAverage = Math.max(1, Math.min(10, average));
+        
+        // スライダーコンテナ内の相対位置を計算（0-100%）
+        const position = ((clampedAverage - 1) / 9) * 100;
+        
+        // 位置を0-100%の範囲に制限（安全対策）
+        const clampedPosition = Math.max(0, Math.min(100, position));
         
         // 既存の平均線を削除
         const existingLine = slider.parentElement.querySelector('.average-line');
@@ -279,12 +287,36 @@ class NavigationController {
           existingLine.remove();
         }
         
-        // 新しい平均線を追加
-        const averageLine = document.createElement('div');
-        averageLine.className = 'average-line';
-        averageLine.style.left = `${position}%`;
-        averageLine.title = `平均: ${average.toFixed(1)}点`;
-        slider.parentElement.appendChild(averageLine);
+        // 平均値が有効な場合のみ平均線を表示
+        if (average > 0) {
+          const averageLine = document.createElement('div');
+          averageLine.className = 'average-line';
+          averageLine.title = `平均: ${average.toFixed(1)}点`;
+          
+          // スライダーの親要素（.rating-input）に追加
+          const ratingInput = slider.closest('.rating-input');
+          if (ratingInput) {
+            ratingInput.style.position = 'relative'; // 位置基準を確保
+            
+            // スライダー要素の実際の位置と幅を取得
+            const ratingInputRect = ratingInput.getBoundingClientRect();
+            const sliderRect = slider.getBoundingClientRect();
+            const sliderCursolSize = 8;
+            
+            // スライダーの実際の幅と相対位置を計算
+            const sliderWidth = sliderRect.width - sliderCursolSize * 2;
+            const sliderStartPos = sliderRect.left - ratingInputRect.left + sliderCursolSize;
+            
+            // スライダー範囲内での位置を計算
+            const positionInSlider = (clampedPosition / 100) * sliderWidth;
+            const finalPosition = sliderStartPos + positionInSlider;
+            
+            averageLine.style.left = `${finalPosition}px`;
+            ratingInput.appendChild(averageLine);
+            
+            console.log(`平均線配置: ${category} 平均=${average.toFixed(1)} 位置=${finalPosition}px (${clampedPosition}%)`);
+          }
+        }
       }
     });
   }
