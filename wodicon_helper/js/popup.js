@@ -15,6 +15,21 @@ class GameListManager {
     this.setupEventListeners();
     this.updateSortHeaders();
     await this.refreshList();
+    
+    // 初期化完了後にステータスバーのデフォルトテキストを設定
+    this.setDefaultStatusText();
+  }
+
+  // デフォルトステータステキスト設定
+  setDefaultStatusText() {
+    const statusText = document.getElementById('status-text');
+    const defaultText = 'ウディこん助 準備完了';
+    
+    statusText.textContent = defaultText;
+    statusText.style.color = '#666';
+    
+    // デフォルトテキストとして保存
+    statusText.dataset.originalText = defaultText;
   }
 
   // イベントリスナー設定
@@ -91,12 +106,16 @@ class GameListManager {
       this.performIntegrationTest();
     });
 
-    document.getElementById('test-bg-update-btn').addEventListener('click', () => {
-      this.performTestBackgroundUpdate();
+    document.getElementById('test-add-btn').addEventListener('click', () => {
+      this.performTestAdd();
     });
 
-    document.getElementById('cleanup-test-data-btn').addEventListener('click', () => {
-      this.cleanupTestData();
+    document.getElementById('test-update-btn').addEventListener('click', () => {
+      this.performTestUpdate();
+    });
+
+    document.getElementById('test-delete-btn').addEventListener('click', () => {
+      this.performTestDelete();
     });
 
     document.getElementById('show-html-btn').addEventListener('click', () => {
@@ -204,7 +223,15 @@ class GameListManager {
 
       this.games = games;
       this.renderGameList(games);
-      await this.updateStatusBar();
+      
+      // ステータスバーの一時メッセージをチェック
+      const statusText = document.getElementById('status-text');
+      const hasTemporaryMessage = statusText.statusTimer && statusText.statusTimer !== null;
+      
+      // 一時メッセージが表示中でない場合のみ統計情報を更新
+      if (!hasTemporaryMessage) {
+        await this.updateStatusBar();
+      }
 
     } catch (error) {
       console.error('Failed to refresh list:', error);
@@ -338,7 +365,14 @@ class GameListManager {
         statusText += ` | 平均: ${stats.average_score}点`;
       }
 
-      document.getElementById('status-text').textContent = statusText;
+      const statusElement = document.getElementById('status-text');
+      
+      // 一時メッセージが表示中の場合は統計情報更新をスキップ
+      if (statusElement.statusTimer) {
+        return;
+      }
+      
+      statusElement.textContent = statusText;
 
     } catch (error) {
       console.error('Failed to update status bar:', error);
@@ -924,15 +958,7 @@ class GameListManager {
       
       if (success) {
         // 成功時の視覚的フィードバック
-        const statusSpan = document.getElementById('status-text');
-        const originalText = statusSpan.textContent;
-        statusSpan.textContent = `📡 監視設定更新: ${enabled ? 'ON' : 'OFF'}`;
-        statusSpan.style.color = enabled ? '#28a745' : '#6c757d';
-        
-        setTimeout(() => {
-          statusSpan.textContent = originalText;
-          statusSpan.style.color = '';
-        }, 2000);
+        this.updateStatusBar(`📡 監視設定更新: ${enabled ? 'ON' : 'OFF'}`, enabled ? 'success' : 'info', 2000);
       } else {
         // 失敗時はチェックボックスを元に戻す
         checkbox.checked = !enabled;
@@ -958,45 +984,24 @@ class GameListManager {
 
   // メッセージ表示
   showMessage(message) {
-    const statusText = document.getElementById('status-text');
-    const originalText = statusText.textContent;
-    
-    statusText.textContent = message;
-    statusText.style.color = '#4CAF50';
-    
-    setTimeout(() => {
-      statusText.textContent = originalText;
-      statusText.style.color = '#666';
-    }, 3000);
+    this.updateStatusBar(message, 'success');
   }
 
   // エラー表示
   showError(message) {
-    const statusText = document.getElementById('status-text');
-    const originalText = statusText.textContent;
-    
-    statusText.textContent = `❌ ${message}`;
-    statusText.style.color = '#F44336';
-    
-    setTimeout(() => {
-      statusText.textContent = originalText;
-      statusText.style.color = '#666';
-    }, 5000);
+    this.updateStatusBar(`❌ ${message}`, 'error', 5000);
   }
 
   // バックグラウンド更新実行
   async performBackgroundUpdate() {
     const btn = document.getElementById('background-update-btn');
     const originalClass = btn.className;
-    const statusText = document.getElementById('status-text');
-    const originalStatusText = statusText.textContent;
 
     try {
       // 更新中の視覚的フィードバック
       btn.classList.add('updating');
       btn.disabled = true;
-      statusText.textContent = '🔄 バックグラウンド更新中...';
-      statusText.style.color = '#2196F3';
+      this.updateStatusBar('🔄 バックグラウンド更新中...', 'processing', 0);
 
       console.log('🚀 バックグラウンド更新開始');
 
@@ -1019,15 +1024,17 @@ class GameListManager {
 
         const newWorksCount = result.newWorks?.length || 0;
         const updatedWorksCount = result.updatedWorks?.length || 0;
+        const totalWorksCount = result.totalWorks || 0;
 
-        statusText.textContent = `✅ 更新完了: 新規${newWorksCount}件, 更新${updatedWorksCount}件`;
-        statusText.style.color = '#4CAF50';
+        this.updateStatusBar(`📊 更新完了: 全${totalWorksCount}作品中、新規${newWorksCount}件・更新${updatedWorksCount}件を検出`, 'success');
 
         // リスト更新
         await this.refreshList();
 
-        // 結果詳細を表示
-        this.showUpdateResult(result);
+        // 結果詳細を表示（ステータスバー表示後に少し遅延）
+        setTimeout(() => {
+          this.showUpdateResult(result);
+        }, 1000);
 
         console.log('✅ バックグラウンド更新成功:', result);
 
@@ -1043,8 +1050,7 @@ class GameListManager {
       btn.classList.add('error');
       btn.disabled = false;
 
-      statusText.textContent = `❌ 更新エラー: ${error.message}`;
-      statusText.style.color = '#F44336';
+      this.updateStatusBar(`❌ 更新エラー: ${error.message}`, 'error');
 
       this.showUpdateError(error);
 
@@ -1052,72 +1058,215 @@ class GameListManager {
       // 3秒後にUIを元に戻す
       setTimeout(() => {
         btn.className = originalClass;
-        statusText.textContent = originalStatusText;
-        statusText.style.color = '#666';
       }, 3000);
     }
   }
 
   // テスト用バックグラウンド更新実行
-  async performTestBackgroundUpdate() {
-    const btn = document.getElementById('test-bg-update-btn');
+  // テスト追加（実運用メソッド使用）
+  async performTestAdd() {
+    const btn = document.getElementById('test-add-btn');
     const originalClass = btn.className;
-    const statusText = document.getElementById('status-text');
-    const originalStatusText = statusText.textContent;
 
     try {
-      // 依存関係チェック
-      if (!window.webMonitor) {
-        throw new Error('WebMonitor が初期化されていません');
-      }
-
-      // 更新中の視覚的フィードバック
       btn.classList.add('updating');
       btn.disabled = true;
-      statusText.textContent = '🧪 テスト更新中(No.7登録)...';
-      statusText.style.color = '#FF9800';
+      this.updateStatusBar('➕ テスト作品追加中...', 'processing', 0);
 
-      console.log('🧪 テスト用バックグラウンド更新開始');
+      // 実運用のaddGameメソッドを使用
+      const testGameData = {
+        no: String(Date.now()).slice(-2), // 下2桁を作品番号として使用
+        title: `テスト作品_${new Date().toLocaleTimeString()}`,
+        author: 'テスト作者',
+        genre: 'テスト',
+        description: '実運用メソッドによるテスト作品追加',
+        rating: {
+          熱中度: 1, 斬新さ: 1, 物語性: 1, 
+          画像音声: 1, 遊びやすさ: 1, その他: 1, total: 6
+        },
+        review: '',
+        source: 'test_add'
+      };
 
-      // WebMonitorのテスト用バックグラウンド更新を実行
-      const result = await window.webMonitor.executeTestBackgroundUpdate();
+      const newId = await window.gameDataManager.addGame(testGameData);
+      
+      btn.className = originalClass;
+      btn.classList.add('success');
+      btn.disabled = false;
+      this.updateStatusBar(`✅ テスト追加成功: No.${testGameData.no} (ID:${newId})`, 'success');
 
-      if (result.success) {
-        // 成功時の処理
-        btn.className = originalClass;
-        btn.classList.add('success');
-        btn.disabled = false;
-
-        const action = result.action || 'processed';
-        statusText.textContent = `✅ テスト完了: No.7を${action === 'added' ? '新規登録' : '更新'}しました`;
-        statusText.style.color = '#4CAF50';
-
-        // リスト更新
-        await this.refreshList();
-
-        console.log('✅ テスト用バックグラウンド更新成功:', result);
-
-      } else {
-        throw new Error(result.error || 'テスト更新に失敗しました');
-      }
+      await this.refreshList();
+      console.log('✅ テスト追加成功:', testGameData);
 
     } catch (error) {
-      // エラー時の処理
-      console.error('❌ テスト用バックグラウンド更新エラー:', error);
-      
+      console.error('❌ テスト追加エラー:', error);
       btn.className = originalClass;
       btn.classList.add('error');
       btn.disabled = false;
-
-      statusText.textContent = `❌ テストエラー: ${error.message}`;
-      statusText.style.color = '#F44336';
-
+      this.updateStatusBar(`❌ テスト追加失敗: ${error.message}`, 'error');
     } finally {
-      // 3秒後にUIを元に戻す
       setTimeout(() => {
         btn.className = originalClass;
-        statusText.textContent = originalStatusText;
+      }, 3000);
+    }
+  }
+
+  // ステータスバー更新の共通メソッド
+  updateStatusBar(message, type = 'info', duration = 3000) {
+    const statusText = document.getElementById('status-text');
+    
+    // デフォルトテキストが設定されていない場合は適切なデフォルトを設定
+    if (!statusText.dataset.originalText) {
+      const defaultText = statusText.textContent === '読み込み中...' ? 'ウディこん助 準備完了' : statusText.textContent;
+      statusText.dataset.originalText = defaultText;
+    }
+    
+    const originalText = statusText.dataset.originalText;
+
+    // タイプに応じた色設定
+    const colors = {
+      info: '#2196F3',      // 青
+      success: '#4CAF50',   // 緑
+      error: '#F44336',     // 赤
+      warning: '#FF9800',   // オレンジ
+      processing: '#FF9800' // オレンジ（処理中）
+    };
+
+    statusText.textContent = message;
+    statusText.style.color = colors[type] || colors.info;
+
+    // 既存のタイマーをクリア
+    if (statusText.statusTimer) {
+      clearTimeout(statusText.statusTimer);
+    }
+
+    // 指定時間後に元に戻す
+    if (duration > 0) {
+      statusText.statusTimer = setTimeout(() => {
+        statusText.textContent = originalText;
         statusText.style.color = '#666';
+        delete statusText.statusTimer;
+      }, duration);
+    }
+  }
+
+  // テスト更新（実運用メソッド使用）
+  async performTestUpdate() {
+    const btn = document.getElementById('test-update-btn');
+    const originalClass = btn.className;
+
+    try {
+      btn.classList.add('updating');
+      btn.disabled = true;
+      this.updateStatusBar('🔄 テスト作品更新中...', 'processing', 0);
+
+      // 既存作品を取得（最初の作品を更新対象とする）
+      const games = await window.gameDataManager.getGames();
+      if (games.length === 0) {
+        throw new Error('更新対象の作品がありません');
+      }
+
+      const targetGame = games[0];
+      
+      // タイトルから過去の更新履歴を削除してクリーンアップ
+      const cleanTitle = targetGame.title.replace(/_更新_[\d:]+/g, '');
+      
+      const updateData = {
+        title: `${cleanTitle}_更新_${new Date().toLocaleTimeString()}`,
+        description: `実運用メソッドによる更新テスト - ${new Date().toISOString()}`,
+        updated_at: new Date().toISOString()
+      };
+
+      // 実運用のupdateGameメソッドを使用
+      const success = await window.gameDataManager.updateGame(targetGame.id, updateData);
+      
+      if (success) {
+        btn.className = originalClass;
+        btn.classList.add('success');
+        btn.disabled = false;
+        this.updateStatusBar(`✅ テスト更新成功: No.${targetGame.no} (ID:${targetGame.id})`, 'success');
+
+        await this.refreshList();
+        console.log('✅ テスト更新成功:', { targetGame, updateData });
+      } else {
+        throw new Error('更新に失敗しました');
+      }
+
+    } catch (error) {
+      console.error('❌ テスト更新エラー:', error);
+      btn.className = originalClass;
+      btn.classList.add('error');
+      btn.disabled = false;
+      this.updateStatusBar(`❌ テスト更新失敗: ${error.message}`, 'error');
+    } finally {
+      setTimeout(() => {
+        btn.className = originalClass;
+      }, 3000);
+    }
+  }
+
+  // テスト削除（実運用メソッド使用・安全確認付き）
+  async performTestDelete() {
+    const btn = document.getElementById('test-delete-btn');
+    const originalClass = btn.className;
+
+    try {
+      btn.classList.add('updating');
+      btn.disabled = true;
+      this.updateStatusBar('🗑️ テスト作品削除中...', 'processing', 0);
+
+      // テスト用作品を検索（source: 'test_add'の作品を対象）
+      const games = await window.gameDataManager.getGames();
+      const testGames = games.filter(game => 
+        game.source === 'test_add' || 
+        game.title?.includes('テスト作品_') ||
+        game.author === 'テスト作者'
+      );
+
+      if (testGames.length === 0) {
+        throw new Error('削除対象のテスト作品がありません');
+      }
+
+      const targetGame = testGames[0];
+      
+      // 実運用のdeleteGameメソッドを使用（強制削除フラグ付き）
+      const success = await window.gameDataManager.deleteGame(targetGame.id, { 
+        forceDelete: true,
+        isSystemDelete: true 
+      });
+      
+      if (success) {
+        btn.className = originalClass;
+        btn.classList.add('success');
+        btn.disabled = false;
+        this.updateStatusBar(`✅ テスト削除成功: No.${targetGame.no} "${targetGame.title}"`, 'success');
+
+        await this.refreshList();
+        console.log('✅ テスト削除成功:', targetGame);
+      } else {
+        throw new Error('削除に失敗しました');
+      }
+
+    } catch (error) {
+      console.error('❌ テスト削除エラー:', error);
+      btn.className = originalClass;
+      btn.classList.add('error');
+      btn.disabled = false;
+      
+      // CONFIRM_DELETE エラーの場合は特別処理
+      if (error.message.includes('CONFIRM_DELETE:')) {
+        const confirmMsg = error.message.replace('CONFIRM_DELETE:', '');
+        if (confirm(confirmMsg)) {
+          // 再帰的に強制削除を実行
+          setTimeout(() => this.performTestDelete(), 100);
+          return;
+        }
+      }
+      
+      this.updateStatusBar(`❌ テスト削除失敗: ${error.message}`, 'error');
+    } finally {
+      setTimeout(() => {
+        btn.className = originalClass;
       }, 3000);
     }
   }
@@ -1126,15 +1275,12 @@ class GameListManager {
   async showHtmlData() {
     const btn = document.getElementById('show-html-btn');
     const originalClass = btn.className;
-    const statusText = document.getElementById('status-text');
-    const originalStatusText = statusText.textContent;
 
     try {
       // 取得中の視覚的フィードバック
       btn.classList.add('updating');
       btn.disabled = true;
-      statusText.textContent = '📡 HTMLデータ取得中...';
-      statusText.style.color = '#2196F3';
+      this.updateStatusBar('📡 HTMLデータ取得中...', 'processing', 0);
 
       console.log('📄 HTMLデータ取得開始');
 
@@ -1178,8 +1324,7 @@ class GameListManager {
       btn.classList.add('success');
       btn.disabled = false;
 
-      statusText.textContent = `✅ HTMLデータを新しいタブで表示しました (${html.length}文字)`;
-      statusText.style.color = '#4CAF50';
+      this.updateStatusBar(`✅ HTMLデータを新しいタブで表示しました (${html.length}文字)`, 'success');
 
       console.log(`✅ HTMLデータ表示完了: ${html.length}文字`);
 
@@ -1191,15 +1336,12 @@ class GameListManager {
       btn.classList.add('error');
       btn.disabled = false;
 
-      statusText.textContent = `❌ HTML取得エラー: ${error.message}`;
-      statusText.style.color = '#F44336';
+      this.updateStatusBar(`❌ HTML取得エラー: ${error.message}`, 'error');
 
     } finally {
       // 3秒後にUIを元に戻す
       setTimeout(() => {
         btn.className = originalClass;
-        statusText.textContent = originalStatusText;
-        statusText.style.color = '#666';
       }, 3000);
     }
   }
@@ -1212,15 +1354,19 @@ class GameListManager {
       existingResult.remove();
     }
 
+    const newWorksCount = result.newWorks?.length || 0;
+    const updatedWorksCount = result.updatedWorks?.length || 0;
+
+    // 新規・更新がない場合は詳細表示をスキップ
+    if (newWorksCount === 0 && updatedWorksCount === 0) {
+      return;
+    }
+
     // 新しい結果表示を作成
     const resultDiv = document.createElement('div');
     resultDiv.className = 'update-result success';
     
-    const newWorksCount = result.newWorks?.length || 0;
-    const updatedWorksCount = result.updatedWorks?.length || 0;
-    const totalWorks = result.totalWorks || 0;
-
-    let content = `📊 更新完了: 全${totalWorks}作品中、新規${newWorksCount}件・更新${updatedWorksCount}件を検出`;
+    let content = '📋 更新詳細:';
 
     if (newWorksCount > 0) {
       content += '\n🆕 新規作品:';
@@ -1242,18 +1388,18 @@ class GameListManager {
       }
     }
 
-    resultDiv.innerHTML = `<pre style="white-space: pre-wrap; margin: 0;">${content}</pre>`;
+    resultDiv.innerHTML = `<pre style="white-space: pre-wrap; margin: 0; font-size: 12px; background: #f8f9fa; padding: 8px; border-radius: 4px; border-left: 3px solid #4CAF50;">${content}</pre>`;
 
     // ステータスバーの上に挿入
     const statusBar = document.querySelector('.status-bar');
     statusBar.parentNode.insertBefore(resultDiv, statusBar);
 
-    // 10秒後に自動削除
+    // 8秒後に自動削除
     setTimeout(() => {
       if (resultDiv.parentNode) {
         resultDiv.remove();
       }
-    }, 10000);
+    }, 8000);
   }
 
   // 更新エラー表示
@@ -1318,7 +1464,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     
   } catch (error) {
     console.error('Failed to initialize application:', error);
-    document.getElementById('status-text').textContent = '❌ 初期化失敗';
+    // 初期化時はupdateStatusBarが利用できない可能性があるため、直接DOM操作
+    const statusText = document.getElementById('status-text');
+    if (statusText) {
+      statusText.textContent = '❌ 初期化失敗';
+      statusText.style.color = '#F44336';
+    }
   }
 });
 
