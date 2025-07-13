@@ -148,6 +148,10 @@ class GameListManager {
       this.performBackgroundUpdate();
     });
 
+    document.getElementById('test-update-btn').addEventListener('click', () => {
+      this.performTestUpdateModification();
+    });
+
     document.getElementById('settings-btn').addEventListener('click', () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
     });
@@ -1204,6 +1208,69 @@ class GameListManager {
       // 3秒後にUIを元に戻す
       setTimeout(() => {
         btn.className = originalClass;
+      }, 3000);
+    }
+  }
+
+  // テスト用: No4作品の更新日を意図的に変更
+  async performTestUpdateModification() {
+    const btn = document.getElementById('test-update-btn');
+    const originalClass = btn.className;
+    
+    try {
+      // テスト実行中の視覚的フィードバック
+      btn.classList.add('updating');
+      btn.disabled = true;
+      this.updateStatusBar('🧪 テスト実行中...', 'processing', 0);
+      
+      console.log('🧪 更新チェックテスト開始');
+      
+      // 依存関係チェック
+      if (!window.updateCheckerTest) {
+        throw new Error('UpdateCheckerTest が初期化されていません');
+      }
+      
+      // テスト実行
+      const result = await window.updateCheckerTest.modifyGameUpdateDate();
+      
+      if (result.success) {
+        // 成功時の処理
+        this.updateStatusBar(
+          `✅ テスト完了: No${result.gameNo} 更新日→${result.newDate}`, 
+          'success', 
+          5000
+        );
+        
+        // リスト更新
+        await this.refreshList();
+        
+        console.log('✅ テスト成功:', result);
+        
+        // 次のステップを案内
+        setTimeout(() => {
+          this.updateStatusBar(
+            '🔍 手動監視でテスト検証してください', 
+            'info', 
+            8000
+          );
+        }, 3000);
+        
+      } else {
+        throw new Error('テスト実行に失敗しました');
+      }
+      
+    } catch (error) {
+      // エラー時の処理
+      console.error('❌ テストエラー:', error);
+      
+      btn.className = originalClass;
+      this.updateStatusBar(`❌ テスト失敗: ${error.message}`, 'error', 5000);
+      
+    } finally {
+      // 3秒後にUIを元に戻す
+      setTimeout(() => {
+        btn.className = originalClass;
+        btn.disabled = false;
       }, 3000);
     }
   }

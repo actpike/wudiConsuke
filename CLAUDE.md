@@ -15,6 +15,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 	`VERSION.md`
 - ユーザから配布準備の依頼を受けた場合、下記資料を参照する
 	'UdiConsuke\documents\chromeStore\releaseReference(配布指南書).md'
+- 自動化スクリプトの詳細は下記を参照
+	`scripts/README.md`
 
 ## プロジェクト構造
 
@@ -141,6 +143,39 @@ Chrome拡張機能には伝統的なbuild/lint/testコマンドはありませ�
      2. 新zipファイル作成・配置（website/release/versions/）
      3. 紹介ページ更新（ダウンロードリンク、バージョン表示）
      4. **全ファイルの存在確認後**にgit操作
+
+### 🔄 ユーザーからpush指示を受けた場合の対応
+
+**基本方針**: 手動git操作ではなく、自動化システムを活用する
+
+#### パターン1: 開発中のコード変更をpushしたい場合
+```bash
+npm run create-release
+```
+- `-pre.zip` 作成
+- Webサイト更新なし（開発用）
+- 開発版コミットメッセージで自動push
+
+#### パターン2: 本番リリースしたい場合  
+```bash
+npm run create-release:production
+```
+- 本番用zip作成
+- 紹介ページ自動更新
+- pre版削除
+- 本番リリースコミットメッセージで自動push
+
+#### パターン3: 通常のコード変更のみの場合
+従来通りの手動git操作
+```bash
+git add .
+git commit -m "適切なメッセージ"
+git push origin main
+```
+
+**判断基準**: 
+- Chrome拡張機能のファイル変更あり → 自動化システム使用
+- ドキュメントやscript変更のみ → 手動git操作でも可
 
 ## アーキテクチャ
 
