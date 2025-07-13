@@ -434,6 +434,18 @@ class PageParser {
         }
       });
 
+      // No4の処理状況をデバッグ
+      const no4Web = newWorks.find(w => w.no === '4' || w.no === 4);
+      const no4Local = existingWorks.find(w => w.no === '4' || w.no === 4);
+      if (no4Web && no4Local) {
+        console.log(`🔍 No4差分検出詳細:`);
+        console.log(`  Web: lastUpdate="${no4Web.lastUpdate}"`);
+        console.log(`  Local: lastUpdate="${no4Local.lastUpdate}"`);
+        console.log(`  マッチング: Web.no=${no4Web.no}(${typeof no4Web.no}) vs Local.no=${no4Local.no}(${typeof no4Local.no})`);
+      } else {
+        console.warn(`⚠️ No4データマッチング失敗: Web=${!!no4Web}, Local=${!!no4Local}`);
+      }
+      
       console.log(`📊 差分検出結果: 新規${changes.newWorks.length}件, 更新${changes.updatedWorks.length}件, 変更なし${changes.unchangedWorks.length}件`);
       
     } catch (error) {
@@ -473,10 +485,23 @@ class PageParser {
         changes.push('updated');
       }
     } else if (newWork.lastUpdate && existingWork.lastUpdate) {
-      // lastUpdateフィールドでの比較も追加
-      if (newWork.lastUpdate !== existingWork.lastUpdate) {
-        console.log(`📅 lastUpdate変更検知: ${existingWork.lastUpdate} → ${newWork.lastUpdate}`);
+      // lastUpdateフィールドでの比較（クリーンアップ後で比較）
+      let cleanNewUpdate = newWork.lastUpdate;
+      let cleanExistingUpdate = existingWork.lastUpdate;
+      
+      // 両方を「→」以降除去してから比較
+      if (cleanNewUpdate && typeof cleanNewUpdate === 'string') {
+        cleanNewUpdate = cleanNewUpdate.split('→')[0].trim();
+      }
+      if (cleanExistingUpdate && typeof cleanExistingUpdate === 'string') {
+        cleanExistingUpdate = cleanExistingUpdate.split('→')[0].trim();
+      }
+      
+      if (cleanNewUpdate !== cleanExistingUpdate) {
+        console.log(`📅 lastUpdate変更検知: ${cleanExistingUpdate} → ${cleanNewUpdate}`);
         changes.push('updated');
+      } else if (newWork.lastUpdate !== existingWork.lastUpdate) {
+        console.log(`📝 lastUpdate文言のみ変更（実質同じ）: ${existingWork.lastUpdate} → ${newWork.lastUpdate}`);
       }
     }
 

@@ -148,6 +148,9 @@ class GameListManager {
       this.performBackgroundUpdate();
     });
 
+    document.getElementById('init-monitoring-btn').addEventListener('click', () => {
+      this.initializeMonitoring();
+    });
 
     document.getElementById('settings-btn').addEventListener('click', () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
@@ -1206,6 +1209,54 @@ class GameListManager {
       setTimeout(() => {
         btn.className = originalClass;
       }, 3000);
+    }
+  }
+
+  // 全作品監視初期化
+  async initializeMonitoring() {
+    try {
+      console.log('🔧 全作品監視初期化開始');
+      this.updateStatusBar('🔧 全作品監視初期化中...', 'processing', 0);
+      
+      // 現在のWebデータを取得
+      if (!window.webMonitor) {
+        throw new Error('WebMonitorが初期化されていません');
+      }
+      
+      console.log('📡 最新Webデータ取得中...');
+      const result = await window.webMonitor.executeBackgroundUpdate();
+      
+      if (result.success) {
+        // 全作品のlastUpdateを現在のWebデータで初期化
+        const games = await window.gameDataManager.getGames();
+        console.log(`📊 ${games.length}件の作品のlastUpdateを初期化します`);
+        
+        let updateCount = 0;
+        for (const game of games) {
+          if (!game.lastUpdate) {
+            // lastUpdateが未設定の作品のみ更新
+            // 仮の値として現在日付を設定（次回の監視で実際の値に更新される）
+            await window.gameDataManager.updateGame(game.id, {
+              lastUpdate: `初期化済み_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '_')}`,
+              version_status: 'latest'
+            });
+            updateCount++;
+          }
+        }
+        
+        console.log(`✅ ${updateCount}件の作品を監視対象に追加`);
+        this.updateStatusBar(`✅ 全作品監視初期化完了: ${updateCount}件を監視対象に追加`, 'success', 5000);
+        
+        // リスト更新
+        await this.refreshList();
+        
+      } else {
+        throw new Error('Webデータ取得に失敗しました');
+      }
+      
+    } catch (error) {
+      console.error('❌ 監視初期化エラー:', error);
+      this.updateStatusBar('❌ 監視初期化でエラーが発生しました', 'error', 5000);
     }
   }
 
