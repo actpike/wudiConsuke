@@ -1,7 +1,7 @@
 const { execSync } = require('child_process');
 const path = require('path');
 const { PROJECT_ROOT } = require('../config/paths.config');
-const { GIT_CONFIG, LOG_CONFIG } = require('../config/release.config');
+const { GIT_CONFIG, LOG_CONFIG, RELEASE_MODE } = require('../config/release.config');
 
 class GitHandler {
   constructor() {
@@ -71,28 +71,35 @@ class GitHandler {
   }
 
   // コミットメッセージ生成
-  generateCommitMessage(version, additionalInfo = {}) {
-    let message = GIT_CONFIG.COMMIT_MESSAGE_TEMPLATE.replace('{version}', version);
+  generateCommitMessage(version, mode, additionalInfo = {}) {
+    const modeConfig = RELEASE_MODE[mode];
+    let message = modeConfig.COMMIT_MESSAGE_TEMPLATE.replace('{version}', version);
     
     // 追加情報がある場合は含める
     if (additionalInfo.zipFile) {
       message += `\\n\\n- パッケージファイル: ${additionalInfo.zipFile}`;
     }
-    if (additionalInfo.websiteUpdated) {
+    if (additionalInfo.websiteUpdated && !additionalInfo.websiteSkipped) {
       message += `\\n- Webサイト更新: ダウンロードリンク・バージョン表示`;
+    }
+    if (additionalInfo.websiteSkipped) {
+      message += `\\n- Webサイト更新: スキップ（開発モード）`;
     }
     if (additionalInfo.versionSynced) {
       message += `\\n- VERSION.md同期更新`;
+    }
+    if (additionalInfo.filesCleanedUp) {
+      message += `\\n- ファイルクリーンアップ実行`;
     }
     
     return message;
   }
 
   // コミット実行
-  createCommit(version, additionalInfo = {}) {
+  createCommit(version, mode, additionalInfo = {}) {
     console.log(`💾 コミット作成中 (v${version})...`);
     
-    const message = this.generateCommitMessage(version, additionalInfo);
+    const message = this.generateCommitMessage(version, mode, additionalInfo);
     
     // シンプルなコミットメッセージ渡し（エスケープ処理）
     const escapedMessage = message.replace(/"/g, '\\\\"').replace(/\\n/g, '\\\\n');
@@ -169,8 +176,8 @@ class GitHandler {
   }
 
   // メインGit処理
-  async handleGitOperations(version, releaseInfo = {}) {
-    console.log(`🔧 Git操作開始 (v${version})`);
+  async handleGitOperations(version, mode = 'development', releaseInfo = {}) {
+    console.log(`🔧 Git操作開始 (v${version}) [${mode}モード]`);
     
     try {
       // 1. Git状態確認
@@ -192,7 +199,7 @@ class GitHandler {
       this.stageFiles();
       
       // 4. コミット作成
-      const commitResult = this.createCommit(version, releaseInfo);
+      const commitResult = this.createCommit(version, mode, releaseInfo);
       
       // 5. リモートプッシュ
       let pushResult = { success: false };

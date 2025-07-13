@@ -4,7 +4,7 @@ const VersionSync = require('./modules/version-sync');
 const ChromePackager = require('./modules/chrome-packager');
 const WebsiteUpdater = require('./modules/website-updater');
 const GitHandler = require('./modules/git-handler');
-const { LOG_CONFIG } = require('./config/release.config');
+const { LOG_CONFIG, RELEASE_MODE } = require('./config/release.config');
 
 class ReleaseAutomation {
   constructor() {
@@ -14,6 +14,32 @@ class ReleaseAutomation {
     this.gitHandler = new GitHandler();
     
     this.startTime = Date.now();
+    
+    // コマンドライン引数解析
+    this.mode = this.parseArguments();
+  }
+
+  // コマンドライン引数解析
+  parseArguments() {
+    const args = process.argv.slice(2);
+    
+    // --production フラグをチェック
+    if (args.includes('--production') || args.includes('--prod')) {
+      return 'production';
+    }
+    
+    return 'development';  // デフォルトは開発モード
+  }
+
+  // モード情報表示
+  showModeInfo() {
+    const modeConfig = RELEASE_MODE[this.mode];
+    const modeEmoji = this.mode === 'production' ? '🚀' : '🛠️';
+    
+    console.log(`${modeEmoji} リリースモード: ${this.mode === 'production' ? '本番' : '開発'}`);
+    console.log(`   📦 zipファイル: v{version}${modeConfig.ZIP_SUFFIX}.zip`);
+    console.log(`   🌐 Webサイト更新: ${modeConfig.UPDATE_WEBSITE ? 'あり' : 'スキップ'}`);
+    console.log(`   🗑️ ファイルクリーンアップ: ${this.mode === 'production' ? 'pre版削除' : '古いpre版削除'}`);
   }
 
   // 進行状況表示
@@ -54,6 +80,10 @@ class ReleaseAutomation {
     console.log('🚀 ウディこん助 リリース自動化システム開始');
     console.log('=' .repeat(60));
     
+    // モード情報表示
+    this.showModeInfo();
+    console.log('─'.repeat(60));
+    
     let version, zipResult, websiteResult, gitResult;
     
     try {
@@ -64,20 +94,27 @@ class ReleaseAutomation {
       
       // Step 2: Chrome拡張パッケージ化
       this.showProgress(2, 5, 'Chrome拡張パッケージ化');
-      zipResult = await this.chromePackager.packageExtension(version);
+      zipResult = await this.chromePackager.packageExtension(version, this.mode);
       console.log(`📦 生成ファイル: ${zipResult.fileName}`);
       
       // Step 3: Webサイト更新
       this.showProgress(3, 5, 'Webサイト更新');
-      websiteResult = await this.websiteUpdater.updateWebsite(version, zipResult.fileName);
-      console.log('🌐 紹介ページ更新完了');
+      websiteResult = await this.websiteUpdater.updateWebsite(version, zipResult.fileName, this.mode);
+      
+      if (websiteResult.skipped) {
+        console.log('ℹ️ Webサイト更新をスキップ (開発モード)');
+      } else {
+        console.log('🌐 紹介ページ更新完了');
+      }
       
       // Step 4: Git操作
       this.showProgress(4, 5, 'Git操作 (commit & push)');
-      gitResult = await this.gitHandler.handleGitOperations(version, {
+      gitResult = await this.gitHandler.handleGitOperations(version, this.mode, {
         zipFile: zipResult.fileName,
-        websiteUpdated: websiteResult.success,
-        versionSynced: true
+        websiteUpdated: websiteResult.success && !websiteResult.skipped,
+        websiteSkipped: websiteResult.skipped,
+        versionSynced: true,
+        filesCleanedUp: true
       });
       
       if (gitResult.skipped) {
@@ -100,13 +137,22 @@ class ReleaseAutomation {
 
   // 完了サマリー表示
   showCompletionSummary(version, zipResult, websiteResult, gitResult) {
+    const modeConfig = RELEASE_MODE[this.mode];
+    const modeEmoji = this.mode === 'production' ? '🚀' : '🛠️';
+    
     console.log('\\n🎉 リリース自動化完了!');
     console.log('=' .repeat(60));
     
     console.log('📋 実行結果サマリー:');
+    console.log(`  ${modeEmoji} モード: ${this.mode === 'production' ? '本番リリース' : '開発リリース'}`);
     console.log(`  ✅ バージョン: v${version}`);
     console.log(`  ✅ パッケージ: ${zipResult.fileName} (${zipResult.fileSize}MB)`);
-    console.log(`  ✅ Webサイト: ${websiteResult.changes.length}件の更新`);
+    
+    if (websiteResult.skipped) {
+      console.log(`  ⏭️ Webサイト: ${websiteResult.changes[0]}`);
+    } else {
+      console.log(`  ✅ Webサイト: ${websiteResult.changes.length}件の更新`);
+    }
     
     if (gitResult.skipped) {
       console.log('  ⏭️ Git操作: スキップ (変更なし)');
@@ -115,9 +161,15 @@ class ReleaseAutomation {
     }
     
     console.log('\\n🔗 次のステップ:');
-    console.log('  1. https://wudi-consuke.vercel.app/ でダウンロード確認');
-    console.log('  2. Chrome拡張機能の動作テスト');
-    console.log('  3. 必要に応じてChrome Web Store更新準備');
+    if (this.mode === 'production') {
+      console.log('  1. https://wudi-consuke.vercel.app/ でダウンロード確認');
+      console.log('  2. 一般ユーザー向け新バージョン告知');
+      console.log('  3. Chrome Web Store更新（準備完了時）');
+    } else {
+      console.log('  1. Chrome拡張機能の動作テスト');
+      console.log('  2. 開発チーム内での検証');
+      console.log('  3. 本番リリース準備（npm run create-release -- --production）');
+    }
     
     this.showExecutionTime();
     

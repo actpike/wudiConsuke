@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { WEBSITE_INDEX_PATH, VERSIONS_DIR } = require('../config/paths.config');
-const { WEBSITE_CONFIG, LOG_CONFIG } = require('../config/release.config');
+const { WEBSITE_CONFIG, LOG_CONFIG, RELEASE_MODE } = require('../config/release.config');
 
 class WebsiteUpdater {
   constructor() {
@@ -114,8 +114,10 @@ class WebsiteUpdater {
   }
 
   // メインWebサイト更新処理
-  async updateWebsite(version, zipFileName) {
-    console.log(`🌐 Webサイト更新開始 (v${version})`);
+  async updateWebsite(version, zipFileName, mode = 'development') {
+    const modeConfig = RELEASE_MODE[mode];
+    
+    console.log(`🌐 Webサイト更新開始 (v${version}) [${mode}モード]`);
     
     try {
       // 1. zipファイル存在確認
@@ -123,21 +125,32 @@ class WebsiteUpdater {
         this.verifyZipFileExists(zipFileName);
       }
       
-      // 2. 現在のindex.html読み込み
+      // 2. モードに応じて更新スキップ
+      if (!modeConfig.UPDATE_WEBSITE) {
+        console.log('ℹ️ 開発モードのため、Webサイト更新をスキップ');
+        return {
+          success: true,
+          skipped: true,
+          reason: 'development mode',
+          changes: ['⏭️ 開発モードによりWebサイト更新スキップ']
+        };
+      }
+      
+      // 3. 現在のindex.html読み込み
       const originalContent = this.readIndexFile();
       let updatedContent = originalContent;
       
-      // 3. ダウンロードリンク更新
+      // 4. ダウンロードリンク更新
       if (WEBSITE_CONFIG.UPDATE_DOWNLOAD_LINKS) {
         updatedContent = this.updateDownloadLinks(updatedContent, version, zipFileName);
       }
       
-      // 4. バージョンバッジ更新
+      // 5. バージョンバッジ更新
       if (WEBSITE_CONFIG.UPDATE_VERSION_BADGE) {
         updatedContent = this.updateVersionBadge(updatedContent, version);
       }
       
-      // 5. 変更内容検証
+      // 6. 変更内容検証
       const changes = this.validateChanges(originalContent, updatedContent, version, zipFileName);
       
       if (LOG_CONFIG.VERBOSE) {
@@ -145,7 +158,7 @@ class WebsiteUpdater {
         changes.forEach(change => console.log(`  ${change}`));
       }
       
-      // 6. ファイル書き込み
+      // 7. ファイル書き込み
       this.writeIndexFile(updatedContent);
       
       console.log('🎉 Webサイト更新完了!');

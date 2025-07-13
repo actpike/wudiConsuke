@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const archiver = require('archiver');
 const { EXTENSION_DIR, VERSIONS_DIR, TEMP_DIR, EXCLUDE_PATTERNS } = require('../config/paths.config');
-const { ZIP_CONFIG, LOG_CONFIG } = require('../config/release.config');
+const { ZIP_CONFIG, LOG_CONFIG, RELEASE_MODE } = require('../config/release.config');
 
 class ChromePackager {
   constructor() {
@@ -55,12 +55,51 @@ class ChromePackager {
     return targetDir;
   }
 
+  // 古いpre版zipファイルを削除
+  async cleanupOldPreFiles(currentVersion) {
+    try {
+      const files = await fs.readdir(this.outputDir);
+      const prePattern = /WudiConsuke_release_v([0-9.]+)-pre\.zip$/;
+      
+      for (const file of files) {
+        const match = file.match(prePattern);
+        if (match) {
+          const fileVersion = match[1];
+          if (fileVersion !== currentVersion) {
+            const filePath = path.join(this.outputDir, file);
+            await fs.remove(filePath);
+            console.log(`🗑️ 古いpre版削除: ${file}`);
+          }
+        }
+      }
+    } catch (error) {
+      console.warn(`⚠️ pre版削除警告: ${error.message}`);
+    }
+  }
+
+  // 同バージョンのpre版zipファイルを削除
+  async cleanupPreVersion(version) {
+    try {
+      const preFileName = `WudiConsuke_release_v${version}-pre.zip`;
+      const preFilePath = path.join(this.outputDir, preFileName);
+      
+      if (await fs.pathExists(preFilePath)) {
+        await fs.remove(preFilePath);
+        console.log(`🗑️ pre版削除: ${preFileName}`);
+      }
+    } catch (error) {
+      console.warn(`⚠️ pre版削除警告: ${error.message}`);
+    }
+  }
+
   // zipファイル作成
-  async createZipFile(sourceDir, version) {
+  async createZipFile(sourceDir, version, suffix = '') {
     return new Promise((resolve, reject) => {
       console.log('🗜️ zipファイル作成中...');
       
-      const zipFileName = ZIP_CONFIG.FILE_NAME_PATTERN.replace('{version}', version);
+      const zipFileName = ZIP_CONFIG.FILE_NAME_PATTERN
+        .replace('{version}', version)
+        .replace('{suffix}', suffix);
       const zipFilePath = path.join(this.outputDir, zipFileName);
       
       // 出力ディレクトリ確保
@@ -122,20 +161,30 @@ class ChromePackager {
   }
 
   // メインパッケージング処理
-  async packageExtension(version) {
-    console.log(`📦 Chrome拡張のパッケージング開始 (v${version})`);
+  async packageExtension(version, mode = 'development') {
+    const modeConfig = RELEASE_MODE[mode];
+    const suffix = modeConfig.ZIP_SUFFIX;
+    
+    console.log(`📦 Chrome拡張のパッケージング開始 (v${version}${suffix}) [${mode}モード]`);
     
     try {
-      // 1. ファイルコピー
+      // 1. ファイルクリーンアップ
+      if (mode === 'development' && modeConfig.CLEANUP_OLD_PRE) {
+        await this.cleanupOldPreFiles(version);
+      } else if (mode === 'production' && modeConfig.CLEANUP_PRE_VERSION) {
+        await this.cleanupPreVersion(version);
+      }
+      
+      // 2. ファイルコピー
       const copiedDir = await this.copyExtensionFiles();
       
-      // 2. zip作成
-      const zipResult = await this.createZipFile(copiedDir, version);
+      // 3. zip作成
+      const zipResult = await this.createZipFile(copiedDir, version, suffix);
       
-      // 3. 検証
+      // 4. 検証
       await this.verifyZipContents(zipResult.filePath);
       
-      // 4. 一時ディレクトリクリーンアップ
+      // 5. 一時ディレクトリクリーンアップ
       await fs.remove(this.tempDir);
       
       console.log('🎉 パッケージング完了!');

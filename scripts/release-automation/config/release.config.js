@@ -2,7 +2,7 @@ module.exports = {
   // zip圧縮設定
   ZIP_CONFIG: {
     FOLDER_NAME: 'WudiConsuke',  // zip内のフォルダ名（固定）
-    FILE_NAME_PATTERN: 'WudiConsuke_release_v{version}.zip',  // zipファイル名パターン
+    FILE_NAME_PATTERN: 'WudiConsuke_release_v{version}{suffix}.zip',  // zipファイル名パターン
     COMPRESSION_LEVEL: 9  // 最大圧縮
   },
   
@@ -13,9 +13,24 @@ module.exports = {
     ADD_CHANGELOG_ENTRY: true  // 変更履歴自動追加
   },
   
+  // リリースモード設定
+  RELEASE_MODE: {
+    development: {
+      ZIP_SUFFIX: '-pre',
+      UPDATE_WEBSITE: false,
+      COMMIT_MESSAGE_TEMPLATE: 'dev: v{version}-pre 開発版リリース\\n\\n🤖 Generated with [Claude Code](https://claude.ai/code)\\n\\nCo-Authored-By: Claude <noreply@anthropic.com>',
+      CLEANUP_OLD_PRE: true  // 古いpre版削除
+    },
+    production: {
+      ZIP_SUFFIX: '',
+      UPDATE_WEBSITE: true,
+      COMMIT_MESSAGE_TEMPLATE: 'release: v{version} 本番リリース\\n\\n🤖 Generated with [Claude Code](https://claude.ai/code)\\n\\nCo-Authored-By: Claude <noreply@anthropic.com>',
+      CLEANUP_PRE_VERSION: true  // 同バージョンのpre版削除
+    }
+  },
+
   // Git設定
   GIT_CONFIG: {
-    COMMIT_MESSAGE_TEMPLATE: 'release: v{version}リリース - 自動パッケージング\\n\\n🤖 Generated with [Claude Code](https://claude.ai/code)\\n\\nCo-Authored-By: Claude <noreply@anthropic.com>',
     AUTO_PUSH: true,  // 自動プッシュ
     BRANCH: 'main'  // 対象ブランチ
   },
