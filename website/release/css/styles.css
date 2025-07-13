@@ -464,3 +464,158 @@ p {
 html {
     scroll-behavior: smooth;
 }
+
+/* Browser Warning Styles */
+.browser-warning {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    color: #856404;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.btn-disabled {
+    background: #6c757d !important;
+    border-color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.7;
+}
+
+.btn-disabled:hover {
+    background: #6c757d !important;
+    border-color: #6c757d !important;
+    transform: none !important;
+}
+
+/* Installation Guide Styles */
+.installation-guide {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.installation-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    color: #2c3e50;
+    font-size: 1.5rem;
+}
+
+.installation-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.step {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.step-content {
+    flex: 1;
+}
+
+.step-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.2rem;
+}
+
+.step-content p {
+    margin: 0 0 1rem 0;
+    color: #6c757d;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.step-content code {
+    background: #f1f3f4;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.prep-note {
+    background: #e8f4f8;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid #667eea;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0 auto 1rem auto;
+    max-width: 500px;
+    text-align: center;
+}
+
+.install-steps-list {
+    margin: 1rem auto;
+    padding-left: 1.5rem;
+    max-width: 500px;
+    text-align: left;
+}
+
+.install-steps-list li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+    color: #6c757d;
+}
+
+.step-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design for Installation Guide */
+@media (max-width: 768px) {
+    .step {
+        flex-direction: column;
+        text-align: left;
+    }
+    
+    .step-number {
+        align-self: flex-start;
+        margin-bottom: 1rem;
+    }
+    
+    .installation-guide {
+        padding: 1.5rem;
+        margin-top: 2rem;
+    }
+    
+    .installation-title {
+        font-size: 1.3rem;
+    }
+    
+    .step-content h4 {
+        font-size: 1.1rem;
+    }
+}

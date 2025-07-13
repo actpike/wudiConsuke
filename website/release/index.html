@@ -15,7 +15,7 @@
     <meta property="og:image:width" content="640">
     <meta property="og:image:height" content="400">
     <meta property="og:image:alt" content="ウディこん助メイン画面 - 作品一覧と評価管理">
-    <meta property="og:url" content="">
+    <meta property="og:url" content="https://wudi-consuke.vercel.app/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="ウディこん助">
     <meta property="og:locale" content="ja_JP">
@@ -48,7 +48,7 @@
         "name": "ウディこん助 (WodiConsuke)",
         "description": "WOLF RPGエディターコンテスト作品のプレイ体験を向上させるChrome拡張機能。サイト訪問時の自動監視機能付き",
         "image": "./images/WudiConsuke_top_640_400.png",
-        "url": "",
+        "url": "https://wudi-consuke.vercel.app/",
         "author": {
             "@type": "Person",
             "name": "ぴけ"
@@ -69,7 +69,8 @@
     </script>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="./images/WudiConsuke_top.png">
+    <link rel="icon" type="image/png" href="./images/icon16.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/icon16.png">
     
     <link rel="stylesheet" href="./css/styles.css">
 </head>
@@ -178,15 +179,56 @@
                 <div class="download-content">
                     <h2 class="section-title">ダウンロード</h2>
                     <p class="download-description">
-                        Chrome Web Storeでの公開準備中です。<br>
-                        もうしばらくお待ちください。
+                        現在Chrome Web Store公開準備中です。<br>
+                        こちらから手動でインストールしていただけます。
                     </p>
+                    
+                    <!-- ダウンロードボタン（ブラウザ判定対応） -->
                     <div class="download-button">
-                        <button class="btn btn-primary btn-large" disabled>
-                            <span class="btn-icon">🔗</span>
-                            Chrome Web Store
-                            <span class="coming-soon">Coming Soon...</span>
-                        </button>
+                        <a href="./versions/WudiConsuke_release_v0.0.1.zip" 
+                           id="download-btn"
+                           class="btn btn-primary btn-large"
+                           download="WudiConsuke_v0.0.1.zip">
+                            <span class="btn-icon">📦</span>
+                            <span id="download-text">ウディこん助 v0.0.1 をダウンロード</span>
+                        </a>
+                        <p id="browser-warning" class="browser-warning" style="display: none;">
+                            ⚠️ この拡張機能はChromeブラウザでのみ動作します
+                        </p>
+                    </div>
+                    
+                    <!-- 導入手順セクション -->
+                    <div class="installation-guide">
+                        <h3 class="installation-title">導入手順</h3>
+                        <div class="installation-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Chrome拡張機能管理画面を開く</h4>
+                                    <p class="prep-note">【事前準備】上記のボタン[ ダウンロード ]より、zipを任意のフォルダへ解凍</p>
+                                    <ol class="install-steps-list">
+                                        <li>Chromeブラウザで <code>chrome://extensions/</code> にアクセス</li>
+                                        <li>右上の『開発者モード』を有効化</li>
+                                        <li>押下『パッケージ化されていない拡張機能を読み込む』</li>
+                                        <li>解凍したzipのフォルダを選択し、押下[ フォルダーの選択 ]</li>
+                                    </ol>
+                                    <img src="./images/Installation/wdiconsuke_Installation_01.png" 
+                                         alt="Chrome拡張機能管理画面" 
+                                         class="step-image">
+                                </div>
+                            </div>
+                            
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>インストール完了</h4>
+                                    <p>ウディこん助がインストールされ、ブラウザのツールバーにアイコンが表示されます。クリックして利用開始！</p>
+                                    <img src="./images/Installation/wdiconsuke_Installation_04.png" 
+                                         alt="インストール完了" 
+                                         class="step-image">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

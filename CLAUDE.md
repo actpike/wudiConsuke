@@ -10,6 +10,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 作業やドキュメント類は英語
 - Claude回答や、ユーザとのコミュニケーションは日本語で行う
 
+## 関連資料
+- 機能追加・修正等が完了し、git操作を行う際VERSION.mdに従う
+	`VERSION.md`
+- ユーザから配布準備の依頼を受けた場合、下記資料を参照する
+	'UdiConsuke\documents\chromeStore\releaseReference(配布指南書).md'
+
 ## プロジェクト構造
 
 ### ドキュメント管理
@@ -50,6 +56,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 作品プレイ補助機能（評価・感想・管理システム）
 - 実用的自動監視システム（Chrome Manifest V3制約対応）
 - 紹介ページリニューアル（一般利用者向け説明）
+
+### 進行中のタスク
+- UI改善・機能強化（設定画面の文言統一、全選択機能、状態表示改善）
 
 ## SOW作成ガイドライン
 
@@ -104,11 +113,14 @@ Chrome拡張機能には伝統的なbuild/lint/testコマンドはありませ�
 ### 全体設計
 Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content Script + Popup の3層構成で完全ローカル動作を実現。
 
-### データフロー
-1. **background.js** (Service Worker) がChrome Alarms APIで定期監視をスケジュール
-2. **pageParser.js** がsilversecond.comをfetchしてHTML解析、新規/更新作品を検出
-3. **updateManager.js** が検出結果を処理し、chrome.storage.localに保存、chrome.notifications.create()で通知
-4. **popup.js** がUI表示とユーザー操作を処理、dataManager.jsでCRUD操作
+### データフロー（実用的自動監視システム）
+1. **content.js** がウディコンサイト訪問時に自動監視実行（30分間隔制限）
+2. **popup.js** が拡張機能開時に定期監視実行（1時間以上経過時）
+3. **pageParser.js** がsilversecond.comをfetchしてHTML解析、新規/更新作品を検出
+4. **updateManager.js** が検出結果を処理し、chrome.storage.localに保存、chrome.notifications.create()で通知
+5. **popup.js** がUI表示とユーザー操作を処理、dataManager.jsでCRUD操作
+
+**注意**: 従来のbackground.js定期監視はChrome Manifest V3制約により廃止済み
 
 ### 重要な相互依存
 - 全モジュールはwindowオブジェクトにグローバルインスタンスを作成（例：window.gameDataManager）

@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
+    // ブラウザ判定とダウンロードボタン制御
+    initializeBrowserDetection();
+    
     // スムーススクロール
     initializeSmoothScroll();
     
@@ -19,6 +22,69 @@ function initializeApp() {
     initializeLazyLoading();
     
     console.log('🌊 ウディこん助紹介ページ初期化完了');
+}
+
+// ブラウザ判定とダウンロードボタン制御
+function initializeBrowserDetection() {
+    const downloadBtn = document.getElementById('download-btn');
+    const downloadText = document.getElementById('download-text');
+    const browserWarning = document.getElementById('browser-warning');
+    
+    // 要素が存在しない場合は処理をスキップ
+    if (!downloadBtn || !downloadText || !browserWarning) {
+        console.log('ダウンロードボタン要素が見つかりません');
+        return;
+    }
+    
+    // Chrome判定（より精密な判定）
+    const isChrome = /Chrome/.test(navigator.userAgent) && 
+                    /Google Inc/.test(navigator.vendor) &&
+                    !/Edg|OPR|Opera/.test(navigator.userAgent);
+    
+    console.log(`ブラウザ判定結果: Chrome=${isChrome}, UserAgent=${navigator.userAgent}`);
+    
+    if (!isChrome) {
+        // Chrome以外の場合
+        downloadBtn.classList.remove('btn-primary');
+        downloadBtn.classList.add('btn-disabled');
+        downloadBtn.removeAttribute('href');
+        downloadBtn.removeAttribute('download');
+        downloadText.textContent = 'Chromeブラウザでのみサポートしています';
+        browserWarning.style.display = 'block';
+        
+        // クリックイベントを無効化
+        downloadBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // より詳細なアラートメッセージ
+            const browserName = getBrowserName();
+            alert(`この拡張機能はGoogle Chromeブラウザでのみ利用できます。\n\n現在のブラウザ: ${browserName}\n\nChromeをダウンロードしてからお試しください。\nhttps://www.google.com/chrome/`);
+        });
+        
+        console.log('🚫 Chrome以外のブラウザでダウンロードボタンを無効化しました');
+    } else {
+        console.log('✅ Chrome環境でダウンロードボタンを有効化しました');
+    }
+}
+
+// ブラウザ名取得ヘルパー関数
+function getBrowserName() {
+    const userAgent = navigator.userAgent;
+    
+    if (userAgent.includes('Firefox')) {
+        return 'Mozilla Firefox';
+    } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+        return 'Safari';
+    } else if (userAgent.includes('Edge') || userAgent.includes('Edg')) {
+        return 'Microsoft Edge';
+    } else if (userAgent.includes('Opera') || userAgent.includes('OPR')) {
+        return 'Opera';
+    } else if (userAgent.includes('Chrome')) {
+        return 'Google Chrome';
+    } else {
+        return '不明なブラウザ';
+    }
 }
 
 // スムーススクロール

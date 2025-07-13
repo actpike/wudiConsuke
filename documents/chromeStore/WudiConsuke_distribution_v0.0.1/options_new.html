@@ -121,18 +121,42 @@
   </div>
 
   <div class="section">
-    <h2>📡 手動監視・履歴</h2>
+    <h2>📡 Web監視設定</h2>
     <div class="setting-item">
-      <label for="contest-url">ウディコンページURL:</label>
-      <input type="url" id="contest-url" placeholder="https://silversecond.com/WolfRPGEditor/Contest/entry.shtml">
-      <small>監視対象となるウディコンページのURLを設定します</small>
+      <label for="monitoring-mode">監視モード:</label>
+      <select id="monitoring-mode">
+        <option value="disabled">無効</option>
+        <option value="all">全作品</option>
+        <option value="selected">注目作品のみ</option>
+      </select>
+      <small>選択した監視モードに基づいて自動監視を実行します</small>
     </div>
     
     <div class="setting-item">
-      <label>最終更新チェック日時:</label>
+      <label for="monitoring-interval">監視間隔:</label>
+      <select id="monitoring-interval">
+        <option value="0">監視しない</option>
+        <option value="15">15分</option>
+        <option value="30">30分</option>
+        <option value="60">1時間</option>
+        <option value="120">2時間</option>
+        <option value="240">4時間</option>
+      </select>
+      <small>短い間隔ほどリアルタイム性が向上しますが、リソースを消費します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label>
+        <input type="checkbox" id="monitor-on-startup"> 
+        ブラウザ起動時にチェック
+      </label>
+      <small>ブラウザ起動時に一度監視を実行します</small>
+    </div>
+    
+    <div class="setting-item">
+      <label>最終監視時刻:</label>
       <span id="last-monitor-time">未実行</span>
       <button id="manual-monitor-now" class="secondary">今すぐ監視実行</button>
-      <small>手動での新規・更新チェックを実行します</small>
     </div>
     
     <div class="setting-item">
@@ -144,56 +168,10 @@
   </div>
 
   <div class="section">
-    <h2>🔄 新規・更新チェック設定</h2>
-    <div class="setting-item">
-      <label>
-        <input type="checkbox" id="enable-auto-monitoring" checked> 
-        新規・更新チェックを有効にする
-      </label>
-      <small>ウディコンサイト訪問時やポップアップ開時の自動チェック機能です</small>
-    </div>
-    
-    <div class="setting-item">
-      <label>
-        <input type="checkbox" id="enable-content-auto-monitoring" checked> 
-        ウディコンサイト訪問時の自動チェック
-      </label>
-      <small>ウディコンページを開いた際に自動的に新規・更新をチェックします（30分間隔制限）</small>
-    </div>
-    
-    <div class="setting-item">
-      <label for="popup-auto-interval">ポップアップ自動チェック間隔:</label>
-      <select id="popup-auto-interval">
-        <option value="1" selected>1時間</option>
-        <option value="3">3時間</option>
-        <option value="6">6時間</option>
-        <option value="12">12時間</option>
-        <option value="24">24時間</option>
-      </select>
-      <small>拡張機能ポップアップを開いた際の自動チェック間隔です</small>
-    </div>
-    
-    <div class="setting-item">
-      <label>最終更新チェック日時:</label>
-      <span id="last-auto-monitor-time">未実行</span>
-      <button id="clear-auto-monitor-time" class="secondary">履歴クリア</button>
-      <small>次回自動チェック: ウディコンサイト訪問時またはポップアップ開時</small>
-    </div>
-    
-    <div class="setting-item">
-      <h4>📊 自動チェック状況</h4>
-      <div id="auto-monitor-status">
-        <p>読み込み中...</p>
-      </div>
-      <small>現在の自動チェック設定と次回実行予定を表示します</small>
-    </div>
-  </div>
-
-  <div class="section">
     <h2>🔔 通知設定</h2>
     <div class="setting-item">
       <label>
-        <input type="checkbox" id="enable-notifications" checked> 
+        <input type="checkbox" id="enable-notifications"> 
         Chrome通知を有効にする
       </label>
     </div>
