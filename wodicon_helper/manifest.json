@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ウディこん助 (WodiConsuke)",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ウディコン作品プレイ体験をより快適・便利にするChrome拡張機能",
   
   "permissions": [

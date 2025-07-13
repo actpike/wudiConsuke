@@ -279,62 +279,11 @@ class NavigationController {
         versionElement.textContent = '';
       }
 
-      // 評価システムを初期化
-      const ratingCategories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
-      ratingCategories.forEach(category => {
-        const slider = document.querySelector(`input[data-category="${category}"]`);
-        if (slider) {
-          slider.value = 1;
-          const valueSpan = slider.nextElementSibling;
-          if (valueSpan) {
-            valueSpan.textContent = '1';
-          }
-        }
-      });
-
-      // 感想テキストエリアをクリア
-      const reviewTextarea = document.getElementById('review-textarea');
-      if (reviewTextarea) {
-        reviewTextarea.value = '';
-      }
-
-      // 文字数カウンターをクリア
-      const charCount = document.getElementById('char-count');
-      if (charCount) {
-        charCount.textContent = '0';
-      }
-
-      // 合計評価をクリア
-      const totalRating = document.getElementById('total-rating');
-      if (totalRating) {
-        totalRating.textContent = '6';
-      }
-
-      // 平均バーをクリア
-      try {
-        const averageBar = document.querySelector('.average-bar');
-        if (averageBar) {
-          averageBar.style.display = 'none';
-        }
-        
-        // 全ての平均バー要素をリセット
-        const averageBars = document.querySelectorAll('.average-bar');
-        averageBars.forEach(bar => {
-          bar.style.display = 'none';
-          bar.style.width = '0%';
-        });
-        
-        // 平均値表示もリセット
-        const averageValues = document.querySelectorAll('.average-value');
-        averageValues.forEach(value => {
-          value.textContent = '';
-        });
-      } catch (averageError) {
-        console.warn('平均バークリアでエラー:', averageError);
-      }
-
-      // 変更フラグをリセット
-      this.hasUnsavedChanges = false;
+      // 評価スライダーと入力フィールドのみリセット（平均バーは保持）
+      this.resetInputsOnly();
+      
+      // 平均バーを表示（全作品の平均値）
+      await this.displayAverageRating();
       
     } catch (error) {
       console.error('Failed to initialize detail view:', error);
@@ -506,7 +455,7 @@ class NavigationController {
     await this.loadGameData(this.editingGameId);
   }
 
-  // UI要素をリセット
+  // UI要素をリセット（削除時など、平均バーも含めて完全リセット）
   resetUI() {
     try {
       // 評価スライダーをリセット
@@ -560,6 +509,48 @@ class NavigationController {
 
     } catch (error) {
       console.error('resetUI エラー:', error);
+    }
+  }
+
+  // 入力フィールドのみリセット（平均バーは保持）
+  resetInputsOnly() {
+    try {
+      // 評価スライダーをリセット
+      const ratingCategories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+      ratingCategories.forEach(category => {
+        const slider = document.querySelector(`input[data-category="${category}"]`);
+        if (slider) {
+          slider.value = 1;
+          const valueSpan = slider.nextElementSibling;
+          if (valueSpan) {
+            valueSpan.textContent = '1';
+          }
+        }
+      });
+
+      // 感想テキストエリアをクリア
+      const reviewTextarea = document.getElementById('review-textarea');
+      if (reviewTextarea) {
+        reviewTextarea.value = '';
+      }
+
+      // 文字数カウンターをクリア
+      const charCount = document.getElementById('character-count');
+      if (charCount) {
+        charCount.textContent = '0';
+      }
+
+      // 合計評価をリセット
+      const totalRating = document.getElementById('total-rating');
+      if (totalRating) {
+        totalRating.textContent = '6';
+      }
+
+      // 変更フラグをリセット
+      this.hasUnsavedChanges = false;
+
+    } catch (error) {
+      console.error('resetInputsOnly エラー:', error);
     }
   }
 
