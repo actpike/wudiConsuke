@@ -1,0 +1,22 @@
+{
+  "name": "wudi-consuke",
+  "version": "0.0.3",
+  "description": "WOLF RPGエディターコンテスト用Chrome拡張機能の開発プロジェクト",
+  "main": "index.js",
+  "scripts": {
+    "create-release": "node scripts/release-automation/create-release.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chrome-extension",
+    "wolf-rpg",
+    "udicon",
+    "game-management"
+  ],
+  "author": "ぴけ",
+  "license": "MIT",
+  "devDependencies": {
+    "archiver": "^7.0.0",
+    "fs-extra": "^11.2.0"
+  }
+}
