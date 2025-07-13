@@ -87,6 +87,17 @@ p {
     font-weight: 400;
 }
 
+.version-badge {
+    font-size: 0.7rem;
+    font-weight: 400;
+    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
 .tagline {
     font-size: 1.1rem;
     color: #f8f9fa;
@@ -420,6 +431,12 @@ p {
     
     .logo h1 {
         font-size: 1.8rem;
+    }
+    
+    .version-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+        margin-left: 0.3rem;
     }
     
     .hero-buttons {
