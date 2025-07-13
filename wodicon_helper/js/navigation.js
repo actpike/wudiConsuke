@@ -505,11 +505,15 @@ class NavigationController {
 
     try {
       // 評価と感想をクリア
-      await window.gameDataManager.saveGameData(this.editingGameId, {
-        ratings: {},
+      const success = await window.gameDataManager.updateGame(this.editingGameId, {
+        rating: {},
         review: '',
-        isPlayed: false
+        is_played: false
       });
+
+      if (!success) {
+        throw new Error('ゲームデータの更新に失敗しました');
+      }
 
       // UI更新
       this.resetUI();
