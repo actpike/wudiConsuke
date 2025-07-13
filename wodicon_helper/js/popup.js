@@ -151,6 +151,10 @@ class GameListManager {
     document.getElementById('test-update-btn').addEventListener('click', () => {
       this.performTestUpdateModification();
     });
+    
+    document.getElementById('test-reset-btn').addEventListener('click', () => {
+      this.performTestReset();
+    });
 
     document.getElementById('settings-btn').addEventListener('click', () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
@@ -1230,33 +1234,33 @@ class GameListManager {
         throw new Error('UpdateCheckerTest が初期化されていません');
       }
       
-      // テスト実行
-      const result = await window.updateCheckerTest.modifyGameUpdateDate();
+      // 包括テストを実行
+      this.updateStatusBar('🧪 更新検知包括テスト実行中...', 'processing', 0);
       
-      if (result.success) {
+      const result = await window.updateCheckerTest.runFullTest();
+      
+      if (result.overall === 'PASS') {
         // 成功時の処理
         this.updateStatusBar(
-          `✅ テスト完了: No${result.gameNo} 更新日→${result.newDate}`, 
+          `🎉 テスト成功！更新検知機能は正常動作しています`, 
           'success', 
-          5000
+          8000
         );
         
         // リスト更新
         await this.refreshList();
         
-        console.log('✅ テスト成功:', result);
-        
-        // 次のステップを案内
-        setTimeout(() => {
-          this.updateStatusBar(
-            '🔍 手動監視でテスト検証してください', 
-            'info', 
-            8000
-          );
-        }, 3000);
+        console.log('✅ 包括テスト成功:', result);
         
       } else {
-        throw new Error('テスト実行に失敗しました');
+        // 失敗時の処理
+        this.updateStatusBar(
+          `⚠️ テスト失敗：更新検知に問題があります`, 
+          'warning', 
+          8000
+        );
+        
+        console.warn('⚠️ 包括テスト失敗:', result);
       }
       
     } catch (error) {
@@ -1272,6 +1276,40 @@ class GameListManager {
         btn.className = originalClass;
         btn.disabled = false;
       }, 3000);
+    }
+  }
+
+  // テストリセット実行
+  async performTestReset() {
+    try {
+      console.log('🔄🧹 テストリセット開始');
+      
+      if (!window.updateCheckerTest) {
+        throw new Error('UpdateCheckerTest が初期化されていません');
+      }
+      
+      // リセット実行
+      this.updateStatusBar('🔄🧹 テストデータリセット中...', 'processing', 0);
+      
+      const result = await window.updateCheckerTest.resetTestData();
+      
+      if (result.success) {
+        // 成功時の処理
+        this.updateStatusBar('✅ テストリセット完了', 'success', 5000);
+        
+        // リスト更新
+        await this.refreshList();
+        
+        console.log('✅ テストリセット成功:', result);
+        
+      } else {
+        throw new Error('テストリセットに失敗しました');
+      }
+      
+    } catch (error) {
+      // エラー時の処理
+      console.error('❌ テストリセットエラー:', error);
+      this.updateStatusBar('❌ テストリセットでエラーが発生しました', 'error', 5000);
     }
   }
 

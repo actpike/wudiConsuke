@@ -9,6 +9,10 @@ class WebMonitor {
     this.selectedWorks = new Set(); // 注目作品のID
     this.checkOnStartup = false;
     
+    // テスト用フラグ
+    this.isTestMode = false;
+    this.testMockData = null;
+    
     // エラー管理
     this.consecutiveErrors = 0;
     this.maxRetries = 3;
@@ -419,11 +423,25 @@ class WebMonitor {
         updates.author = workData.author;
       }
 
+      // 更新日変更
+      if (workData.changeType.includes('updated')) {
+        let cleanLastUpdate = workData.lastUpdate || workData.updateTimestamp;
+        
+        // 「→」以降の不要な文言を除去
+        if (cleanLastUpdate && typeof cleanLastUpdate === 'string') {
+          // 「→」で分割して最初の部分のみ使用
+          cleanLastUpdate = cleanLastUpdate.split('→')[0].trim();
+          console.log(`🧹 更新日クリーンアップ: ${workData.lastUpdate} → ${cleanLastUpdate}`);
+        }
+        
+        updates.lastUpdate = cleanLastUpdate;
+      }
+
       // Web監視情報更新
       updates.web_monitoring = {
         ...existingWork.web_monitoring,
         last_check: new Date().toISOString(),
-        last_update: workData.updateTimestamp,
+        last_update: workData.updateTimestamp || workData.lastUpdate,
         change_type: workData.changeType
       };
 
@@ -584,13 +602,42 @@ class WebMonitor {
       this.lastCheckTime = new Date().toISOString();
       await this.saveSettings();
 
-      // ページ取得（既存のfetchContestPageを使用）
-      console.log('📡 ウディコンページ取得中...');
-      const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
+      let parseResult;
       
-      // 解析実行（既存のpageParserを使用）
-      console.log('🔍 ページ解析実行中...');
-      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
+      // テストモードの確認
+      console.log(`🔍 テストモード確認: isTestMode=${this.isTestMode}, mockData=${!!this.testMockData}`);
+      if (this.isTestMode && this.testMockData) {
+        console.log('🧪 テストモード: モックデータを使用');
+        console.log(`📊 モックデータ件数: ${this.testMockData.length}`);
+        // No4のデータを特別に表示（型変換対応）
+        const no4Mock = this.testMockData.find(w => 
+          w.no === 4 || w.no === '4' || parseInt(w.no) === 4
+        );
+        if (no4Mock) {
+          console.log(`🎯 No4モックデータ: ${no4Mock.title} - 更新日: ${no4Mock.lastUpdate}`);
+        } else {
+          console.warn('⚠️ No4のモックデータが見つかりません');
+          // デバッグ用：最初の3件のnoを表示
+          console.log('📊 モックデータのNo例:', this.testMockData.slice(0, 3).map(w => `${w.no}(${typeof w.no})`));
+        }
+        parseResult = {
+          success: true,
+          works: this.testMockData,
+          pattern: 'testMock',
+          metadata: {
+            totalWorks: this.testMockData.length,
+            parseTime: Date.now()
+          }
+        };
+      } else {
+        // ページ取得（既存のfetchContestPageを使用）
+        console.log('📡 ウディコンページ取得中...');
+        const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
+        
+        // 解析実行（既存のpageParserを使用）
+        console.log('🔍 ページ解析実行中...');
+        parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
+      }
       
       if (!parseResult.success) {
         throw new Error(`ページ解析失敗: ${parseResult.error}`);

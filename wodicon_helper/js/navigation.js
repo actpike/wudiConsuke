@@ -125,6 +125,9 @@ class NavigationController {
   async showDetailView(gameId) {
     this.saveMainViewState();
     
+    // 詳細画面を開く時にベルアイコンをリセット
+    await this.resetUpdateNotification(gameId);
+    
     this.hideView('main-view');
     this.showView('detail-view');
     this.currentView = 'detail';
@@ -133,6 +136,28 @@ class NavigationController {
     
     await this.loadGameData(gameId);
     this.startAutoSave();
+  }
+
+  // 更新通知をリセット（ベルアイコンを消す）
+  async resetUpdateNotification(gameId) {
+    try {
+      const game = await window.gameDataManager.getGame(gameId);
+      if (game && game.version_status === 'updated') {
+        console.log(`🔔→✅ ベルアイコンリセット: ${game.title}`);
+        
+        await window.gameDataManager.updateGame(gameId, {
+          version_status: 'latest',
+          update_notification: false
+        });
+        
+        // メインビューのリストを更新（ベルアイコンを消すため）
+        if (window.gameListManager) {
+          await window.gameListManager.refreshList();
+        }
+      }
+    } catch (error) {
+      console.error('❌ 通知リセットエラー:', error);
+    }
   }
 
   // 画面切り替えヘルパー
@@ -197,6 +222,12 @@ class NavigationController {
       // 更新日情報
       const versionElement = document.getElementById('detail-version');
       
+      // デバッグ: 詳細画面でゲームデータを確認
+      console.log(`📋 詳細画面データ確認 (No.${game.no} ${game.title}):`);
+      console.log(`  lastUpdate: ${game.lastUpdate}`);
+      console.log(`  last_update: ${game.last_update}`);
+      console.log(`  version: ${game.version}`);
+      console.log(`  updated_at: ${game.updated_at}`);
       
       const lastUpdateValue = game.lastUpdate || game.last_update || game.version || game.updated_at;
       if (lastUpdateValue) {
@@ -213,6 +244,8 @@ class NavigationController {
         } catch (error) {
           updateText = `更新日: ${lastUpdateValue}`;
         }
+        
+        console.log(`📅 詳細画面表示: ${updateText}`);
         versionElement.textContent = updateText;
       } else {
         versionElement.textContent = '';

@@ -448,6 +448,13 @@ class PageParser {
   checkWorkChanges(newWork, existingWork) {
     const changes = [];
 
+    // No4の場合はデバッグログを出力
+    if (newWork.no === 4 || existingWork.no === 4) {
+      console.log(`🔍 No4変更チェック:`);
+      console.log(`  新データ: ${newWork.title} - lastUpdate: ${newWork.lastUpdate}, updateTimestamp: ${newWork.updateTimestamp}`);
+      console.log(`  既存データ: ${existingWork.title} - lastUpdate: ${existingWork.lastUpdate}, updateTimestamp: ${existingWork.updateTimestamp}`);
+    }
+
     // タイトル変更
     if (newWork.title !== existingWork.title) {
       changes.push('title');
@@ -458,13 +465,24 @@ class PageParser {
       changes.push('author');
     }
 
-    // 更新日時変更
+    // 更新日時変更（updateTimestampまたはlastUpdateで比較）
     if (newWork.updateTimestamp && existingWork.updateTimestamp) {
       const newDate = new Date(newWork.updateTimestamp);
       const existingDate = new Date(existingWork.updateTimestamp);
       if (newDate > existingDate) {
         changes.push('updated');
       }
+    } else if (newWork.lastUpdate && existingWork.lastUpdate) {
+      // lastUpdateフィールドでの比較も追加
+      if (newWork.lastUpdate !== existingWork.lastUpdate) {
+        console.log(`📅 lastUpdate変更検知: ${existingWork.lastUpdate} → ${newWork.lastUpdate}`);
+        changes.push('updated');
+      }
+    }
+
+    // No4の場合は結果をログ出力
+    if (newWork.no === 4 || existingWork.no === 4) {
+      console.log(`🎯 No4変更結果: ${changes.length > 0 ? changes.join(', ') : '変更なし'}`);
     }
 
     return changes.length > 0 ? changes : null;
