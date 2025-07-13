@@ -553,6 +553,10 @@ html {
     text-align: left;
 }
 
+.step-content p.prep-note {
+    text-align: center !important;
+}
+
 .step-content code {
     background: #f1f3f4;
     padding: 0.2rem 0.4rem;
