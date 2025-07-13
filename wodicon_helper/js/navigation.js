@@ -316,6 +316,19 @@ class NavigationController {
         if (averageBar) {
           averageBar.style.display = 'none';
         }
+        
+        // 全ての平均バー要素をリセット
+        const averageBars = document.querySelectorAll('.average-bar');
+        averageBars.forEach(bar => {
+          bar.style.display = 'none';
+          bar.style.width = '0%';
+        });
+        
+        // 平均値表示もリセット
+        const averageValues = document.querySelectorAll('.average-value');
+        averageValues.forEach(value => {
+          value.textContent = '';
+        });
       } catch (averageError) {
         console.warn('平均バークリアでエラー:', averageError);
       }
@@ -491,6 +504,63 @@ class NavigationController {
     }
 
     await this.loadGameData(this.editingGameId);
+  }
+
+  // UI要素をリセット
+  resetUI() {
+    try {
+      // 評価スライダーをリセット
+      const ratingCategories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+      ratingCategories.forEach(category => {
+        const slider = document.querySelector(`input[data-category="${category}"]`);
+        if (slider) {
+          slider.value = 1;
+          const valueSpan = slider.nextElementSibling;
+          if (valueSpan) {
+            valueSpan.textContent = '1';
+          }
+        }
+      });
+
+      // 感想テキストエリアをクリア
+      const reviewTextarea = document.getElementById('review-textarea');
+      if (reviewTextarea) {
+        reviewTextarea.value = '';
+      }
+
+      // 文字数カウンターをクリア
+      const charCount = document.getElementById('character-count');
+      if (charCount) {
+        charCount.textContent = '0';
+      }
+
+      // 合計評価をリセット
+      const totalRating = document.getElementById('total-rating');
+      if (totalRating) {
+        totalRating.textContent = '6';
+      }
+
+      // 平均バーを完全にリセット
+      const averageBars = document.querySelectorAll('.average-bar');
+      averageBars.forEach(bar => {
+        bar.style.display = 'none';
+        bar.style.width = '0%';
+        bar.style.opacity = '0';
+      });
+
+      // 平均値表示をリセット
+      const averageValues = document.querySelectorAll('.average-value');
+      averageValues.forEach(value => {
+        value.textContent = '';
+        value.style.display = 'none';
+      });
+
+      // 変更フラグをリセット
+      this.hasUnsavedChanges = false;
+
+    } catch (error) {
+      console.error('resetUI エラー:', error);
+    }
   }
 
   // ゲームデータ削除
