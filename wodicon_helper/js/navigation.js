@@ -80,14 +80,9 @@ class NavigationController {
       }
     });
 
-    // 手動保存ボタン
-    document.getElementById('manual-save-btn').addEventListener('click', () => {
-      this.saveCurrentEdit();
-    });
-
-    // リセットボタン
-    document.getElementById('reset-btn').addEventListener('click', () => {
-      this.resetCurrentEdit();
+    // 削除ボタン
+    document.getElementById('delete-btn').addEventListener('click', () => {
+      this.deleteCurrentGame();
     });
 
     // 詳細画面のタイトルクリック
@@ -496,6 +491,40 @@ class NavigationController {
     }
 
     await this.loadGameData(this.editingGameId);
+  }
+
+  // ゲームデータ削除
+  async deleteCurrentGame() {
+    if (!this.editingGameId) return;
+
+    const game = await window.gameDataManager.getGame(this.editingGameId);
+    if (!game) return;
+
+    const confirmed = confirm(`「${game.title}」の評価・感想データを削除しますか？\n\nこの操作は取り消せません。`);
+    if (!confirmed) return;
+
+    try {
+      // 評価と感想をクリア
+      await window.gameDataManager.saveGameData(this.editingGameId, {
+        ratings: {},
+        review: '',
+        isPlayed: false
+      });
+
+      // UI更新
+      this.resetUI();
+      this.updateSaveStatus('💾 削除完了');
+      
+      // メイン画面に戻る
+      setTimeout(() => {
+        this.showMainView();
+      }, 1000);
+
+      console.log(`ゲームデータ削除完了: ${game.title}`);
+    } catch (error) {
+      console.error('削除処理エラー:', error);
+      this.updateSaveStatus('❌ 削除失敗');
+    }
   }
 
   // 自動保存開始
