@@ -148,10 +148,6 @@ class GameListManager {
       this.performBackgroundUpdate();
     });
 
-    document.getElementById('init-monitoring-btn').addEventListener('click', () => {
-      this.initializeMonitoring();
-    });
-
     document.getElementById('settings-btn').addEventListener('click', () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
     });
@@ -761,106 +757,8 @@ class GameListManager {
     return `<pre style="white-space: pre-wrap; font-size: 11px;">${lines.join('\n')}</pre>`;
   }
 
-  // 統合テスト実行
-  async performIntegrationTest() {
-    const btn = document.getElementById('integration-test-btn');
-    const resultDiv = document.getElementById('monitor-result');
-    const contentDiv = document.getElementById('monitor-result-content');
 
-    try {
-      btn.disabled = true;
-      btn.textContent = '🧪 統合テスト実行中...';
-      
-      console.log('🧪 統合テスト開始');
-      
-      const testResults = await this.runIntegrationTests();
-      
-      // 結果表示
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = this.formatIntegrationTestResults(testResults);
-      
-      console.log('✅ 統合テスト完了:', testResults);
-      
-    } catch (error) {
-      console.error('❌ 統合テストエラー:', error);
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = `統合テストエラー: ${error.message}`;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '🧪 統合テスト実行';
-    }
-  }
 
-  // 統合テスト実行ロジック
-  async runIntegrationTests() {
-    const results = {
-      timestamp: new Date().toISOString(),
-      tests: [],
-      summary: { total: 0, passed: 0, failed: 0 }
-    };
-
-    // テスト1: データ管理機能
-    results.tests.push(await this.testDataManagement());
-    
-    // テスト2: Web監視基盤
-    results.tests.push(await this.testWebMonitoringSystem());
-    
-    // テスト3: 設定機能
-    results.tests.push(await this.testSettingsSystem());
-    
-    // テスト4: 通知システム
-    results.tests.push(await this.testNotificationSystem());
-    
-    // テスト5: UI統合
-    results.tests.push(await this.testUIIntegration());
-
-    // 集計
-    results.summary.total = results.tests.length;
-    results.summary.passed = results.tests.filter(t => t.status === 'passed').length;
-    results.summary.failed = results.tests.filter(t => t.status === 'failed').length;
-
-    return results;
-  }
-
-  // データ管理テスト
-  async testDataManagement() {
-    try {
-      // ゲームデータ取得テスト
-      const games = await window.gameDataManager.getGames();
-      if (!Array.isArray(games) || games.length === 0) {
-        throw new Error('ゲームデータが取得できません');
-      }
-
-      // 監視フラグ更新テスト
-      const testGame = games[0];
-      const originalFlag = testGame.web_monitoring_enabled;
-      
-      await window.gameDataManager.updateWebMonitoringFlag(testGame.id, !originalFlag);
-      const updatedGame = await window.gameDataManager.getGame(testGame.id);
-      
-      if (updatedGame.web_monitoring_enabled === originalFlag) {
-        throw new Error('監視フラグ更新が反映されていません');
-      }
-
-      // 元に戻す
-      await window.gameDataManager.updateWebMonitoringFlag(testGame.id, originalFlag);
-
-      // 作品番号正規化テスト
-      const normalizeResult = await window.gameDataManager.normalizeWorkNumbers();
-
-      return {
-        name: 'データ管理機能',
-        status: 'passed',
-        details: `ゲーム数: ${games.length}, フラグ更新: OK, 正規化: ${normalizeResult ? '実行' : 'スキップ'}`
-      };
-    } catch (error) {
-      return {
-        name: 'データ管理機能',
-        status: 'failed',
-        details: error.message
-      };
-    }
-  }
 
   // Web監視システムテスト
   async testWebMonitoringSystem() {
@@ -902,128 +800,9 @@ class GameListManager {
     }
   }
 
-  // 設定システムテスト
-  async testSettingsSystem() {
-    try {
-      // ストレージ読み込みテスト
-      const result = await chrome.storage.local.get(['web_monitor_settings', 'update_manager_settings']);
-      
-      const webSettings = result.web_monitor_settings || {};
-      const updateSettings = result.update_manager_settings || {};
 
-      // デフォルト値テスト
-      const expectedFields = ['mode', 'interval', 'checkOnStartup'];
-      for (const field of expectedFields) {
-        if (!(field in webSettings)) {
-          console.warn(`設定フィールド不足: ${field}`);
-        }
-      }
 
-      return {
-        name: '設定システム',
-        status: 'passed',
-        details: `Web設定: ${Object.keys(webSettings).length}項目, 通知設定: ${Object.keys(updateSettings).length}項目`
-      };
-    } catch (error) {
-      return {
-        name: '設定システム',
-        status: 'failed',
-        details: error.message
-      };
-    }
-  }
 
-  // 通知システムテスト
-  async testNotificationSystem() {
-    try {
-      // 通知権限確認
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        throw new Error('通知権限が許可されていません');
-      }
-
-      // UpdateManagerのステータス取得
-      const status = window.updateManager.getStatus();
-      if (!status || typeof status !== 'object') {
-        throw new Error('UpdateManagerステータスが取得できません');
-      }
-
-      return {
-        name: '通知システム',
-        status: 'passed',
-        details: `通知権限: ${permission}, 設定状態: OK`
-      };
-    } catch (error) {
-      return {
-        name: '通知システム',
-        status: 'failed',
-        details: error.message
-      };
-    }
-  }
-
-  // UI統合テスト
-  async testUIIntegration() {
-    try {
-      // 必須UI要素の存在確認
-      const requiredElements = [
-        'manual-monitor-btn',
-        'monitor-status-btn',
-        'parse-info-btn',
-        'integration-test-btn',
-        'monitor-result'
-      ];
-
-      for (const id of requiredElements) {
-        const element = document.getElementById(id);
-        if (!element) {
-          throw new Error(`UI要素が見つかりません: ${id}`);
-        }
-      }
-
-      // 監視チェックボックスの存在確認
-      const checkboxes = document.querySelectorAll('.monitor-checkbox');
-      if (checkboxes.length === 0) {
-        throw new Error('監視チェックボックスが見つかりません');
-      }
-
-      return {
-        name: 'UI統合',
-        status: 'passed',
-        details: `UI要素: ${requiredElements.length}個, チェックボックス: ${checkboxes.length}個`
-      };
-    } catch (error) {
-      return {
-        name: 'UI統合',
-        status: 'failed',
-        details: error.message
-      };
-    }
-  }
-
-  // 統合テスト結果フォーマット
-  formatIntegrationTestResults(results) {
-    const lines = [
-      `🧪 統合テスト結果 [${new Date(results.timestamp).toLocaleString()}]`,
-      '',
-      `📊 概要: ${results.summary.passed}/${results.summary.total} テスト成功`,
-      `成功率: ${Math.round((results.summary.passed / results.summary.total) * 100)}%`,
-      ''
-    ];
-
-    results.tests.forEach(test => {
-      const status = test.status === 'passed' ? '✅' : '❌';
-      lines.push(`${status} ${test.name}: ${test.details}`);
-    });
-
-    if (results.summary.failed > 0) {
-      lines.push('', '⚠️ 失敗したテストがあります。詳細をご確認ください。');
-    } else {
-      lines.push('', '🎉 全テストが成功しました！');
-    }
-
-    return lines.join('\n');
-  }
 
   // 監視チェックボックス変更ハンドラー
   async handleMonitoringToggle(checkbox) {
@@ -1153,7 +932,7 @@ class GameListManager {
       btn.disabled = true;
       this.updateStatusBar('🔄 バックグラウンド更新中...', 'processing', 0);
 
-      console.log('🚀 バックグラウンド更新開始（全作品監視初期化付き）');
+      console.log('🚀 バックグラウンド更新開始');
 
       // 依存関係チェック
       if (!window.webMonitor) {
@@ -1163,32 +942,8 @@ class GameListManager {
         throw new Error('PageParser が初期化されていません');
       }
 
-      // Step 1: 全作品監視初期化を先に実行
-      console.log('🔧 Step 1: 全作品監視初期化実行');
-      this.updateStatusBar('🔧 全作品監視初期化中...', 'processing', 0);
-      
-      const initResult = await window.webMonitor.executeBackgroundUpdate();
-      if (initResult.success) {
-        const games = await window.gameDataManager.getGames();
-        console.log(`📊 ${games.length}件の作品のlastUpdateを初期化します`);
-        
-        let updateCount = 0;
-        for (const game of games) {
-          if (!game.lastUpdate) {
-            await window.gameDataManager.updateGame(game.id, {
-              lastUpdate: `初期化済み_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '_')}`,
-              version_status: 'latest'
-            });
-            updateCount++;
-          }
-        }
-        console.log(`✅ ${updateCount}件の作品を監視対象に追加`);
-      }
-
-      // Step 2: バックグラウンド更新を実行
-      console.log('🔄 Step 2: バックグラウンド更新実行');
       this.updateStatusBar('🔄 バックグラウンド更新中...', 'processing', 0);
-      
+      // バックグラウンド更新を実行
       const result = await window.webMonitor.executeBackgroundUpdate();
 
       if (result.success) {
@@ -1237,53 +992,6 @@ class GameListManager {
     }
   }
 
-  // 全作品監視初期化
-  async initializeMonitoring() {
-    try {
-      console.log('🔧 全作品監視初期化開始');
-      this.updateStatusBar('🔧 全作品監視初期化中...', 'processing', 0);
-      
-      // 現在のWebデータを取得
-      if (!window.webMonitor) {
-        throw new Error('WebMonitorが初期化されていません');
-      }
-      
-      console.log('📡 最新Webデータ取得中...');
-      const result = await window.webMonitor.executeBackgroundUpdate();
-      
-      if (result.success) {
-        // 全作品のlastUpdateを現在のWebデータで初期化
-        const games = await window.gameDataManager.getGames();
-        console.log(`📊 ${games.length}件の作品のlastUpdateを初期化します`);
-        
-        let updateCount = 0;
-        for (const game of games) {
-          if (!game.lastUpdate) {
-            // lastUpdateが未設定の作品のみ更新
-            // 仮の値として現在日付を設定（次回の監視で実際の値に更新される）
-            await window.gameDataManager.updateGame(game.id, {
-              lastUpdate: `初期化済み_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '_')}`,
-              version_status: 'latest'
-            });
-            updateCount++;
-          }
-        }
-        
-        console.log(`✅ ${updateCount}件の作品を監視対象に追加`);
-        this.updateStatusBar(`✅ 全作品監視初期化完了: ${updateCount}件を監視対象に追加`, 'success', 5000);
-        
-        // リスト更新
-        await this.refreshList();
-        
-      } else {
-        throw new Error('Webデータ取得に失敗しました');
-      }
-      
-    } catch (error) {
-      console.error('❌ 監視初期化エラー:', error);
-      this.updateStatusBar('❌ 監視初期化でエラーが発生しました', 'error', 5000);
-    }
-  }
 
   // ステータスバー更新の共通メソッド
   updateStatusBar(message, type = 'info', duration = 3000) {

@@ -9,9 +9,6 @@ class WebMonitor {
     this.selectedWorks = new Set(); // 注目作品のID
     this.checkOnStartup = false;
     
-    // テスト用フラグ
-    this.isTestMode = false;
-    this.testMockData = null;
     
     // エラー管理
     this.consecutiveErrors = 0;
@@ -293,7 +290,7 @@ class WebMonitor {
     throw new Error('全ての対象URLでページ取得に失敗');
   }
 
-  // 変更処理
+  // 変更処理（updateManagerに統一）
   async processChanges(changes, checkId) {
     const result = {
       checkId: checkId,
@@ -304,36 +301,20 @@ class WebMonitor {
     };
 
     try {
-      // 新規作品処理
-      for (const newWork of changes.newWorks) {
-        if (this.shouldProcessWork(newWork)) {
-          const addedWork = await this.addNewWork(newWork);
-          if (addedWork) {
-            result.newWorks.push(addedWork);
-          }
-        }
-      }
-
-      // 更新作品処理
-      for (const updatedWork of changes.updatedWorks) {
-        if (this.shouldProcessWork(updatedWork)) {
-          const updated = await this.updateExistingWork(updatedWork);
-          if (updated) {
-            result.updatedWorks.push(updated);
-          }
-        }
-      }
-
       // 監視結果をストレージに保存
       await this.saveMonitoringResult(result);
 
-      // 更新管理システムに結果を通知
-      if (window.updateManager && (result.newWorks.length > 0 || result.updatedWorks.length > 0)) {
+      // 更新管理システムに処理を委譲
+      if (window.updateManager) {
         try {
-          await window.updateManager.processUpdates(changes, checkId);
-          console.log('📢 更新管理システムに通知完了');
+          const updateResult = await window.updateManager.processUpdates(changes, checkId);
+          result.newWorks = updateResult.processed.newWorks || [];
+          result.updatedWorks = updateResult.processed.updatedWorks || [];
+          console.log('📢 更新管理システムで処理完了');
         } catch (error) {
-          console.error('❌ 更新管理システム通知エラー:', error);
+          console.error('❌ 更新管理システム処理エラー:', error);
+          result.success = false;
+          result.error = error.message;
         }
       }
 
@@ -360,110 +341,6 @@ class WebMonitor {
     return false;
   }
 
-  // 新規作品追加
-  async addNewWork(workData) {
-    try {
-      console.log('🆕 新規作品を自動追加:', workData.title);
-      
-      // gameDataManagerを使用して作品を追加
-      const newGame = {
-        no: workData.no || String(Date.now()).slice(-3),
-        title: workData.title,
-        author: workData.author || '不明',
-        genre: workData.genre || 'その他',
-        description: workData.description || '',
-        url: workData.url || '',
-        version: workData.version || '1.0',
-        lastUpdate: workData.lastUpdate,
-        source: 'auto_monitoring',
-        addedAt: new Date().toISOString()
-      };
-
-      // 重複チェック
-      const existing = await window.gameDataManager.getGameByNo(newGame.no);
-      if (existing) {
-        console.log('⚠️ 作品番号重複のため追加をスキップ:', newGame.no);
-        return null;
-      }
-
-      // データベースに追加
-      const newGameId = await window.gameDataManager.addGame(newGame);
-      
-      // 新規作品の監視初期化を実行
-      console.log(`🔧 新規作品 No.${newGame.no} の監視初期化実行`);
-      await this.initializeWorkMonitoring(newGameId, workData);
-      
-      console.log('✅ 新規作品追加完了:', newGame.title);
-      
-      return {
-        ...newGame,
-        id: newGameId,
-        action: 'added',
-        timestamp: new Date().toISOString()
-      };
-      
-    } catch (error) {
-      console.error('❌ 新規作品追加エラー:', error);
-      return null;
-    }
-  }
-
-  // 既存作品更新
-  async updateExistingWork(workData) {
-    try {
-      const existingWork = workData.previousData;
-      const updates = {
-        version_status: 'updated',
-        update_notification: true,
-        updated_at: new Date().toISOString()
-      };
-
-      // タイトル変更
-      if (workData.changeType.includes('title')) {
-        updates.title = workData.title;
-      }
-
-      // 作者変更
-      if (workData.changeType.includes('author')) {
-        updates.author = workData.author;
-      }
-
-      // 更新日変更
-      if (workData.changeType.includes('updated')) {
-        let cleanLastUpdate = workData.lastUpdate || workData.updateTimestamp;
-        
-        // 「→」以降の不要な文言を除去
-        if (cleanLastUpdate && typeof cleanLastUpdate === 'string') {
-          // 「→」で分割して最初の部分のみ使用
-          cleanLastUpdate = cleanLastUpdate.split('→')[0].trim();
-          console.log(`🧹 更新日クリーンアップ: ${workData.lastUpdate} → ${cleanLastUpdate}`);
-        }
-        
-        updates.lastUpdate = cleanLastUpdate;
-      }
-
-      // Web監視情報更新
-      updates.web_monitoring = {
-        ...existingWork.web_monitoring,
-        last_check: new Date().toISOString(),
-        last_update: workData.updateTimestamp || workData.lastUpdate,
-        change_type: workData.changeType
-      };
-
-      const success = await window.gameDataManager.updateGame(existingWork.id, updates);
-      
-      if (success) {
-        console.log(`🔄 作品更新: ${workData.title} (No.${workData.no}) - ${workData.changeType.join(', ')}`);
-        return { ...existingWork, ...updates };
-      }
-      
-      return null;
-      
-    } catch (error) {
-      console.error('❌ 作品更新エラー:', error);
-      return null;
-    }
-  }
 
   // 監視結果保存
   async saveMonitoringResult(result) {
@@ -649,40 +526,13 @@ class WebMonitor {
 
       let parseResult;
       
-      // テストモードの確認
-      console.log(`🔍 テストモード確認: isTestMode=${this.isTestMode}, mockData=${!!this.testMockData}`);
-      if (this.isTestMode && this.testMockData) {
-        console.log('🧪 テストモード: モックデータを使用');
-        console.log(`📊 モックデータ件数: ${this.testMockData.length}`);
-        // No4のデータを特別に表示（型変換対応）
-        const no4Mock = this.testMockData.find(w => 
-          w.no === 4 || w.no === '4' || parseInt(w.no) === 4
-        );
-        if (no4Mock) {
-          console.log(`🎯 No4モックデータ: ${no4Mock.title} - 更新日: ${no4Mock.lastUpdate}`);
-        } else {
-          console.warn('⚠️ No4のモックデータが見つかりません');
-          // デバッグ用：最初の3件のnoを表示
-          console.log('📊 モックデータのNo例:', this.testMockData.slice(0, 3).map(w => `${w.no}(${typeof w.no})`));
-        }
-        parseResult = {
-          success: true,
-          works: this.testMockData,
-          pattern: 'testMock',
-          metadata: {
-            totalWorks: this.testMockData.length,
-            parseTime: Date.now()
-          }
-        };
-      } else {
-        // ページ取得（既存のfetchContestPageを使用）
-        console.log('📡 ウディコンページ取得中...');
-        const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
-        
-        // 解析実行（既存のpageParserを使用）
-        console.log('🔍 ページ解析実行中...');
-        parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
-      }
+      // ページ取得（既存のfetchContestPageを使用）
+      console.log('📡 ウディコンページ取得中...');
+      const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
+      
+      // 解析実行（既存のpageParserを使用）
+      console.log('🔍 ページ解析実行中...');
+      parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
       
       if (!parseResult.success) {
         throw new Error(`ページ解析失敗: ${parseResult.error}`);
@@ -751,105 +601,6 @@ class WebMonitor {
     }
   }
 
-  // テスト用バックグラウンド更新（No.7登録）
-  async executeTestBackgroundUpdate() {
-    const updateId = `test_update_${Date.now()}`;
-    console.log(`🧪 テスト用バックグラウンド更新開始 [${updateId}] - No.7として登録`);
-
-    try {
-      // 現在時刻記録
-      this.lastCheckTime = new Date().toISOString();
-      await this.saveSettings();
-
-      // ページ取得（既存のfetchContestPageを使用）
-      console.log('📡 ウディコンページ取得中...');
-      const html = await this.performWithRetry(() => this.fetchContestPage(), 'ページ取得');
-      
-      // 解析実行（既存のpageParserを使用）
-      console.log('🔍 ページ解析実行中...');
-      const parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
-      
-      if (!parseResult.success) {
-        throw new Error(`ページ解析失敗: ${parseResult.error}`);
-      }
-
-      console.log(`📊 解析完了: ${parseResult.works.length}件の作品を検出`);
-
-      // テスト用処理：最初の作品をNo.7として登録
-      if (parseResult.works.length > 0) {
-        const workData = parseResult.works[0]; // 最初の作品を取得
-        
-        // No.7として強制設定
-        workData.no = "7";
-        
-        const testGameData = this.convertToGameFormat(workData);
-        
-        // 既存No.7のチェック
-        const existingGame = await window.gameDataManager.getGameByNo("7");
-        
-        let result;
-        if (existingGame) {
-          // 既存データを更新
-          console.log('⚠️ 既存No.7データを更新します');
-          await window.gameDataManager.updateGame(existingGame.id, {
-            ...testGameData,
-            updated_at: new Date().toISOString()
-          });
-          result = {
-            success: true,
-            updateId: updateId,
-            timestamp: new Date().toISOString(),
-            action: 'updated',
-            updatedWorks: [testGameData],
-            newWorks: [],
-            totalWorks: 1,
-            testMode: true
-          };
-        } else {
-          // 新規追加
-          console.log('✨ No.7として新規登録します');
-          await window.gameDataManager.addGame(testGameData);
-          result = {
-            success: true,
-            updateId: updateId,
-            timestamp: new Date().toISOString(),
-            action: 'added',
-            newWorks: [testGameData],
-            updatedWorks: [],
-            totalWorks: 1,
-            testMode: true
-          };
-        }
-
-        // エラーカウンタリセット
-        this.consecutiveErrors = 0;
-        
-        console.log(`✅ テスト用バックグラウンド更新完了 [${updateId}]:`, result);
-        
-        this.lastResult = result;
-        return result;
-        
-      } else {
-        throw new Error('解析結果に作品データが含まれていません');
-      }
-      
-    } catch (error) {
-      // エラー処理
-      this.handleOperationFailure('テスト用バックグラウンド更新', error);
-      
-      console.error(`❌ テスト用バックグラウンド更新失敗 [${updateId}]:`, error);
-      
-      return {
-        success: false,
-        error: error.message,
-        updateId: updateId,
-        timestamp: new Date().toISOString(),
-        consecutiveErrors: this.consecutiveErrors,
-        testMode: true
-      };
-    }
-  }
-
   // 作品データをgameDataManager形式に変換
   convertToGameFormat(workData) {
     return {
@@ -857,7 +608,7 @@ class WebMonitor {
       title: workData.title || '取得失敗',
       author: workData.author || '不明',
       genre: 'その他',
-      description: 'バックグラウンド更新テストで自動取得された作品です。',
+      description: 'バックグラウンド更新で自動取得された作品です。',
       wodicon_url: workData.url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1',
       local_folder_path: '',
       is_played: false,
@@ -884,10 +635,10 @@ class WebMonitor {
         detected_at: new Date().toISOString(),
         last_update: workData.lastUpdate || new Date().toISOString(),
         source_url: workData.url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1',
-        detection_type: 'test_background_update'
+        detection_type: 'background_update'
       },
-      // テスト識別用
-      source: 'test_background_update',
+      // 検出元
+      source: 'background_update',
       version: workData.version || workData.lastUpdate || '',
       lastUpdate: workData.lastUpdate || ''
     };

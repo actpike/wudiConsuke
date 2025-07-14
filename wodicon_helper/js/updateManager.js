@@ -169,6 +169,11 @@ class UpdateManager {
         if (work.changeType.includes('author')) {
           updates.author = work.author;
         }
+        
+        // 更新日変更の場合はlastUpdateを更新
+        if (work.changeType.includes('updated') && work.lastUpdate) {
+          updates.lastUpdate = work.lastUpdate;
+        }
 
         // Web監視情報更新
         updates.web_monitoring = {
@@ -226,6 +231,7 @@ class UpdateManager {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
       update_notification: true,
+      lastUpdate: workData.lastUpdate || workData.updateTimestamp,
       web_monitoring: {
         detected_at: new Date().toISOString(),
         last_update: workData.updateTimestamp,

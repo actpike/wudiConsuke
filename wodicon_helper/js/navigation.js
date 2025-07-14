@@ -229,20 +229,30 @@ class NavigationController {
       console.log(`  version: ${game.version}`);
       console.log(`  updated_at: ${game.updated_at}`);
       
-      const lastUpdateValue = game.lastUpdate || game.last_update || game.version || game.updated_at;
+      const lastUpdateValue = game.lastUpdate || game.last_update || game.version;
       if (lastUpdateValue) {
-        // 更新日が日付文字列かどうかを確認
+        // ウディコン形式の更新日（[7/13]Ver1.2に更新 等）はそのまま表示
         let updateText = '';
-        try {
-          const updateDate = new Date(lastUpdateValue);
-          if (!isNaN(updateDate.getTime())) {
-            updateText = `更新日: ${updateDate.toLocaleDateString('ja-JP')}`;
-          } else {
-            // 日付変換できない場合は元の文字列を使用
+        
+        // ISO形式の日付文字列の場合のみ日付変換
+        if (typeof lastUpdateValue === 'string' && lastUpdateValue.match(/^\d{4}-\d{2}-\d{2}T/)) {
+          try {
+            const updateDate = new Date(lastUpdateValue);
+            if (!isNaN(updateDate.getTime())) {
+              updateText = `更新日: ${updateDate.toLocaleDateString('ja-JP')}`;
+            } else {
+              updateText = `更新日: ${lastUpdateValue}`;
+            }
+          } catch (error) {
             updateText = `更新日: ${lastUpdateValue}`;
           }
-        } catch (error) {
-          updateText = `更新日: ${lastUpdateValue}`;
+        } else {
+          // ウディコン形式やその他の文字列は「→」以降を除去して表示
+          let cleanUpdateValue = lastUpdateValue;
+          if (typeof lastUpdateValue === 'string' && lastUpdateValue.includes('→')) {
+            cleanUpdateValue = lastUpdateValue.split('→')[0].trim();
+          }
+          updateText = `更新日: ${cleanUpdateValue}`;
         }
         
         console.log(`📅 詳細画面表示: ${updateText}`);
@@ -298,15 +308,25 @@ class NavigationController {
       // 更新日情報
       const versionElement = document.getElementById('detail-version');
       if (gameInfo && gameInfo.lastUpdate) {
-        try {
-          const updateDate = new Date(gameInfo.lastUpdate);
-          if (!isNaN(updateDate.getTime())) {
-            versionElement.textContent = `更新日: ${updateDate.toLocaleDateString('ja-JP')}`;
-          } else {
+        // ISO形式の日付文字列の場合のみ日付変換
+        if (typeof gameInfo.lastUpdate === 'string' && gameInfo.lastUpdate.match(/^\d{4}-\d{2}-\d{2}T/)) {
+          try {
+            const updateDate = new Date(gameInfo.lastUpdate);
+            if (!isNaN(updateDate.getTime())) {
+              versionElement.textContent = `更新日: ${updateDate.toLocaleDateString('ja-JP')}`;
+            } else {
+              versionElement.textContent = `更新日: ${gameInfo.lastUpdate}`;
+            }
+          } catch (error) {
             versionElement.textContent = `更新日: ${gameInfo.lastUpdate}`;
           }
-        } catch (error) {
-          versionElement.textContent = `更新日: ${gameInfo.lastUpdate}`;
+        } else {
+          // ウディコン形式やその他の文字列は「→」以降を除去して表示
+          let cleanUpdateValue = gameInfo.lastUpdate;
+          if (typeof gameInfo.lastUpdate === 'string' && gameInfo.lastUpdate.includes('→')) {
+            cleanUpdateValue = gameInfo.lastUpdate.split('→')[0].trim();
+          }
+          versionElement.textContent = `更新日: ${cleanUpdateValue}`;
         }
       } else {
         versionElement.textContent = '';
