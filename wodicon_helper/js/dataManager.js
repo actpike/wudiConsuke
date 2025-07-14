@@ -152,8 +152,8 @@ class GameDataManager {
   
   // ユーザーデータ存在チェック
   hasUserData(game) {
-    // 評価が初期値以外、またはコメントがある場合
-    const defaultRating = { 熱中度: 1, 斬新さ: 1, 物語性: 1, 画像音声: 1, 遊びやすさ: 1, その他: 1, total: 6 };
+    // 評価がnull初期値以外、またはコメントがある場合
+    const defaultRating = { 熱中度: null, 斬新さ: null, 物語性: null, 画像音声: null, 遊びやすさ: null, その他: null, total: 0 };
     const hasCustomRating = JSON.stringify(game.rating) !== JSON.stringify(defaultRating);
     const hasReview = game.review && game.review.trim().length > 0;
     const isPlayed = game.is_played === true;
@@ -327,12 +327,12 @@ class GameDataManager {
   // 評価完了チェック
   isRatingComplete(rating) {
     return rating && 
-           rating.熱中度 > 0 && 
-           rating.斬新さ > 0 && 
-           rating.物語性 > 0 && 
-           rating.画像音声 > 0 && 
-           rating.遊びやすさ > 0 && 
-           rating.その他 > 0;
+           rating.熱中度 !== null && rating.熱中度 !== undefined && rating.熱中度 > 0 && 
+           rating.斬新さ !== null && rating.斬新さ !== undefined && rating.斬新さ > 0 && 
+           rating.物語性 !== null && rating.物語性 !== undefined && rating.物語性 > 0 && 
+           rating.画像音声 !== null && rating.画像音声 !== undefined && rating.画像音声 > 0 && 
+           rating.遊びやすさ !== null && rating.遊びやすさ !== undefined && rating.遊びやすさ > 0 && 
+           rating.その他 !== null && rating.その他 !== undefined && rating.その他 > 0;
   }
 
   // 合計点計算

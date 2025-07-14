@@ -220,9 +220,9 @@ class UpdateManager {
       local_folder_path: '',
       is_played: false,
       rating: {
-        熱中度: 1, 斬新さ: 1, 物語性: 1,
-        画像音声: 1, 遊びやすさ: 1, その他: 1,
-        total: 6
+        熱中度: null, 斬新さ: null, 物語性: null,
+        画像音声: null, 遊びやすさ: null, その他: null,
+        total: 0
       },
       review: '',
       review_length: 0,

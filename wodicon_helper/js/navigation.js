@@ -75,6 +75,12 @@ class NavigationController {
     // フォーム変更検知
     document.addEventListener('input', (e) => {
       if (e.target.matches('.rating-slider, #review-textarea')) {
+        // スライダーの場合、null値から実際の値に変更
+        if (e.target.matches('.rating-slider')) {
+          const valueSpan = e.target.parentElement.querySelector('.rating-value');
+          valueSpan.textContent = e.target.value;
+          this.updateTotalRating();
+        }
         this.markAsChanged();
         this.debouncedAutoSave();
       }
@@ -349,11 +355,17 @@ class NavigationController {
     
     categories.forEach(category => {
       const slider = document.querySelector(`[data-category="${category}"]`);
-      const value = rating[category] || 0;
-      slider.value = value;
+      const value = rating[category];
       
-      const valueSpan = slider.parentElement.querySelector('.rating-value');
-      valueSpan.textContent = value;
+      if (value === null || value === undefined) {
+        slider.value = 1; // スライダーの最小値
+        const valueSpan = slider.parentElement.querySelector('.rating-value');
+        valueSpan.textContent = '-';
+      } else {
+        slider.value = value;
+        const valueSpan = slider.parentElement.querySelector('.rating-value');
+        valueSpan.textContent = value;
+      }
     });
 
     this.updateTotalRating();
@@ -372,8 +384,17 @@ class NavigationController {
       const averages = {};
       
       categories.forEach(category => {
-        const total = playedGames.reduce((sum, game) => sum + (game.rating[category] || 0), 0);
-        averages[category] = total / playedGames.length;
+        // null値を除外して平均を計算
+        const validRatings = playedGames
+          .map(game => game.rating[category])
+          .filter(rating => rating !== null && rating !== undefined && rating > 0);
+        
+        if (validRatings.length > 0) {
+          const total = validRatings.reduce((sum, rating) => sum + rating, 0);
+          averages[category] = total / validRatings.length;
+        } else {
+          averages[category] = 0;
+        }
       });
       
       // 各スライダーに平均線を追加
@@ -691,18 +712,32 @@ class NavigationController {
   updateTotalRating() {
     const sliders = document.querySelectorAll('.rating-slider');
     let total = 0;
+    let ratedCount = 0;
     
     sliders.forEach(slider => {
-      total += parseInt(slider.value);
       const valueSpan = slider.parentElement.querySelector('.rating-value');
-      valueSpan.textContent = slider.value;
+      
+      // 現在の表示が「-」かどうかで判定
+      if (valueSpan.textContent === '-') {
+        // null値の場合は合計に含めない
+        return;
+      } else {
+        // 値がある場合は合計に加算
+        total += parseInt(slider.value);
+        ratedCount++;
+        valueSpan.textContent = slider.value;
+      }
     });
     
     document.getElementById('total-rating').textContent = total;
     
-    // 星表示
-    const stars = Math.round(total / 12); // 60点満点を5段階に変換
-    document.getElementById('rating-stars').textContent = '⭐'.repeat(Math.min(stars, 5));
+    // 星表示（評価済み項目のみで計算）
+    if (ratedCount > 0) {
+      const stars = Math.round(total / (ratedCount * 2)); // 評価済み項目の平均を5段階に変換
+      document.getElementById('rating-stars').textContent = '⭐'.repeat(Math.min(stars, 5));
+    } else {
+      document.getElementById('rating-stars').textContent = '';
+    }
   }
 
   // 文字数カウント更新
