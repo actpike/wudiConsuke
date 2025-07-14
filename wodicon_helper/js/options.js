@@ -78,7 +78,6 @@ async function loadBasicSettings() {
     // 実用的自動監視設定
     setElementValue('enable-auto-monitoring', autoMonitorSettings.enabled !== false);
     setElementValue('enable-content-auto-monitoring', autoMonitorSettings.contentEnabled !== false);
-    setElementValue('popup-auto-interval', autoMonitorSettings.popupInterval || 1, 'value');
 
     // 通知設定（新しい初期値）
     setElementValue('notify-new-works', updateSettings.showNewWorks !== false);           // チェックする
@@ -297,7 +296,7 @@ function setupEventListeners() {
 
     // 設定変更時の自動保存（Web自動監視設定を除外）
     ['enable-notifications', 'notify-new-works', 'notify-updated-works', 'max-notifications',
-     'enable-auto-monitoring', 'enable-content-auto-monitoring', 'popup-auto-interval'].forEach(id => {
+     'enable-auto-monitoring', 'enable-content-auto-monitoring'].forEach(id => {
       const element = document.getElementById(id);
       if (element) {
         element.addEventListener('change', saveSettings);
@@ -346,7 +345,7 @@ async function saveSettings() {
     const autoMonitorSettings = {
       enabled: document.getElementById('enable-auto-monitoring').checked,
       contentEnabled: document.getElementById('enable-content-auto-monitoring').checked,
-      popupInterval: parseInt(document.getElementById('popup-auto-interval').value)
+      popupInterval: 1 // デフォルト値1時間に固定
     };
 
     await chrome.storage.local.set({ 
