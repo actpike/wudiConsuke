@@ -1,0 +1,52 @@
+
+/* Live CSS Adjustments for LifeSim */
+/* このファイルを編集してリアルタイムでスタイルを調整 */
+
+/* ゲーム全体のサイズ調整 */
+.lifesim-container {
+  zoom: 0.9;
+  transition: all 0.3s ease;
+}
+
+/* 人間一覧の調整 (ACT-67) */
+.human-list {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+/* ログパネルの調整 (ACT-66) */
+.log-panel {
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+/* ヘッダーの高さ調整 (ACT-65) */
+.header, .game-header {
+  height: 40px;
+  padding: 5px 10px;
+}
+
+/* フォントサイズ全体調整 (ACT-64) */
+body {
+  font-size: 13px;
+}
+
+/* ゲーム情報パネル */
+.game-info {
+  font-size: 12px;
+  padding: 8px;
+}
+
+/* キャンバスの調整 */
+canvas {
+  border: 1px solid #ddd;
+  transition: transform 0.3s ease;
+}
+
+canvas:hover {
+  transform: scale(1.02);
+}
+      

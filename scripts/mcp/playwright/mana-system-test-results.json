@@ -1,0 +1,161 @@
+{
+  "timestamp": "2025-06-26T12:26:51.116Z",
+  "testResults": {
+    "gameAccess": true,
+    "uiElementsFound": false,
+    "canvasRendering": false,
+    "manaColorDetected": false,
+    "worldTreeColorDetected": false,
+    "observationComplete": true,
+    "elementsVisible": false
+  },
+  "statsElements": {
+    "worldTree": [],
+    "mana": [],
+    "statsArea": []
+  },
+  "canvasAnalysis": null,
+  "observations": [
+    {
+      "second": 1,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:41.985Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 2,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:42.991Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 3,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:43.993Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 4,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:44.995Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 5,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:45.997Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 6,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:46.999Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 7,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:48.002Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 8,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:49.004Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 9,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:50.007Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    },
+    {
+      "second": 10,
+      "stats": {
+        "timestamp": "2025-06-26T12:26:51.009Z",
+        "manaText": [],
+        "allNumbers": [
+          "19",
+          "0",
+          "20",
+          "800"
+        ],
+        "bodyText": "\n    Next Game TemplateReact 19 + TypeScript + Linear API統合によるゲーム開発テンプレートデモパネルライフシムモダンゲームCanvasゲーム軽量LifeSim🎮 NEXT_TEMPLATEシステムデモクリック数: 0🔊 クリック音🎵 成功音📳 軽い振動📳 成功振動✨ キラキラ💥 爆発📊 統計記録テスト⚡ パフォーマンス監視⚙️ 設定パネル ▼ボタンを押してシステムの動作を確認してください\n    \n    \n    \n      console.log('Next Game Template - Loading...');\n      window.addEventListener('error', (e) => {\n        console.error('Runtime Error:', e.error);\n        document.body.innerHTML = '<div style=\"padding:20px;font-family:monospace;background:#fee;colo"
+      }
+    }
+  ],
+  "elementPositions": []
+}

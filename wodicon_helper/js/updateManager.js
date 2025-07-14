@@ -106,10 +106,25 @@ class UpdateManager {
 
     for (const work of newWorks) {
       try {
+        // 重複チェック: 既にwebMonitor.addNewWorkで追加済みかチェック
+        const existing = await window.gameDataManager.getGameByNo(work.no);
+        if (existing) {
+          console.log(`⚠️ 作品No.${work.no}は既に追加済み - updateManager処理をスキップ`);
+          result.processed++;
+          
+          // 更新マーカー設定のみ実行
+          this.updateMarkers.set(work.no, {
+            type: 'new',
+            timestamp: new Date().toISOString(),
+            confirmed: false
+          });
+          continue;
+        }
+        
         // 作品データの正規化
         const normalizedWork = this.normalizeWorkData(work, 'new');
         
-        // データベースに追加
+        // データベースに追加（重複がない場合のみ）
         const success = await window.gameDataManager.addGame(normalizedWork);
         
         if (success) {

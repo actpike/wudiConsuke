@@ -31,6 +31,8 @@ module.exports = {
     '.DS_Store',
     'Thumbs.db',
     '*.log',
-    '.env*'
+    '.env*',
+    'icons/etc',
+    'tests'
   ]
 };

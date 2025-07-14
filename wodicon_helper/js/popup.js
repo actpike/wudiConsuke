@@ -1153,7 +1153,7 @@ class GameListManager {
       btn.disabled = true;
       this.updateStatusBar('🔄 バックグラウンド更新中...', 'processing', 0);
 
-      console.log('🚀 バックグラウンド更新開始');
+      console.log('🚀 バックグラウンド更新開始（全作品監視初期化付き）');
 
       // 依存関係チェック
       if (!window.webMonitor) {
@@ -1163,7 +1163,32 @@ class GameListManager {
         throw new Error('PageParser が初期化されていません');
       }
 
-      // WebMonitorのバックグラウンド更新を実行
+      // Step 1: 全作品監視初期化を先に実行
+      console.log('🔧 Step 1: 全作品監視初期化実行');
+      this.updateStatusBar('🔧 全作品監視初期化中...', 'processing', 0);
+      
+      const initResult = await window.webMonitor.executeBackgroundUpdate();
+      if (initResult.success) {
+        const games = await window.gameDataManager.getGames();
+        console.log(`📊 ${games.length}件の作品のlastUpdateを初期化します`);
+        
+        let updateCount = 0;
+        for (const game of games) {
+          if (!game.lastUpdate) {
+            await window.gameDataManager.updateGame(game.id, {
+              lastUpdate: `初期化済み_${new Date().toLocaleDateString('ja-JP').replace(/\//g, '_')}`,
+              version_status: 'latest'
+            });
+            updateCount++;
+          }
+        }
+        console.log(`✅ ${updateCount}件の作品を監視対象に追加`);
+      }
+
+      // Step 2: バックグラウンド更新を実行
+      console.log('🔄 Step 2: バックグラウンド更新実行');
+      this.updateStatusBar('🔄 バックグラウンド更新中...', 'processing', 0);
+      
       const result = await window.webMonitor.executeBackgroundUpdate();
 
       if (result.success) {

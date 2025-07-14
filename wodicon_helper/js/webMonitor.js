@@ -387,12 +387,17 @@ class WebMonitor {
       }
 
       // データベースに追加
-      await window.gameDataManager.addGame(newGame);
+      const newGameId = await window.gameDataManager.addGame(newGame);
+      
+      // 新規作品の監視初期化を実行
+      console.log(`🔧 新規作品 No.${newGame.no} の監視初期化実行`);
+      await this.initializeWorkMonitoring(newGameId, workData);
       
       console.log('✅ 新規作品追加完了:', newGame.title);
       
       return {
         ...newGame,
+        id: newGameId,
         action: 'added',
         timestamp: new Date().toISOString()
       };
@@ -590,6 +595,46 @@ class WebMonitor {
   async manualCheck() {
     console.log('🔍 手動監視チェック実行');
     return await this.performCheck();
+  }
+
+  // 単体作品の監視初期化
+  async initializeWorkMonitoring(gameId, webData) {
+    try {
+      console.log(`🔧 作品ID ${gameId} の監視初期化開始`);
+      
+      // Web取得データから最新の更新情報を設定
+      const initData = {
+        lastUpdate: webData.lastUpdate || '更新情報なし',
+        version_status: 'latest',
+        web_monitoring_enabled: true, // 監視を有効化
+        initialized_at: new Date().toISOString()
+      };
+      
+      // Web取得データの updateTimestamp も設定
+      if (webData.updateTimestamp) {
+        initData.updateTimestamp = webData.updateTimestamp;
+      }
+      
+      console.log(`🔧 監視初期化データ:`, {
+        gameId: gameId,
+        lastUpdate: initData.lastUpdate,
+        updateTimestamp: initData.updateTimestamp
+      });
+      
+      // データベース更新
+      const success = await window.gameDataManager.updateGame(gameId, initData);
+      
+      if (success) {
+        console.log(`✅ 作品ID ${gameId} の監視初期化完了`);
+        return true;
+      } else {
+        throw new Error('データベース更新に失敗しました');
+      }
+      
+    } catch (error) {
+      console.error(`❌ 作品ID ${gameId} の監視初期化エラー:`, error);
+      return false;
+    }
   }
 
   // バックグラウンド更新実行
