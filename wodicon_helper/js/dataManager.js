@@ -332,7 +332,7 @@ class GameDataManager {
            rating.物語性 !== null && rating.物語性 !== undefined && rating.物語性 > 0 && 
            rating.画像音声 !== null && rating.画像音声 !== undefined && rating.画像音声 > 0 && 
            rating.遊びやすさ !== null && rating.遊びやすさ !== undefined && rating.遊びやすさ > 0 && 
-           rating.その他 !== null && rating.その他 !== undefined && rating.その他 > 0;
+           rating.その他 !== null && rating.その他 !== undefined && rating.その他 >= 0;
   }
 
   // 合計点計算

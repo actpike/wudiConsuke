@@ -358,7 +358,8 @@ class NavigationController {
       const value = rating[category];
       
       if (value === null || value === undefined) {
-        slider.value = 1; // スライダーの最小値
+        // 「その他」項目のみ最小値0、他は1
+        slider.value = category === 'その他' ? 0 : 1;
         const valueSpan = slider.parentElement.querySelector('.rating-value');
         valueSpan.textContent = '-';
       } else {

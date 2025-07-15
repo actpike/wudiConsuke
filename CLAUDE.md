@@ -17,6 +17,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 	'UdiConsuke\documents\chromeStore\releaseReference(配布指南書).md'
 - 自動化スクリプトの詳細は下記を参照
 	`scripts/README.md`
+- 今後もバージョンアップの度に、READMEの更新履歴を3行で要約して追記する
+- 紹介ページ（website/release/index.html）の更新履歴セクションも同時に更新する
 
 ## プロジェクト構造
 
@@ -61,14 +63,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **個別作品削除機能**（確認ダイアログ付き安全削除）
 - **バージョン表示機能**（Chrome拡張・紹介ページ両方）
 - **平均バー初期化バグ修正**（新規作品表示時の正しい平均値表示）
+- **新規登録時評価表示改善**（null値を「-」表示で直感的な未評価状態）
+- **コードベース最適化**（データ処理統一化・重複削除）
 
 ### 現在のバージョン
-- **最新リリース**: v0.0.3
+- **最新リリース**: v0.0.4
 - **主な新機能**: 
-  - 平均バー初期化バグ修正（ゼロパディング削除で正確な平均値表示）
-  - 個別作品削除機能（確認ダイアログ付き安全削除）
-  - 自動監視システム（サイト訪問時・ポップアップ開時の実用的監視）
-  - 紹介ページリニューアル（ブラウザ判定機能付き）
+  - 新規登録時の評価表示改善（全項目「-」表示で直感的な未評価状態）
+  - 詳細画面の更新日クリーンアップ（「→ご意見/バグ報告BBS」等の不要文言自動除去）
+  - コードベース最適化（データ処理の重複削除・updateManager.jsへの統一）
+  - 不要なテストコード・設定項目の整理
 - **配布URL**: https://wudi-consuke.vercel.app/
 
 ### リリース管理・zip圧縮ルール
@@ -197,7 +201,27 @@ Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content
 - chrome.storage.localが唯一の永続化層（5MB制限）
 - Web監視系はService Workerとポップアップ間でchrome.runtime.onMessage通信
 
+### 主要クラス構造
+- **GameListManager** (popup.js): メイン画面のゲーム一覧管理・UI制御
+- **GameDataManager** (dataManager.js): chrome.storage.local操作・データCRUD
+- **Navigation** (navigation.js): 詳細画面・画面遷移管理
+- **WebMonitor** (webMonitor.js): Web監視実行・ページ取得
+- **UpdateManager** (updateManager.js): 更新検知・新規作品処理（統一データ処理）
+- **PageParser** (pageParser.js): HTML解析・差分検出
+
+### データ処理の統一化
+- v0.0.4で重複処理を統一：全てのデータ処理はupdateManager.jsに集約
+- webMonitor.jsは監視実行のみ、実際のデータ処理はupdateManagerに委譲
+- 新規作品・更新作品の処理フローが統一され、データ不整合を防止
+
 ### セキュリティ考慮
 - Host permissions: https://silversecond.com/* のみ
 - 外部API一切不使用、完全ローカル動作
 - HTMLクローリングのため、サイト構造変更リスクあり（複数パターンで対応）
+
+### 重要な設計パターン
+- **評価システム**: 新規作品は全項目null初期値、UI上「-」表示
+- **null値処理**: 詳細画面・一覧画面・平均計算でnull値を適切に除外
+- **データ統一**: updateManager.jsがすべてのデータ処理を担当（重複防止）
+- **自動保存**: 3秒間隔でのdebounced自動保存（navigation.js）
+- **モジュール初期化**: popup.htmlで順次読み込み、windowオブジェクトにインスタンス作成
