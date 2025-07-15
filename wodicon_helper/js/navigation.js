@@ -29,11 +29,13 @@ class NavigationController {
         return;
       }
       
-      // No列またはタイトル列のクリックのみ処理
+      // No列、タイトル列、または評価列のクリックを処理
       const isNoColumn = e.target.closest('.col-no');
       const isTitleColumn = e.target.closest('.col-title');
+      const isVersionColumn = e.target.closest('.col-ver');
+      const isRatingColumn = e.target.closest('.col-rating');
       
-      if ((isNoColumn || isTitleColumn) && this.currentView === 'main') {
+      if ((isNoColumn || isTitleColumn || isVersionColumn || isRatingColumn) && this.currentView === 'main') {
         const gameRow = e.target.closest('.game-row');
         if (gameRow) {
           const gameId = parseInt(gameRow.dataset.gameId);
@@ -144,21 +146,32 @@ class NavigationController {
     this.startAutoSave();
   }
 
-  // 更新通知をリセット（ベルアイコンを消す）
+  // 更新通知をリセット（ベルアイコンを消す）とNEWステータスを☑に変更
   async resetUpdateNotification(gameId) {
     try {
       const game = await window.gameDataManager.getGame(gameId);
-      if (game && game.version_status === 'updated') {
-        console.log(`🔔→✅ ベルアイコンリセット: ${game.title}`);
+      if (game) {
+        let updates = {};
+        let logMessage = '';
         
-        await window.gameDataManager.updateGame(gameId, {
-          version_status: 'latest',
-          update_notification: false
-        });
+        if (game.version_status === 'updated') {
+          updates.version_status = 'latest';
+          updates.update_notification = false;
+          logMessage = `🔔→✅ ベルアイコンリセット: ${game.title}`;
+        } else if (game.version_status === 'new') {
+          updates.version_status = 'latest';
+          logMessage = `🆕→✅ NEWステータスリセット: ${game.title}`;
+        }
         
-        // メインビューのリストを更新（ベルアイコンを消すため）
-        if (window.gameListManager) {
-          await window.gameListManager.refreshList();
+        if (Object.keys(updates).length > 0) {
+          console.log(logMessage);
+          
+          await window.gameDataManager.updateGame(gameId, updates);
+          
+          // メインビューのリストを更新（アイコンを消すため）
+          if (window.gameListManager) {
+            await window.gameListManager.refreshList();
+          }
         }
       }
     } catch (error) {
@@ -278,6 +291,9 @@ class NavigationController {
       document.getElementById('review-textarea').value = game.review || '';
       this.updateCharacterCount();
       
+      // 目盛りを追加
+      this.addTickMarks();
+      
       // 平均点を計算して表示
       await this.displayAverageRating();
 
@@ -340,6 +356,9 @@ class NavigationController {
 
       // 評価スライダーと入力フィールドのみリセット（平均バーは保持）
       this.resetInputsOnly();
+      
+      // 目盛りを追加
+      this.addTickMarks();
       
       // 平均バーを表示（全作品の平均値）
       await this.displayAverageRating();
@@ -404,6 +423,66 @@ class NavigationController {
     } catch (error) {
       console.error('Failed to display average rating:', error);
     }
+  }
+
+  // 目盛りを追加
+  addTickMarks() {
+    const categories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+    
+    categories.forEach(category => {
+      const slider = document.querySelector(`[data-category="${category}"]`);
+      if (slider) {
+        const ratingInput = slider.closest('.rating-input');
+        if (ratingInput) {
+          // 既存の目盛りを削除
+          const existingTicks = ratingInput.querySelector('.rating-tick-marks');
+          if (existingTicks) {
+            existingTicks.remove();
+          }
+          
+          // 新しい目盛りを作成
+          const tickMarks = document.createElement('div');
+          tickMarks.className = 'rating-tick-marks';
+          
+          // 位置基準を確保
+          ratingInput.style.position = 'relative';
+          
+          // スライダー要素の実際の位置と幅を取得（平均バーと同じ計算）
+          const ratingInputRect = ratingInput.getBoundingClientRect();
+          const sliderRect = slider.getBoundingClientRect();
+          const sliderCursolSize = 8;
+          
+          // スライダーの実際の幅と相対位置を計算
+          const sliderWidth = sliderRect.width - sliderCursolSize * 2;
+          const sliderStartPos = sliderRect.left - ratingInputRect.left + sliderCursolSize;
+          
+          // 「その他」項目は0-10で10等分、他は1-10で9等分
+          const tickCount = category === 'その他' ? 10 : 9;
+          
+          for (let i = 1; i < tickCount; i++) {
+            const tick = document.createElement('div');
+            tick.style.position = 'absolute';
+            
+            // 平均バーと同じ位置計算方法
+            const tickPosition = (i / tickCount) * sliderWidth;
+            const finalPosition = sliderStartPos + tickPosition;
+            
+            tick.style.left = `${finalPosition}px`;
+            tick.style.top = '50%';
+            tick.style.transform = 'translateY(-50%)';
+            tick.style.width = '1px';
+            tick.style.height = '20px';
+            tick.style.backgroundColor = 'rgba(102, 126, 234, 0.3)';
+            tick.style.pointerEvents = 'none';
+            tick.style.zIndex = '4';
+            
+            tickMarks.appendChild(tick);
+          }
+          
+          ratingInput.appendChild(tickMarks);
+        }
+      }
+    });
   }
 
   // 平均点インジケータを更新

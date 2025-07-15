@@ -223,7 +223,7 @@ class GameDataManager {
       case 'unplayed':
         return games.filter(game => !game.is_played);
       case 'new':
-        return games.filter(game => game.version_status === 'new');
+        return games.filter(game => game.version_status === 'new' || game.version_status === 'updated');
       case 'updated':
         return games.filter(game => game.version_status === 'updated');
       default:

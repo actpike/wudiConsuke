@@ -195,12 +195,12 @@ body {
 }
 
 /* クリック可能な列のスタイル */
-.col-no, .col-title {
+.col-no, .col-title, .col-ver, .col-rating {
   cursor: pointer;
   transition: background-color 0.2s;
 }
 
-.col-no:hover, .col-title:hover {
+.col-no:hover, .col-title:hover, .col-ver:hover, .col-rating:hover {
   background-color: #f0f0f8;
 }
 
@@ -531,43 +531,16 @@ body {
   z-index: 2;
 }
 
-/* スライダーの目盛り背景 */
-.rating-input::before {
-  content: '';
+/* スライダーの目盛り線コンテナ */
+.rating-tick-marks {
   position: absolute;
-  left: 0;
   top: 50%;
-  transform: translateY(-50%);
-  width: calc(100% - 28px); /* rating-valueの幅を考慮 */
+  left: 0;
+  width: calc(100% - 28px);
   height: 20px;
-  background: 
-    linear-gradient(to right, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%),
-    repeating-linear-gradient(
-      to right,
-      transparent 0%,
-      transparent calc(11.111% - 0.5px), /* 9等分 (100%/9) */
-      rgba(102, 126, 234, 0.25) calc(11.111% - 0.5px),
-      rgba(102, 126, 234, 0.25) calc(11.111% + 0.5px),
-      transparent calc(11.111% + 0.5px)
-    );
-  border-radius: 10px;
+  transform: translateY(-50%);
   pointer-events: none;
-  z-index: 1;
-}
-
-/* 「その他」項目の目盛り（0-10で10等分） */
-.rating-item:nth-child(6) .rating-input::before {
-  /* 「その他」項目は6番目の.rating-item */
-  background: 
-    linear-gradient(to right, rgba(102, 126, 234, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%),
-    repeating-linear-gradient(
-      to right,
-      transparent 0%,
-      transparent calc(10% - 0.5px), /* 10等分 */
-      rgba(102, 126, 234, 0.25) calc(10% - 0.5px),
-      rgba(102, 126, 234, 0.25) calc(10% + 0.5px),
-      transparent calc(10% + 0.5px)
-    );
+  z-index: 4;
 }
 
 .rating-slider::-webkit-slider-thumb {
