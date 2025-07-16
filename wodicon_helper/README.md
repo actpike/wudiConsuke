@@ -34,11 +34,12 @@
 ### 権限設定
 **ウディこん助が使用する権限とその用途:**
 - **storage**: 作品の評価・感想・プレイ状況をローカル保存
-- **alarms**: 自動監視機能（30分～1時間間隔でサイト監視）
 - **notifications**: 新規・更新作品のデスクトップ通知
 - **activeTab**: アクティブタブの情報取得、手動監視時のページ解析
 - **downloads**: 作品データのエクスポート/インポート機能
 - **host_permissions**: ウディコン公式サイト(silversecond.com)からの情報取得
+
+**監視機能**: サイト訪問時・ポップアップ開時・手動実行で新作品チェック
 
 **完全ローカル動作**: データ送信・追跡・広告なし
 
@@ -68,7 +69,7 @@
 ### 使用技術
 - **フロントエンド**: Vanilla JavaScript, CSS3, HTML5
 - **ストレージ**: chrome.storage.local（5MB制限）
-- **権限**: storage, alarms, notifications, activeTab, downloads, host_permissions
+- **権限**: storage, notifications, activeTab, downloads, host_permissions
 
 ## 📝 ライセンス
 
@@ -81,8 +82,11 @@
 ---
 
 **開発者**: Claude Code  
-**バージョン**: 0.0.5
-**最終更新**: 2025-07-15
+**バージョン**: 0.0.6
+**最終更新**: 2025-07-16
+
+### v0.0.6 (2025/7/16)
+- プライバシー情報周りの見直し。alarms,scripts権限の削除
 
 ### v0.0.5 (2025/7/15)
 - 評価『その他』の下限を0に設定

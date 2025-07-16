@@ -1,6 +1,6 @@
 ---
 project_name: "Chrome拡張機能alarms権限削除とChrome審査対応"
-status: "Todo"
+status: "In Progress"
 owner: "act_pike"
 created_at: "2025-07-16"
 updated_at: "2025-07-16"

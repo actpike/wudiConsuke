@@ -223,37 +223,12 @@ chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) =
   chrome.notifications.clear(notificationId);
 });
 
-// アラーム処理（将来の更新監視機能用）
-chrome.alarms.onAlarm.addListener((alarm) => {
-  console.log('Alarm triggered:', alarm.name);
-  
-  switch (alarm.name) {
-    case 'update_check':
-      // 将来実装: 更新チェック処理
-      handleUpdateCheck();
-      break;
-      
-    case 'auto_backup':
-      // 将来実装: 自動バックアップ処理
-      handleAutoBackup();
-      break;
-      
-    default:
-      console.log('Unknown alarm:', alarm.name);
-  }
-});
+// アラーム処理は削除済み（Chrome審査簡素化のため）
+// 代替: サイト訪問時・ポップアップ開時・手動実行で監視機能を提供
 
-// 更新チェック処理（将来実装用スケルトン）
-async function handleUpdateCheck() {
-  console.log('Update check triggered (not implemented yet)');
-  // TODO: ウディコン公式サイトの更新チェック実装
-}
+// 更新チェック処理は削除済み（代替: content.jsとpopup.jsで実装済み）
 
-// 自動バックアップ処理（将来実装用スケルトン）
-async function handleAutoBackup() {
-  console.log('Auto backup triggered (not implemented yet)');
-  // TODO: 自動バックアップ機能実装
-}
+// 自動バックアップ処理は将来実装予定（アラーム以外の手段で）
 
 // コンテキストメニュー（将来実装用）
 chrome.runtime.onInstalled.addListener(() => {

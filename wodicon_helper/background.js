@@ -23,14 +23,7 @@ chrome.runtime.onStartup.addListener(() => {
   handleStartup();
 });
 
-// アラーム処理（Web監視）
-chrome.alarms.onAlarm.addListener((alarm) => {
-  console.log(`⏰ アラーム発火: ${alarm.name}`);
-  
-  if (alarm.name === 'web_monitor_check') {
-    handleWebMonitorAlarm();
-  }
-});
+// アラーム処理は削除済み（Chrome審査簡素化のため）
 
 // 通知クリック処理
 chrome.notifications.onClicked.addListener((notificationId) => {
@@ -137,24 +130,11 @@ async function initializeSampleData() {
   }
 }
 
-// Web監視初期化
+// Web監視初期化（アラーム機能削除済み）
 async function initializeWebMonitoring() {
   try {
-    // 既存のアラームをクリア
-    await chrome.alarms.clearAll();
-    
-    // 設定を読み込んで、監視が有効な場合は開始
-    const result = await chrome.storage.local.get('web_monitor_settings');
-    const settings = result.web_monitor_settings || {};
-    
-    if (settings.mode !== 'disabled' && settings.interval > 0) {
-      await chrome.alarms.create('web_monitor_check', {
-        delayInMinutes: settings.interval,
-        periodInMinutes: settings.interval
-      });
-      
-      console.log(`🔍 Web監視アラーム設定完了: ${settings.interval}分間隔`);
-    }
+    console.log('🔍 Web監視初期化（手動・サイト訪問時・ポップアップ開時のみ対応）');
+    // アラームベース定期監視は削除済み
     
   } catch (error) {
     console.error('❌ Web監視初期化エラー:', error);
@@ -199,14 +179,8 @@ async function handleStartup() {
     const result = await chrome.storage.local.get('web_monitor_settings');
     const settings = result.web_monitor_settings || {};
     
-    // 起動時チェックが有効な場合
-    if (settings.checkOnStartup) {
-      console.log('🔍 起動時Web監視チェック実行');
-      // 1分後に監視チェックを実行
-      await chrome.alarms.create('startup_monitor_check', {
-        delayInMinutes: 1
-      });
-    }
+    // 起動時アラームチェックは削除済み
+    console.log('🔍 起動時処理（アラーム監視なし）');
     
     // 定期監視の確認・再開
     await initializeWebMonitoring();
@@ -218,78 +192,11 @@ async function handleStartup() {
   }
 }
 
-// Web監視アラーム処理
-async function handleWebMonitorAlarm() {
-  try {
-    console.log('🔍 Web監視アラーム処理開始');
-    
-    // 監視処理を実行
-    // 注意: Service Worker内では直接的なDOMアクセスやfetch制限があるため
-    // 実際の監視処理は Content Script や Popup から実行する
-    await performWebMonitorCheck();
-    
-  } catch (error) {
-    console.error('❌ Web監視アラーム処理エラー:', error);
-  }
-}
+// アラーム処理は削除済み（代替: サイト訪問時・ポップアップ開時・手動実行）
 
-// Web監視チェック実行
-async function performWebMonitorCheck() {
-  try {
-    // 現在の設定を確認
-    const result = await chrome.storage.local.get('web_monitor_settings');
-    const settings = result.web_monitor_settings || {};
-    
-    if (settings.mode === 'disabled') {
-      console.log('📴 Web監視は無効に設定されています');
-      return;
-    }
-    
-    // Content ScriptまたはPopupから監視処理を実行するためのメッセージ送信
-    // 実際の実装では、activeなタブやポップアップに監視実行を依頼
-    await triggerMonitoringFromContentScript();
-    
-  } catch (error) {
-    console.error('❌ Web監視チェック実行エラー:', error);
-  }
-}
+// バックグラウンド監視チェックは削除済み（代替: サイト訪問時・ポップアップ開時・手動実行）
 
-// Content Scriptからの監視実行
-async function triggerMonitoringFromContentScript() {
-  try {
-    // アクティブなタブを取得
-    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-    
-    if (tabs.length > 0) {
-      // タブがウディこんサイトの場合、そこから監視実行
-      const tab = tabs[0];
-      if (tab.url && tab.url.includes('silversecond.com')) {
-        await chrome.tabs.sendMessage(tab.id, {
-          action: 'perform_monitoring_check',
-          source: 'background_alarm'
-        });
-        console.log('📡 監視チェックをContent Scriptに依頼');
-        return;
-      }
-    }
-    
-    // 上記が利用できない場合は、ポップアップ経由で実行
-    // この場合、結果は次回ポップアップ開時に確認される
-    console.log('📡 監視チェックはポップアップ開時に実行予定');
-    
-    // 監視実行フラグを設定
-    await chrome.storage.local.set({
-      pending_monitor_check: {
-        requested: true,
-        timestamp: new Date().toISOString(),
-        source: 'background_alarm'
-      }
-    });
-    
-  } catch (error) {
-    console.error('❌ Content Script監視実行エラー:', error);
-  }
-}
+// アラームベース監視実行は削除済み（代替: サイト訪問時・ポップアップ開時・手動実行）
 
 // メッセージリスナー（ポップアップからの要求処理）
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -338,41 +245,27 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-// Web監視開始処理
+// Web監視開始処理（アラーム機能削除済み）
 async function handleStartWebMonitoring(settings) {
   try {
-    console.log('🚀 Web監視開始処理:', settings);
+    console.log('🚀 Web監視設定更新:', settings);
+    console.log('ℹ️ アラームベース定期監視は削除済み（サイト訪問時・ポップアップ開時・手動実行で対応）');
     
-    // 既存のアラームをクリア
-    await chrome.alarms.clear('web_monitor_check');
-    
-    // 新しいアラームを設定
-    if (settings.interval > 0) {
-      await chrome.alarms.create('web_monitor_check', {
-        delayInMinutes: settings.interval,
-        periodInMinutes: settings.interval
-      });
-      
-      console.log(`⏰ Web監視アラーム設定: ${settings.interval}分間隔`);
-    }
-    
-    return { started: true, interval: settings.interval };
+    return { started: true, mode: 'manual_and_auto_on_access', interval: 'N/A' };
     
   } catch (error) {
-    console.error('❌ Web監視開始エラー:', error);
+    console.error('❌ Web監視設定エラー:', error);
     throw error;
   }
 }
 
-// Web監視停止処理
+// Web監視停止処理（アラーム機能削除済み）
 async function handleStopWebMonitoring() {
   try {
-    console.log('⏹️ Web監視停止処理');
+    console.log('⏹️ Web監視停止処理（アラーム機能なし）');
+    console.log('ℹ️ サイト訪問時・ポップアップ開時の自動監視は継続動作');
     
-    await chrome.alarms.clear('web_monitor_check');
-    console.log('⏰ Web監視アラーム削除完了');
-    
-    return { stopped: true };
+    return { stopped: true, note: 'alarm_based_monitoring_removed' };
     
   } catch (error) {
     console.error('❌ Web監視停止エラー:', error);
@@ -380,17 +273,15 @@ async function handleStopWebMonitoring() {
   }
 }
 
-// 監視ステータス取得
+// 監視ステータス取得（アラーム機能削除済み）
 async function getMonitoringStatus() {
   try {
-    const alarms = await chrome.alarms.getAll();
-    const webMonitorAlarm = alarms.find(alarm => alarm.name === 'web_monitor_check');
-    
     const status = {
-      isActive: !!webMonitorAlarm,
-      nextCheck: webMonitorAlarm ? new Date(webMonitorAlarm.scheduledTime).toISOString() : null,
-      intervalMinutes: webMonitorAlarm ? 
-        (webMonitorAlarm.periodInMinutes || webMonitorAlarm.delayInMinutes) : null
+      isActive: true,
+      monitoringType: 'site_visit_and_popup_based',
+      nextCheck: 'ウディコンサイト訪問時またはポップアップ開時',
+      intervalMinutes: null,
+      note: 'アラームベース定期監視は削除済み'
     };
     
     return status;

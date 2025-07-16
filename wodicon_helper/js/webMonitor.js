@@ -94,12 +94,12 @@ class WebMonitor {
     }
   }
 
-  // 監視停止
+  // 監視停止（アラーム機能削除済み）
   async stopMonitoring() {
     try {
       this.isMonitoring = false;
-      await chrome.alarms.clear('web_monitor_check');
-      console.log('⏹️ Web監視停止');
+      console.log('⏹️ Web監視停止（アラーム機能削除済み）');
+      console.log('ℹ️ サイト訪問時・ポップアップ開時の自動監視は継続動作');
       
       return true;
       
@@ -109,21 +109,12 @@ class WebMonitor {
     }
   }
 
-  // スケジュール設定
+  // スケジュール設定（アラーム機能削除済み）
   async scheduleMonitoring() {
     try {
-      // 既存のアラームをクリア
-      await chrome.alarms.clear('web_monitor_check');
-      
-      if (this.monitoringInterval > 0) {
-        // 新しいアラームを設定
-        await chrome.alarms.create('web_monitor_check', {
-          delayInMinutes: this.monitoringInterval,
-          periodInMinutes: this.monitoringInterval
-        });
-        
-        console.log(`⏰ 監視スケジュール設定完了: ${this.monitoringInterval}分間隔`);
-      }
+      console.log('ℹ️ アラームベース定期監視は削除済み（Chrome審査簡素化のため）');
+      console.log('✅ 代替監視方式: サイト訪問時・ポップアップ開時・手動実行');
+      console.log(`📋 設定値保持: ${this.monitoringInterval}分間隔（参考値）`);
       
     } catch (error) {
       console.error('❌ スケジュール設定エラー:', error);
