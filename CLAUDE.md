@@ -67,12 +67,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **コードベース最適化**（データ処理統一化・重複削除）
 
 ### 現在のバージョン
-- **最新リリース**: v0.0.4
+- **最新リリース**: v0.0.5
 - **主な新機能**: 
-  - 新規登録時の評価表示改善（全項目「-」表示で直感的な未評価状態）
-  - 詳細画面の更新日クリーンアップ（「→ご意見/バグ報告BBS」等の不要文言自動除去）
-  - コードベース最適化（データ処理の重複削除・updateManager.jsへの統一）
-  - 不要なテストコード・設定項目の整理
+  - 評価『その他』の下限を0に設定
+  - 評価の目盛りを追加等の細かな修正
+  - 評価スライダーの視覚的改善
+  - 新着フィルターでベルアイコン対応
+  - 詳細画面でNEWステータス自動更新
+  - 全列からの詳細画面遷移対応
 - **配布URL**: https://wudi-consuke.vercel.app/
 
 ### リリース管理・zip圧縮ルール
@@ -225,3 +227,132 @@ Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content
 - **データ統一**: updateManager.jsがすべてのデータ処理を担当（重複防止）
 - **自動保存**: 3秒間隔でのdebounced自動保存（navigation.js）
 - **モジュール初期化**: popup.htmlで順次読み込み、windowオブジェクトにインスタンス作成
+
+## GeminiAPI統合パッケージ
+
+### 概要
+`scripts/gemini-integration/` - 汎用的なGeminiAPI統合モジュール。どのプロジェクトでも簡単に組み込み可能な独立したパッケージ。
+
+### 主要機能
+- **対話形式セットアップ**: APIキーの安全な設定管理
+- **チャットセッション**: 単発メッセージ送信と継続的な会話
+- **自動ログ記録**: 全会話を詳細にログ記録（conversations/, sessions/, errors/）
+- **堅牢なエラーハンドリング**: リトライ機能付きエラー処理
+- **テスト機能**: 接続テスト、日本語対応テスト等の包括的テスト
+
+### 使用方法
+```bash
+# セットアップ
+cd scripts/gemini-integration
+npm install
+npm run setup
+
+# 接続テスト
+npm test
+
+# 対話型チャット
+npm run chat
+```
+
+### 重要な設定
+- **モデル**: gemini-2.5-flash（デフォルト）
+- **温度**: 0.7（デフォルト）
+- **最大トークン**: 4000（デフォルト）
+- **ログ**: 会話履歴、セッション統計、エラーログの自動記録
+
+### アーキテクチャ
+- **GeminiClient**: メインクライアント（src/gemini-client.js）
+- **GeminiChatSession**: チャットセッション管理
+- **ConversationLogger**: 会話ログ記録（utils/conversation-logger.js）
+- **GeminiConfig**: 設定管理（config/gemini-config.js）
+
+### 統合例
+```javascript
+import { geminiClient } from './scripts/gemini-integration/src/gemini-client.js';
+
+await geminiClient.initialize();
+const result = await geminiClient.sendMessage('Hello, Gemini!');
+console.log(result.response);
+```
+
+### 重要な制約
+- **ファイルシステムアクセス不可**: GeminiAPIは直接ファイルを読み取れない
+- **外部ツール実行不可**: bashコマンドやgit操作などは実行できない
+- **リアルタイム情報取得不可**: 最新情報を自分で取得することはできない
+- **実用性**: 現状では補助的な対話ツールとしての位置づけ
+
+### セキュリティ
+- APIキーは.envファイルで管理（.gitignore済み）
+- セーフティ設定でハラスメント/危険内容を防止
+- 本番環境では環境変数として設定推奨
+
+## 重要な実装詳細
+
+### 評価スライダーの目盛り機能
+- **実装場所**: navigation.js の `addTickMarks()` メソッド
+- **仕組み**: 平均バーと同じz-index (4) で動的にdiv要素として目盛りを生成
+- **分割**: 通常項目は9等分（1-10）、「その他」項目は10等分（0-10）
+- **スタイル**: `rgba(102, 126, 234, 0.3)` の薄い青色縦線
+
+### 新着フィルター機能
+- **対象**: `version_status === 'new'` と `version_status === 'updated'` の両方
+- **自動更新**: 詳細画面を開くとNEWステータス（🆕）とベルアイコン（🔔）が自動的に✅に変更
+- **実装場所**: navigation.js の `resetUpdateNotification()` メソッド
+
+### クリック可能領域の拡張
+- **対象列**: No、作品名、更新、評価列（熱、斬、物、画、遊、他）すべて
+- **実装**: navigation.js でクリック検知、popup.css でホバー効果
+- **効果**: 任意の列クリックで詳細画面へ遷移可能
+
+## GeminiCLI統合パッケージ
+
+### 概要
+`scripts/gemini_cli/` - GeminiCLIを使用したコード分析とプロジェクト分析機能。従来のGeminiAPI統合とは異なり、CLI経由でファイルやプロジェクト全体を分析可能。
+
+### 主要機能
+- **📁 ファイル分析**: 個別ファイルの詳細分析
+- **📊 プロジェクト分析**: プロジェクト全体の包括的分析  
+- **🔍 コードレビュー**: 品質とセキュリティの評価
+- **⚖️ ファイル比較**: 2つのファイルの比較分析
+- **📋 結果保存**: Markdown形式での分析結果保存
+
+### 使用方法
+```bash
+# セットアップ（ワンコマンド）
+cd scripts/gemini_cli
+npm run quick-start
+
+# ファイル分析
+node src/cli-analyzer.js file ./src/app.js
+
+# プロジェクト分析
+node src/cli-analyzer.js project ./my-project
+
+# コードレビュー
+node src/cli-analyzer.js review ./src/component.tsx
+```
+
+### 前提条件
+- **GeminiCLI**: `npm install -g https://github.com/google-gemini/gemini-cli`
+- **認証**: `gemini` コマンドで初回認証が必要
+- **Node.js**: 18以上
+
+### アーキテクチャ
+- **GeminiCLIWrapper** (cli-wrapper.js): CLI実行とエラーハンドリング
+- **CLIAnalyzer** (cli-analyzer.js): 分析機能とファイル出力
+- **設定管理**: config/cli-config.json で動作設定
+- **結果出力**: output/ フォルダにMarkdown形式で保存
+
+### GeminiAPIとの違い
+| 機能 | GeminiAPI統合 | GeminiCLI統合 |
+|------|--------------|--------------|
+| ファイル読み取り | 不可（手動コピペ必要） | 可能（CLI経由） |
+| プロジェクト分析 | 不可 | 可能 |
+| 結果保存 | 手動 | 自動（Markdown） |
+| 実用性 | 補助的対話 | 実用的分析ツール |
+
+### 重要な制約
+- **GeminiCLI依存**: 外部CLIツールのインストールが必要
+- **認証要件**: Google認証プロセスが必要
+- **ネットワーク依存**: インターネット接続必須
+- **実行時間**: 大きなファイル・プロジェクトは時間がかかる

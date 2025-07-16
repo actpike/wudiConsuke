@@ -1,0 +1,12 @@
+{
+  "name": "test-project",
+  "version": "1.0.0",
+  "description": "GeminiCLI統合テスト用プロジェクト",
+  "main": "sample.js",
+  "scripts": {
+    "test": "echo 'テスト実行'"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}

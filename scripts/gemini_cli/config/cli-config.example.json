@@ -1,0 +1,27 @@
+{
+  "geminiModel": "gemini-2.5-flash",
+  "defaultPath": ".",
+  "maxFileSize": 1024000,
+  "excludePatterns": [
+    "node_modules",
+    "dist",
+    ".git",
+    ".vscode",
+    "coverage",
+    "build",
+    "*.log",
+    "*.tmp"
+  ],
+  "timeout": 120000,
+  "retryCount": 3,
+  "debug": false,
+  "analysisOptions": {
+    "includeComments": true,
+    "analyzeDependencies": true,
+    "detectPatterns": true,
+    "securityScan": false
+  },
+  "outputFormat": "markdown",
+  "projectName": "gemini-cli-integration",
+  "lastUpdated": "2025-07-16T00:00:00.000Z"
+}

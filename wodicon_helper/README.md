@@ -29,12 +29,22 @@
 2. Chrome で `chrome://extensions/` を開く
 3. 「デベロッパーモード」を有効にする
 4. 「パッケージ化されていない拡張機能を読み込む」をクリック
-5. `wodicon_helper` フォルダを選択
+5. `WudiConsuke` フォルダを選択
 
-### 権限設定（未実装）
-# ローカルフォルダ機能を使用する場合：
-# 1. 拡張機能の「詳細」をクリック
-# 2. 「ファイルのURLへのアクセスを許可する」を有効にする
+### 権限設定
+**ウディこん助が使用する権限とその用途:**
+- **storage**: 作品の評価・感想・プレイ状況をローカル保存
+- **alarms**: 自動監視機能（30分～1時間間隔でサイト監視）
+- **notifications**: 新規・更新作品のデスクトップ通知
+- **activeTab**: アクティブタブの情報取得、手動監視時のページ解析
+- **downloads**: 作品データのエクスポート/インポート機能
+- **host_permissions**: ウディコン公式サイト(silversecond.com)からの情報取得
+
+**完全ローカル動作**: データ送信・追跡・広告なし
+
+**ローカルフォルダ機能を使用する場合:**
+1. 拡張機能の「詳細」をクリック
+2. 「ファイルのURLへのアクセスを許可する」を有効にする
 
 ## 📖 使い方
 
@@ -58,7 +68,7 @@
 ### 使用技術
 - **フロントエンド**: Vanilla JavaScript, CSS3, HTML5
 - **ストレージ**: chrome.storage.local（5MB制限）
-- **権限**: storage, alarms, notifications, activeTab, downloads
+- **権限**: storage, alarms, notifications, activeTab, downloads, host_permissions
 
 ## 📝 ライセンス
 

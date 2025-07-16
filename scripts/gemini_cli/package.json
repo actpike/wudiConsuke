@@ -1,0 +1,52 @@
+{
+  "name": "@gemini-integration/cli",
+  "version": "1.0.0",
+  "description": "🤖 GeminiCLI統合モジュール - コード分析とプロジェクト分析",
+  "type": "module",
+  "main": "src/cli-wrapper.js",
+  "bin": {
+    "gemini-analyze": "src/cli-analyzer.js"
+  },
+  "scripts": {
+    "setup": "node setup.js",
+    "install-cli": "npm install -g https://github.com/google-gemini/gemini-cli",
+    "test": "node test/test-gemini-cli.js",
+    "analyze": "node src/cli-analyzer.js",
+    "copy-config": "cp config/cli-config.example.json config/cli-config.json",
+    "quick-start": "npm run copy-config && npm run setup && npm run test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "gemini-cli": "*"
+  },
+  "files": [
+    "src/**/*",
+    "config/**/*",
+    "test/**/*",
+    "setup.js",
+    "README.md"
+  ],
+  "keywords": [
+    "gemini",
+    "cli",
+    "code-analysis",
+    "project-analysis",
+    "ai",
+    "review",
+    "javascript",
+    "nodejs",
+    "gemini-2.5-flash"
+  ],
+  "author": "act_pike",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/act-pike/gemini-cli-integration.git"
+  },
+  "bugs": {
+    "url": "https://github.com/act-pike/gemini-cli-integration/issues"
+  },
+  "homepage": "https://github.com/act-pike/gemini-cli-integration#readme"
+}
