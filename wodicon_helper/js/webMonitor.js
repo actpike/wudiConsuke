@@ -79,7 +79,7 @@ class WebMonitor {
       this.isMonitoring = true;
       console.log(`🚀 Web監視開始 (${this.monitoringInterval}分間隔)`);
       
-      // Chrome Alarms APIでスケジュール設定
+      // アラームベーススケジュールは削除済み
       await this.scheduleMonitoring();
       
       // 即座に1回実行

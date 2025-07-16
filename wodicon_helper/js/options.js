@@ -325,9 +325,9 @@ async function saveSettings() {
 
     // Web監視設定（基本設定のみ保持、自動監視機能は無効化）
     const webMonitorSettings = {
-      mode: 'disabled',
-      interval: 0,
-      checkOnStartup: false,
+      mode: 'disabled', // アラーム機能削除により固定
+      interval: 0, // 使用されない（参考値）
+      checkOnStartup: false, // 機能削除済み
       contest_url: document.getElementById('contest-url').value,
       lastCheckTime: null // 保持される値
     };

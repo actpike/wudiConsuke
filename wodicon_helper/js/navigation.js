@@ -99,17 +99,7 @@ class NavigationController {
     });
 
     // フォルダ関連ボタンは削除済みのためコメントアウト
-    // document.getElementById('open-folder-btn').addEventListener('click', () => {
-    //   this.openLocalFolder();
-    // });
-
-    // document.getElementById('edit-folder-btn').addEventListener('click', () => {
-    //   this.toggleFolderEdit();
-    // });
-
-    // document.getElementById('open-wodicon-btn').addEventListener('click', () => {
-    //   this.openWodiconPage();
-    // });
+    // フォルダ関連イベントリスナーは削除済み（未使用コードクリーンアップ）
   }
 
   // メイン画面表示
@@ -837,44 +827,11 @@ class NavigationController {
     }
   }
 
-  // ローカルフォルダ開く
-  openLocalFolder() {
-    const folderPath = document.getElementById('folder-path').value.trim();
-    if (!folderPath) {
-      alert('フォルダパスが設定されていません。');
-      return;
-    }
+  // ローカルフォルダ機能は削除済み（未使用コードクリーンアップ）
 
-    const fileUrl = `file:///${folderPath.replace(/\\/g, '/')}`;
-    chrome.tabs.create({ url: fileUrl, active: false }).catch(error => {
-      console.error('Failed to open folder:', error);
-      alert('フォルダを開けませんでした。\n「ファイルのURLへのアクセスを許可する」が有効になっているか確認してください。');
-    });
-  }
+  // フォルダ編集機能は削除済み（未使用コードクリーンアップ）
 
-  // フォルダ編集切り替え
-  toggleFolderEdit() {
-    const input = document.getElementById('folder-path');
-    const button = document.getElementById('edit-folder-btn');
-    
-    if (input.readOnly) {
-      input.readOnly = false;
-      input.focus();
-      button.textContent = '完了';
-    } else {
-      input.readOnly = true;
-      button.textContent = '編集';
-      this.markAsChanged();
-    }
-  }
-
-  // ウディコン公式ページ開く
-  openWodiconPage() {
-    const url = document.getElementById('wodicon-url').value;
-    if (url) {
-      chrome.tabs.create({ url: url, active: true });
-    }
-  }
+  // ウディコンページ機能は削除済み（未使用コードクリーンアップ）
 
   // ウディコンリンクを開く
   async openWodiconLink() {

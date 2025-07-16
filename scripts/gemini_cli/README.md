@@ -127,7 +127,7 @@ gemini_cli/
 | `defaultPath` | デフォルト分析パス | `"."` |
 | `maxFileSize` | 最大ファイルサイズ (bytes) | `1024000` |
 | `excludePatterns` | 除外パターン | `["node_modules", "dist", ".git"]` |
-| `timeout` | タイムアウト時間 (ms) | `60000` |
+| `timeout` | タイムアウト時間 (ms) | `180000` |
 | `retryCount` | リトライ回数 | `3` |
 | `debug` | デバッグモード | `false` |
 
@@ -302,7 +302,7 @@ Error: コマンドがタイムアウトしました
 ```
 
 **解決方法**:
-- `config/cli-config.json`の`timeout`を増加
+- `config/cli-config.json`の`timeout`を増加（デフォルト: 180秒）
 - ファイルサイズを確認（`maxFileSize`以下に）
 
 ### デバッグモード
@@ -332,7 +332,7 @@ Error: コマンドがタイムアウトしました
     "node_modules", ".env", "*.key", "*.pem", 
     ".git", "dist", "coverage", "*.log"
   ],
-  "timeout": 30000
+  "timeout": 180000
 }
 ```
 
@@ -350,6 +350,90 @@ Error: コマンドがタイムアウトしました
 - **小さなファイル** (< 10KB): 5-15秒
 - **中程度のファイル** (10-100KB): 15-45秒
 - **プロジェクト分析**: 30-120秒
+
+## 🔄 推奨開発フロー
+
+### 基本開発サイクル
+
+```bash
+1. SOW作成 → 2. 改修 → 3. テスト → 4. Geminiレビュー → 5. 改修対応（必要時）
+```
+
+### 1. SOW作成
+```bash
+# SOW作成（documents/SOW/backlog/に配置）
+# - 明確な要件定義
+# - 具体的な作業項目
+# - 完了条件の明記
+```
+
+### 2. 改修・実装
+```bash
+# 通常の開発作業
+# - コード実装
+# - 既存機能のテスト確認
+# - 基本的な動作検証
+```
+
+### 3. テスト
+```bash
+# Chrome拡張機能の場合
+# - chrome://extensions/ での拡張機能リロード
+# - 基本機能の手動テスト
+# - ポップアップ・オプション画面の動作確認
+```
+
+### 4. Geminiレビュー
+```bash
+# 軽量個別分析（推奨）
+node src/cli-analyzer.js file ./path/to/modified-file.js
+
+# プロジェクト全体分析（時間がかかる）
+node src/cli-analyzer.js project ./project-path
+
+# マルチ観点レビュー（並列実行・高負荷）
+node multi-review.js ./project-path chrome_extension
+```
+
+### 5. 改修対応
+```bash
+# Geminiレビュー結果の確認
+ls -la output/
+
+# 指摘事項への対応
+# - セキュリティ・パフォーマンス問題（高優先度）
+# - コード品質改善（中優先度）
+# - アーキテクチャ最適化（低優先度）
+```
+
+### 📊 マルチ観点レビュー（実験的機能）
+
+複数の観点から並列でレビューを実行する高度な機能：
+
+```bash
+# Chrome拡張機能用テンプレート
+node multi-review.js ./project chrome_extension
+
+# 観点別実行
+node multi-review.js ./project chrome_extension architecture,security
+```
+
+**利用可能テンプレート:**
+- `chrome_extension`: architecture, code_quality, security, performance, maintenance
+- `webapp`: architecture, code_quality, security  
+- `general`: comprehensive, quick_review
+
+**注意事項:**
+- 並列実行により高負荷（CPU・ネットワーク）
+- レビュー時間: 5-15分（観点数により変動）
+- タイムアウト制限: 180秒/観点（コード量考慮）
+
+### 🎯 効率化のヒント
+
+1. **段階的レビュー**: 個別ファイル → プロジェクト全体
+2. **問題特化**: セキュリティやパフォーマンスなど特定観点に絞る
+3. **軽量優先**: quick_reviewで概要把握後、詳細分析
+4. **結果活用**: output/フォルダの分析結果を改修に活用
 
 ---
 
