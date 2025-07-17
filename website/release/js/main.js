@@ -41,30 +41,41 @@ function initializeBrowserDetection() {
                     /Google Inc/.test(navigator.vendor) &&
                     !/Edg|OPR|Opera/.test(navigator.userAgent);
     
-    console.log(`ブラウザ判定結果: Chrome=${isChrome}, UserAgent=${navigator.userAgent}`);
+    // モバイル端末判定
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                    (navigator.maxTouchPoints && navigator.maxTouchPoints > 2);
     
-    if (!isChrome) {
-        // Chrome以外の場合
+    console.log(`ブラウザ判定結果: Chrome=${isChrome}, Mobile=${isMobile}, UserAgent=${navigator.userAgent}`);
+    
+    if (!isChrome || isMobile) {
+        // Chrome以外またはモバイル端末の場合
         downloadBtn.classList.remove('btn-primary');
         downloadBtn.classList.add('btn-disabled');
         downloadBtn.removeAttribute('href');
         downloadBtn.removeAttribute('download');
-        downloadText.textContent = 'Chromeブラウザでのみサポートしています';
+        
+        let warningMessage = '';
+        if (isMobile) {
+            downloadText.textContent = 'PC版Chromeブラウザでのみサポートしています';
+            warningMessage = 'この拡張機能はPC版Google Chromeブラウザでのみ利用できます。\n\nモバイル端末では利用できません。\nパソコンのChromeブラウザからアクセスしてください。';
+        } else {
+            downloadText.textContent = 'Chromeブラウザでのみサポートしています';
+            const browserName = getBrowserName();
+            warningMessage = `この拡張機能はGoogle Chromeブラウザでのみ利用できます。\n\n現在のブラウザ: ${browserName}\n\nChromeをダウンロードしてからお試しください。\nhttps://www.google.com/chrome/`;
+        }
+        
         browserWarning.style.display = 'block';
         
         // クリックイベントを無効化
         downloadBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
-            // より詳細なアラートメッセージ
-            const browserName = getBrowserName();
-            alert(`この拡張機能はGoogle Chromeブラウザでのみ利用できます。\n\n現在のブラウザ: ${browserName}\n\nChromeをダウンロードしてからお試しください。\nhttps://www.google.com/chrome/`);
+            alert(warningMessage);
         });
         
-        console.log('🚫 Chrome以外のブラウザでダウンロードボタンを無効化しました');
+        console.log('🚫 Chrome以外またはモバイル端末でダウンロードボタンを無効化しました');
     } else {
-        console.log('✅ Chrome環境でダウンロードボタンを有効化しました');
+        console.log('✅ PC版Chrome環境でダウンロードボタンを有効化しました');
     }
 }
 
