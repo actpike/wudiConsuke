@@ -41,7 +41,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### 主要機能モジュール
 - **プレイ補助**: 既プレイチェックリスト、感想記録（✅完了）
 - **実用的自動監視**: サイト訪問時・ポップアップ開時の自動監視（✅完了）
-- **ローカル連携**: フォルダ参照（file://制約あり）
+- **ローカル連携**: フォルダ参照（未実装・検証済み、file://制約により困難）
 - **データ管理**: chrome.storage.local（5MB制限）
 
 ### 実装済みコンポーネント
@@ -67,14 +67,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **コードベース最適化**（データ処理統一化・重複削除）
 
 ### 現在のバージョン
-- **最新リリース**: v0.0.5
+- **最新リリース**: v0.0.6
 - **主な新機能**: 
-  - 評価『その他』の下限を0に設定
-  - 評価の目盛りを追加等の細かな修正
-  - 評価スライダーの視覚的改善
-  - 新着フィルターでベルアイコン対応
-  - 詳細画面でNEWステータス自動更新
-  - 全列からの詳細画面遷移対応
+  - alarms/scriptsアクセス権限削除（Chrome Web Store準拠）
+  - コードクリーンアップ：constants.js/errorHandler.js追加
+  - GeminiCLI統合：並列実行機能、開発フロー文書化
+  - 重複ファイル削除（622行削除）
+  - 統一エラーハンドリングシステム
 - **配布URL**: https://wudi-consuke.vercel.app/
 
 ### リリース管理・zip圧縮ルール
@@ -210,6 +209,8 @@ Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content
 - **WebMonitor** (webMonitor.js): Web監視実行・ページ取得
 - **UpdateManager** (updateManager.js): 更新検知・新規作品処理（統一データ処理）
 - **PageParser** (pageParser.js): HTML解析・差分検出
+- **ErrorHandler** (errorHandler.js): 統一エラーハンドリング・通知システム
+- **Constants** (constants.js): 定数管理・マジックナンバー排除
 
 ### データ処理の統一化
 - v0.0.4で重複処理を統一：全てのデータ処理はupdateManager.jsに集約
@@ -227,6 +228,8 @@ Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content
 - **データ統一**: updateManager.jsがすべてのデータ処理を担当（重複防止）
 - **自動保存**: 3秒間隔でのdebounced自動保存（navigation.js）
 - **モジュール初期化**: popup.htmlで順次読み込み、windowオブジェクトにインスタンス作成
+- **統一エラーハンドリング**: window.errorHandlerによる分類・通知・履歴管理（v0.0.6追加）
+- **定数管理**: window.constantsによるマジックナンバー・文字列の統一管理（v0.0.6追加）
 
 ## GeminiAPI統合パッケージ
 
@@ -304,6 +307,16 @@ console.log(result.response);
 - **実装**: navigation.js でクリック検知、popup.css でホバー効果
 - **効果**: 任意の列クリックで詳細画面へ遷移可能
 
+### 統一エラーハンドリングシステム
+- **実装場所**: errorHandler.js の `window.errorHandler` グローバルインスタンス
+- **機能**: エラー分類（network, storage, parse, timeout, permission）、通知作成、履歴追跡
+- **使用方法**: `window.errorHandler.handleError(error, context)` で統一的なエラー処理
+
+### 定数管理システム
+- **実装場所**: constants.js の `window.constants` グローバルインスタンス
+- **内容**: STORAGE_KEYS, FILTER_TYPES, SORT_TYPES, LIMITS, URLs, ERROR_MESSAGES
+- **目的**: マジックナンバー・文字列の排除、保守性向上
+
 ## GeminiCLI統合パッケージ
 
 ### 概要
@@ -330,6 +343,10 @@ node src/cli-analyzer.js project ./my-project
 
 # コードレビュー
 node src/cli-analyzer.js review ./src/component.tsx
+
+# 並列マルチ観点レビュー（NEW）
+node multi-review.js ./project-path chrome_extension
+node multi-review.js ./project-path chrome_extension architecture,security
 ```
 
 ### 前提条件
@@ -355,4 +372,11 @@ node src/cli-analyzer.js review ./src/component.tsx
 - **GeminiCLI依存**: 外部CLIツールのインストールが必要
 - **認証要件**: Google認証プロセスが必要
 - **ネットワーク依存**: インターネット接続必須
-- **実行時間**: 大きなファイル・プロジェクトは時間がかかる
+- **実行時間**: 大きなファイル・プロジェクトは時間がかかる（並列実行で改善）
+- **タイムアウト**: 180秒/観点（コード量考慮済み）
+
+### 開発フロー統合
+詳細は `scripts/gemini_cli/README.md` の「🔄 推奨開発フロー」を参照：
+1. **SOW作成** → 2. **改修** → 3. **テスト** → 4. **Geminiレビュー** → 5. **改修対応**
+
+**マルチ観点レビュー**: Promise.allSettledによる真の並列処理で複数観点を同時実行
