@@ -9,6 +9,9 @@ function initializeApp() {
     // ブラウザ判定とダウンロードボタン制御
     initializeBrowserDetection();
     
+    // タブ切り替え機能
+    initializeTabs();
+    
     // スムーススクロール
     initializeSmoothScroll();
     
@@ -22,6 +25,56 @@ function initializeApp() {
     initializeLazyLoading();
     
     console.log('🌊 ウディこん助紹介ページ初期化完了');
+}
+
+// タブ切り替え機能
+function initializeTabs() {
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    console.log(`タブ要素検索結果: buttons=${tabButtons.length}, contents=${tabContents.length}`);
+    
+    if (tabButtons.length === 0 || tabContents.length === 0) {
+        console.log('タブ要素が見つかりません');
+        return;
+    }
+    
+    // 初期状態をログ出力
+    tabButtons.forEach((btn, index) => {
+        console.log(`タブボタン${index}: data-tab="${btn.dataset.tab}", active=${btn.classList.contains('active')}`);
+    });
+    
+    tabContents.forEach((content, index) => {
+        console.log(`タブコンテンツ${index}: id="${content.id}", active=${content.classList.contains('active')}`);
+    });
+    
+    // タブボタンのクリックイベント
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const targetTab = this.dataset.tab;
+            const targetContentId = targetTab + '-tab';
+            
+            console.log(`タブクリック: ${targetTab} -> ${targetContentId}`);
+            
+            // すべてのタブボタンとコンテンツからactiveクラスを削除
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // クリックされたタブボタンにactiveクラスを追加
+            this.classList.add('active');
+            
+            // 対応するタブコンテンツを表示
+            const targetContent = document.getElementById(targetContentId);
+            if (targetContent) {
+                targetContent.classList.add('active');
+                console.log(`✅ タブ切り替え成功: ${targetContentId}`);
+            } else {
+                console.error(`❌ タブコンテンツが見つかりません: ${targetContentId}`);
+            }
+        });
+    });
+    
+    console.log('✅ タブ切り替え機能初期化完了');
 }
 
 // ブラウザ判定とダウンロードボタン制御

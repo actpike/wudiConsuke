@@ -148,6 +148,10 @@ class GameListManager {
       this.performBackgroundUpdate();
     });
 
+    document.getElementById('local-folder-test-btn').addEventListener('click', () => {
+      this.performLocalFolderTest();
+    });
+
     document.getElementById('settings-btn').addEventListener('click', () => {
       chrome.tabs.create({ url: chrome.runtime.getURL('options.html') });
     });
@@ -983,6 +987,82 @@ class GameListManager {
       this.updateStatusBar(`❌ 更新エラー: ${error.message}`, 'error');
 
       this.showUpdateError(error);
+
+    } finally {
+      // 3秒後にUIを元に戻す
+      setTimeout(() => {
+        btn.className = originalClass;
+      }, 3000);
+    }
+  }
+
+  // ローカルフォルダアクセステスト
+  async performLocalFolderTest() {
+    const btn = document.getElementById('local-folder-test-btn');
+    const originalClass = btn.className;
+
+    try {
+      // テスト中の視覚的フィードバック
+      btn.classList.add('updating');
+      btn.disabled = true;
+      this.updateStatusBar('📁 ローカルフォルダテスト実行中...', 'processing', 0);
+
+      console.log('🧪 ローカルフォルダアクセステスト開始');
+
+      // D:\tmpフォルダへのアクセステスト
+      const testPath = 'D:\\tmp\\test.txt';
+      const testContent = 'ウディこん助 ローカルフォルダアクセステスト - ' + new Date().toISOString();
+      
+      // Service WorkerにメッセージでD:\tmpアクセスを依頼
+      const result = await new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage({
+          type: 'LOCAL_FOLDER_TEST',
+          data: {
+            path: testPath,
+            content: testContent
+          }
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else {
+            resolve(response);
+          }
+        });
+      });
+
+      if (result.success) {
+        // 成功時の処理
+        btn.className = originalClass;
+        btn.classList.add('success');
+        btn.disabled = false;
+
+        this.updateStatusBar(`✅ ローカルフォルダテスト成功: ${result.message}`, 'success');
+        
+        // 結果詳細を表示
+        setTimeout(() => {
+          alert(`📁 ローカルフォルダアクセステスト結果:\n\n✅ 成功\n\n詳細: ${result.message}\n\nファイルパス: ${testPath}`);
+        }, 500);
+
+        console.log('✅ ローカルフォルダテスト成功:', result);
+
+      } else {
+        throw new Error(result.error || 'ローカルフォルダアクセステストに失敗しました');
+      }
+
+    } catch (error) {
+      // エラー時の処理
+      console.error('❌ ローカルフォルダテストエラー:', error);
+      
+      btn.className = originalClass;
+      btn.classList.add('error');
+      btn.disabled = false;
+
+      this.updateStatusBar(`❌ ローカルフォルダテスト失敗: ${error.message}`, 'error');
+
+      // エラー詳細を表示
+      setTimeout(() => {
+        alert(`📁 ローカルフォルダアクセステスト結果:\n\n❌ 失敗\n\nエラー: ${error.message}\n\nChrome拡張機能のセキュリティ制約により、file://プロトコルへの直接アクセスは制限されています。`);
+      }, 500);
 
     } finally {
       // 3秒後にUIを元に戻す

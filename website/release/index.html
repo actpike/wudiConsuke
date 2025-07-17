@@ -81,7 +81,7 @@
             <div class="header-content">
                 <div class="logo">
                     <img src="./images/WudiConsuke_top.png" alt="ウディこん助" class="logo-img">
-                    <h1>ウディこん助 <span class="sub-title">(WodiConsuke)</span> <span class="version-badge">ver0.0.5</span></h1>
+                    <h1>ウディこん助 <span class="sub-title">(WodiConsuke)</span> <span class="version-badge">ver0.0.6</span></h1>
                 </div>
                 <p class="tagline">ウディコン作品プレイ体験をより快適・便利に</p>
             </div>
@@ -105,7 +105,7 @@
                             <a href="#download" class="btn btn-primary">
                                 <span class="btn-icon">🔗</span>
                                 Chrome Web Store
-                                <span class="coming-soon">Coming Soon...</span>
+                                <!--<span class="coming-soon">Coming Soon...</span>-->
                             </a>
                             <a href="#features" class="btn btn-secondary">
                                 <span class="btn-icon">✨</span>
@@ -173,59 +173,109 @@
             </div>
         </section>
 
-        <!-- Download Section -->
+        <!-- Installation Section -->
         <section id="download" class="download">
             <div class="container">
                 <div class="download-content">
-                    <h2 class="section-title">ダウンロード</h2>
+                    <h2 class="section-title">導入方法</h2>
                     <p class="download-description">
-                        現在Chrome Web Store公開準備中です。<br>
-                        こちらから手動でインストールしていただけます。
+                        Chrome Web Storeで公開中！簡単インストールまたは手動インストールをお選びください。
                     </p>
                     
-                    <!-- ダウンロードボタン（ブラウザ判定対応） -->
-                    <div class="download-button">
-                        <a href="./versions/WudiConsuke_release_v0.0.5.zip" 
-                           id="download-btn"
-                           class="btn btn-primary btn-large"
-                           download="WudiConsuke_v0.0.5.zip">
-                            <span class="btn-icon">📦</span>
-                            <span id="download-text">ウディこん助 v0.0.5 をダウンロード</span>
-                        </a>
-                        <p id="browser-warning" class="browser-warning" style="display: none;">
-                            ⚠️ この拡張機能はPC版Chromeブラウザでのみ動作します
-                        </p>
-                    </div>
-                    
-                    <!-- 導入手順セクション -->
-                    <div class="installation-guide">
-                        <h3 class="installation-title">導入手順</h3>
-                        <div class="installation-steps">
-                            <div class="step">
-                                <div class="step-number">1</div>
-                                <div class="step-content">
-                                    <h4>Chrome拡張機能管理画面を開く</h4>
-                                    <ol class="install-steps-list">
-                                        <p class="prep-note">【事前準備】上記のボタン[ ダウンロード ]より、<br>zipを任意のフォルダへ解凍</p>
-                                        <li>Chromeブラウザで <code>chrome://extensions/</code> にアクセス</li>
-                                        <li>右上の『開発者モード』を有効化</li>
-                                        <li>押下『パッケージ化されていない拡張機能を読み込む』</li>
-                                        <li>解凍したzipのフォルダを選択し、押下[ フォルダーの選択 ]</li>
+                    <!-- タブ切り替え -->
+                    <div class="installation-tabs">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active" data-tab="webstore">Chrome Web Store</button>
+                            <button class="tab-btn" data-tab="manual">手動インストール</button>
+                        </div>
+                        
+                        <!-- Chrome Web Store タブ -->
+                        <div class="tab-content active" id="webstore-tab">
+                            <div class="webstore-content">
+                                <h3>Chrome Web Store から簡単インストール</h3>
+                                <p class="webstore-description">
+                                    公式のChrome Web Storeからワンクリックでインストールできます。
+                                </p>
+                                <div class="webstore-button">
+                                    <a href="https://chromewebstore.google.com/detail/%E3%82%A6%E3%83%87%E3%82%A3%E3%81%93%E3%82%93%E5%8A%A9-wodiconsuke/abbbkpknokmcgkgdhffkddjincbiepfk" 
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="btn btn-secondary btn-large"
+                                       id="webstore-btn">
+                                        <span class="btn-icon">🏪</span>
+                                        Chrome Web Store で入手
+                                    </a>
+                                    <p id="webstore-warning" class="browser-warning" style="display: none;">
+                                        ⚠️ この拡張機能はPC版Chromeブラウザでのみ動作します
+                                    </p>
+                                </div>
+                                
+                                <div class="webstore-steps">
+                                    <h4>インストール手順</h4>
+                                    <ol>
+                                        <li>上記ボタンをクリックしてChrome Web Storeを開く</li>
+                                        <li>「Chromeに追加」ボタンをクリック</li>
+                                        <li>確認ダイアログで「拡張機能を追加」をクリック</li>
+                                        <li>ブラウザのツールバーにアイコンが表示されたら完了！</li>
                                     </ol>
-                                    <img src="./images/Installation/wdiconsuke_Installation_01.png" 
-                                         alt="Chrome拡張機能管理画面" 
-                                         class="step-image">
                                 </div>
                             </div>
-                            
-                            <div class="step">
-                                <div class="step-number">2</div>
-                                <div class="step-content">
-                                    <h4>インストール完了</h4>
-                                    <p>ウディこん助がインストールされ、ブラウザのツールバーにアイコンが表示されます。クリックして利用開始！</p>
-                                    <img src="./images/Installation/wdiconsuke_Installation_04.png" 
-                                         alt="インストール完了" 
-                                         class="step-image">
+                        </div>
+                        
+                        <!-- 手動インストール タブ -->
+                        <div class="tab-content" id="manual-tab">
+                            <div class="manual-content">
+                                <h3>手動インストール（zip版）</h3>
+                                <p class="manual-description">
+                                    開発版や最新版を試したい場合は、こちらから手動でインストールできます。
+                                </p>
+                                
+                                <!-- ダウンロードボタン（ブラウザ判定対応） -->
+                                <div class="download-button">
+                                    <a href="./versions/WudiConsuke_release_v0.0.6.zip" 
+                                       id="download-btn"
+                                       class="btn btn-secondary btn-large"
+                                       download="WudiConsuke_v0.0.6.zip">
+                                        <span class="btn-icon">📦</span>
+                                        <span id="download-text">ウディこん助 v0.0.6 をダウンロード</span>
+                                    </a>
+                                    <p id="browser-warning" class="browser-warning" style="display: none;">
+                                        ⚠️ この拡張機能はPC版Chromeブラウザでのみ動作します
+                                    </p>
+                                </div>
+                                
+                                <!-- 導入手順セクション -->
+                                <div class="installation-guide">
+                                    <h4>導入手順</h4>
+                                    <div class="installation-steps">
+                                        <div class="step">
+                                            <div class="step-number">1</div>
+                                            <div class="step-content">
+                                                <h5>Chrome拡張機能管理画面を開く</h5>
+                                                <ol class="install-steps-list">
+                                                    <p class="prep-note">【事前準備】上記のボタン[ ダウンロード ]より、<br>zipを任意のフォルダへ解凍</p>
+                                                    <li>Chromeブラウザで <code>chrome://extensions/</code> にアクセス</li>
+                                                    <li>右上の『開発者モード』を有効化</li>
+                                                    <li>押下『パッケージ化されていない拡張機能を読み込む』</li>
+                                                    <li>解凍したzipのフォルダを選択し、押下[ フォルダーの選択 ]</li>
+                                                </ol>
+                                                <img src="./images/Installation/wdiconsuke_Installation_01.png" 
+                                                     alt="Chrome拡張機能管理画面" 
+                                                     class="step-image">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="step">
+                                            <div class="step-number">2</div>
+                                            <div class="step-content">
+                                                <h5>インストール完了</h5>
+                                                <p>ウディこん助がインストールされ、ブラウザのツールバーにアイコンが表示されます。クリックして利用開始！</p>
+                                                <img src="./images/Installation/wdiconsuke_Installation_04.png" 
+                                                     alt="インストール完了" 
+                                                     class="step-image">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -257,6 +307,17 @@
             <div class="container">
                 <h2 class="section-title">更新履歴</h2>
                 <div class="update-list">
+                    <div class="update-item">
+                        <div class="update-version">v0.0.6</div>
+                        <div class="update-date">2025年7月17日</div>
+                        <div class="update-content">
+                            <h4>主な改善点</h4>
+                            <ul>
+                                <li>Chromeストア審査完了！</li>
+                                <li>プライバシー（権限）の修正</li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="update-item">
                         <div class="update-version">v0.0.5</div>
                         <div class="update-date">2025年7月15日</div>
