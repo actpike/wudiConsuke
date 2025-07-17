@@ -243,13 +243,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch(error => sendResponse({ success: false, error: error.message }));
     return true;
   }
-  
-  if (message.type === 'LOCAL_FOLDER_TEST') {
-    handleLocalFolderTest(message.data)
-      .then(result => sendResponse({ success: true, message: result }))
-      .catch(error => sendResponse({ success: false, error: error.message }));
-    return true;
-  }
 });
 
 // Web監視開始処理（アラーム機能削除済み）
@@ -525,74 +518,6 @@ async function getGameStatistics() {
       lastUpdated: new Date().toISOString(),
       error: error.message
     };
-  }
-}
-
-// ローカルフォルダアクセステスト処理
-async function handleLocalFolderTest(data) {
-  try {
-    console.log('📁 ローカルフォルダアクセステスト開始:', data);
-    
-    const { path, content } = data;
-    
-    // file://プロトコルを使用してローカルファイルアクセステスト
-    const fileUrl = `file:///${path.replace(/\\/g, '/')}`;
-    console.log('🔗 テスト対象URL:', fileUrl);
-    
-    // Chrome拡張機能の制約確認
-    const testResults = [];
-    
-    // 1. fetch APIでのfile://アクセステスト
-    try {
-      const response = await fetch(fileUrl);
-      if (response.ok) {
-        testResults.push('✅ fetch API: 成功');
-      } else {
-        testResults.push(`❌ fetch API: 失敗 (${response.status})`);
-      }
-    } catch (fetchError) {
-      testResults.push(`❌ fetch API: エラー (${fetchError.message})`);
-    }
-    
-    // 2. chrome.tabs.updateでのfile://アクセステスト
-    try {
-      const tab = await chrome.tabs.create({ url: fileUrl, active: false });
-      if (tab) {
-        testResults.push('✅ chrome.tabs.create: 成功');
-        // テストタブを閉じる
-        await chrome.tabs.remove(tab.id);
-      } else {
-        testResults.push('❌ chrome.tabs.create: 失敗');
-      }
-    } catch (tabError) {
-      testResults.push(`❌ chrome.tabs.create: エラー (${tabError.message})`);
-    }
-    
-    // 3. File System Access APIのサポート確認
-    const fileSystemSupported = 'showDirectoryPicker' in window;
-    testResults.push(fileSystemSupported ? '✅ File System Access API: サポート' : '❌ File System Access API: 未サポート');
-    
-    // 4. manifest.jsonの権限確認
-    const manifest = chrome.runtime.getManifest();
-    const hasFilePermission = manifest.permissions?.includes('file:///*') || 
-                             manifest.host_permissions?.includes('file:///*');
-    testResults.push(hasFilePermission ? '✅ file:// 権限: 設定済み' : '❌ file:// 権限: 未設定');
-    
-    const result = {
-      timestamp: new Date().toISOString(),
-      testPath: path,
-      testUrl: fileUrl,
-      results: testResults,
-      summary: 'ローカルフォルダアクセステスト完了',
-      note: 'Chrome拡張機能のセキュリティ制約により、直接的なfile://アクセスは制限されています'
-    };
-    
-    console.log('📁 ローカルフォルダテスト結果:', result);
-    return `テスト完了: ${testResults.join(', ')}`;
-    
-  } catch (error) {
-    console.error('❌ ローカルフォルダテストエラー:', error);
-    throw new Error(`ローカルフォルダアクセステスト失敗: ${error.message}`);
   }
 }
 
