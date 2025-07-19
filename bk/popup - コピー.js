@@ -183,11 +183,6 @@ class GameListManager {
     document.getElementById('vote-form-btn').addEventListener('click', () => {
       this.handleVoteFormButtonClick();
     });
-
-    // 評価済み作品一括入力ボタン
-    document.getElementById('fill-all-forms-btn').addEventListener('click', () => {
-      this.handleFillAllFormsClick();
-    });
   }
 
   // 投票フォーム入力ボタンクリック時の処理
@@ -222,48 +217,6 @@ class GameListManager {
 
     } catch (error) {
       console.error('❌ 投票フォーム入力エラー:', error);
-      this.showError(error.message);
-    }
-  }
-
-  // 評価済み作品一括入力ボタンクリック時の処理
-  async handleFillAllFormsClick() {
-    try {
-      // 投票ページか確認
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      const currentTab = tabs[0];
-      if (!currentTab || !currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi')) {
-        this.showError('投票ページで実行してください。');
-        return;
-      }
-
-      // 評価済みの作品を取得
-      const playedGames = await window.gameDataManager.filterGames('played');
-      if (playedGames.length === 0) {
-        this.showMessage('評価済みの作品がありません。', 'info');
-        return;
-      }
-
-      // 確認ダイアログ
-      if (!confirm(`${playedGames.length}件の評価済み作品のデータをフォームに一括入力しますか？`)) {
-        return;
-      }
-
-      this.updateStatusBar(`🗳️ ${playedGames.length}件の作品を一括入力中...`, 'processing', 0);
-
-      // content.jsにメッセージを送信
-      const response = await chrome.tabs.sendMessage(currentTab.id, {
-        action: 'fillAllVoteForms',
-        data: playedGames
-      });
-
-      if (response && response.success) {
-        this.updateStatusBar(`✅ 一括入力完了: 成功 ${response.successCount}件, スキップ ${response.skippedCount}件`, 'success', 5000);
-      } else {
-        throw new Error(response?.error || '一括入力に失敗しました。');
-      }
-    } catch (error) {
-      console.error('❌ 一括入力エラー:', error);
       this.showError(error.message);
     }
   }

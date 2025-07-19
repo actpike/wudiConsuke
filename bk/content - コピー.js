@@ -2,90 +2,6 @@
 
 console.log('🌊 ウディこん助 content script loaded on:', window.location.href);
 
-// バックグラウンドスクリプトからのメッセージ受信
-// 初期化処理よりも先にリスナーを登録することで、初期化中のエラーで受信できなくなる事態を防ぐ
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  switch (request.action) {
-    case 'extractPageData':
-      const data = analyzeWodiconPage();
-      sendResponse({ success: true, data: data });
-      break;
-      
-    case 'checkPageType':
-      sendResponse({ 
-        success: true, 
-        isWodiconPage: isWodiconPage(),
-        url: window.location.href,
-        title: document.title
-      });
-      break;
-
-    case 'parse_current_page':
-      // ページ解析情報表示機能対応
-      try {
-        const pageInfo = {
-          url: window.location.href,
-          title: document.title,
-          isWodiconPage: isWodiconPage(),
-          timestamp: new Date().toISOString()
-        };
-
-        if (isWodiconPage()) {
-          const works = extractWorksList();
-          pageInfo.works = works;
-          pageInfo.success = works.length > 0;
-          
-          // 診断情報追加
-          const diagnosis = {
-            info: {
-              tables: document.querySelectorAll('table').length,
-              tableRows: document.querySelectorAll('table tr').length,
-              links: document.querySelectorAll('a').length,
-              entryLinks: document.querySelectorAll('a[href*="entry"]').length
-            }
-          };
-          pageInfo.diagnosis = diagnosis;
-        } else {
-          pageInfo.success = false;
-          pageInfo.error = 'Not a Wodicon page';
-        }
-
-        sendResponse(pageInfo);
-      } catch (error) {
-        sendResponse({
-          success: false,
-          error: error.message,
-          timestamp: new Date().toISOString()
-        });
-      }
-      break;
-
-    case 'fillVoteForm':
-      try {
-        const result = fillVoteForm(request.data);
-        sendResponse(result);
-      } catch (error) {
-        sendResponse({ success: false, error: error.message });
-      }
-      break;
-
-    case 'fillAllVoteForms':
-      try {
-        const result = fillAllVoteForms(request.data);
-        sendResponse(result);
-      } catch (error) {
-        sendResponse({ success: false, error: error.message });
-      }
-      break;
-      
-    default:
-      sendResponse({ success: false, error: 'Unknown action' });
-  }
-
-  // 非同期レスポンスを有効にする
-  return true;
-});
-
 // ウディコン関連ページかチェック
 function isWodiconPage() {
   const url = window.location.href;
@@ -105,26 +21,15 @@ if (document.readyState === 'loading') {
 function initContentScript() {
   if (isWodiconPage()) {
     console.log('📋 ウディコン関連ページを検出しました');
-
-    // 各初期化処理をtry-catchで囲み、一部の処理が失敗しても全体が停止しないようにする
-    try {
-      // ページ解析とデータ抽出
-      analyzeWodiconPage();
-    } catch (e) {
-      console.error('❌ analyzeWodiconPage failed:', e);
-    }
-    try {
-      // 自動監視実行
-      performAutoMonitoring();
-    } catch (e) {
-      console.error('❌ performAutoMonitoring failed:', e);
-    }
-    try {
-      // ページ監視開始
-      startPageMonitoring();
-    } catch (e) {
-      console.error('❌ startPageMonitoring failed:', e);
-    }
+    
+    // ページ解析とデータ抽出
+    analyzeWodiconPage();
+    
+    // 自動監視実行
+    performAutoMonitoring();
+    
+    // ページ監視開始
+    startPageMonitoring();
   }
 }
 
@@ -655,30 +560,79 @@ function startPageMonitoring() {
   }, 10 * 60 * 1000);
 }
 
-function fillAllVoteForms(games) {
-  console.log(`📝 ${games.length}件の作品を一括入力開始`);
-  let successCount = 0;
-  let skippedCount = 0;
-  const skippedGames = [];
+// バックグラウンドスクリプトからのメッセージ受信
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  switch (request.action) {
+    case 'extractPageData':
+      const data = analyzeWodiconPage();
+      sendResponse({ success: true, data: data });
+      break;
+      
+    case 'checkPageType':
+      sendResponse({ 
+        success: true, 
+        isWodiconPage: isWodiconPage(),
+        url: window.location.href,
+        title: document.title
+      });
+      break;
 
-  for (const gameData of games) {
-    // 評価データがない作品はスキップ
-    if (!gameData.rating) continue;
+    case 'parse_current_page':
+      // ページ解析情報表示機能対応
+      try {
+        const pageInfo = {
+          url: window.location.href,
+          title: document.title,
+          isWodiconPage: isWodiconPage(),
+          timestamp: new Date().toISOString()
+        };
 
-    const result = fillVoteForm(gameData);
-    if (result.success) {
-      successCount++;
-    } else {
-      skippedCount++;
-      skippedGames.push({ no: gameData.no, title: gameData.title, error: result.error });
-    }
+        if (isWodiconPage()) {
+          const works = extractWorksList();
+          pageInfo.works = works;
+          pageInfo.success = works.length > 0;
+          
+          // 診断情報追加
+          const diagnosis = {
+            info: {
+              tables: document.querySelectorAll('table').length,
+              tableRows: document.querySelectorAll('table tr').length,
+              links: document.querySelectorAll('a').length,
+              entryLinks: document.querySelectorAll('a[href*="entry"]').length
+            }
+          };
+          pageInfo.diagnosis = diagnosis;
+        } else {
+          pageInfo.success = false;
+          pageInfo.error = 'Not a Wodicon page';
+        }
+
+        sendResponse(pageInfo);
+      } catch (error) {
+        sendResponse({
+          success: false,
+          error: error.message,
+          timestamp: new Date().toISOString()
+        });
+      }
+      break;
+
+    case 'fillVoteForm':
+      try {
+        const result = fillVoteForm(request.data);
+        sendResponse(result);
+      } catch (error) {
+        sendResponse({ success: false, error: error.message });
+      }
+      break;
+      
+    default:
+      sendResponse({ success: false, error: 'Unknown action' });
   }
 
-  console.log(`📝 一括入力完了: 成功 ${successCount}件, スキップ ${skippedCount}件`);
-  console.log('スキップされた作品:', skippedGames);
-
-  return { success: true, successCount, skippedCount, skippedGames };
-}
+  // 非同期レスポンスを有効にする
+  return true;
+});
 
 function fillVoteForm(gameData) {
   console.log('📝 投票フォーム入力開始:', gameData);

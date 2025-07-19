@@ -18,16 +18,16 @@
   "background": {
     "service_worker": "background.js"
   },
+  
   "content_scripts": [
     {
-      "matches": [
-        "https://silversecond.com/WolfRPGEditor/Contest/*"
-      ],
-      "js": [
-        "js/content.js"
-      ]
+      "matches": ["https://silversecond.com/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_end",
+      "all_frames": false
     }
   ],
+  
   "action": {
     "default_popup": "popup.html",
     "default_title": "ウディこん助",

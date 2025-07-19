@@ -587,6 +587,39 @@ class NavigationController {
     };
   }
 
+  // 現在編集中のゲームデータをフォームの値と合わせて取得
+  async getCurrentGameDataWithFormValues() {
+    if (!this.editingGameId) {
+      return null;
+    }
+    try {
+      // First, get the current form data, as this represents the user's latest input.
+      const formData = this.collectFormData();
+
+      // Then, try to get the stored game data to get metadata like title, no, etc.
+      let game = await window.gameDataManager.getGame(this.editingGameId);
+
+      if (!game) {
+        // If the game is not in storage (e.g., new entry), get basic info from the list.
+        game = await this.loadGameDataFromList(this.editingGameId);
+        if (!game) {
+            // If it's not in the list either, we can't proceed.
+            return null;
+        }
+      }
+
+      // Combine the stored data with the current form data.
+      // The form data should take precedence for fields like 'rating' and 'review'.
+      return {
+        ...game,
+        ...formData
+      };
+    } catch (error) {
+      console.error('Failed to get current game data with form values:', error);
+      return null;
+    }
+  }
+
   // 編集内容リセット
   async resetCurrentEdit() {
     if (!this.editingGameId) return;
