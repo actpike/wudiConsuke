@@ -526,6 +526,18 @@ class GameDataManager {
     
     return mergedGames;
   }
+
+  // 全てのバージョンステータスをクリア
+  async clearAllVersionStatus() {
+    const games = await this.getGames();
+    games.forEach(game => {
+      if (game.version_status === 'new' || game.version_status === 'updated') {
+        game.version_status = 'latest';
+      }
+    });
+    await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+    await this.updateMetadata();
+  }
 }
 
 // グローバルインスタンス

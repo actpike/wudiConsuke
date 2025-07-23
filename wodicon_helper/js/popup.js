@@ -11,6 +11,13 @@ class GameListManager {
 
   // 初期化
   async initialize() {
+    // バージョン情報を表示
+    const manifest = chrome.runtime.getManifest();
+    const versionBadge = document.querySelector('.version-badge');
+    if (versionBadge) {
+      versionBadge.textContent = `v${manifest.version}`;
+    }
+
     await window.gameDataManager.initialize();
     
     // ポップアップ開時の自動監視チェック
@@ -118,6 +125,11 @@ class GameListManager {
       btn.addEventListener('click', (e) => {
         this.setFilter(e.target.dataset.filter);
       });
+    });
+
+    // 更新クリアボタン
+    document.getElementById('clear-updates-btn').addEventListener('click', () => {
+      this.clearAllUpdates();
     });
 
     // 検索
@@ -229,29 +241,45 @@ class GameListManager {
   // 評価済み作品一括入力ボタンクリック時の処理
   async handleFillAllFormsClick() {
     try {
-      // 投票ページか確認
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      const currentTab = tabs[0];
-      if (!currentTab || !currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi')) {
-        this.showError('投票ページで実行してください。');
-        return;
-      }
-
-      // 評価済みの作品を取得
       const playedGames = await window.gameDataManager.filterGames('played');
       if (playedGames.length === 0) {
         this.showMessage('評価済みの作品がありません。', 'info');
         return;
       }
 
-      // 確認ダイアログ
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      const currentTab = tabs[0];
+      const isVotePage = currentTab && currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi');
+
+      if (!isVotePage) {
+        if (confirm('投票ページが開かれていません。投票ページを開いて入力しますか？')) {
+          const votePageUrl = 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi?action=load';
+          const newTab = await chrome.tabs.create({ url: votePageUrl, active: true });
+          
+          // 新しいタブでコンテンツスクリプトが実行されるのを待つ
+          setTimeout(async () => {
+            this.updateStatusBar(`🗳️ ${playedGames.length}件の作品を一括入力中...`, 'processing', 0);
+            const response = await chrome.tabs.sendMessage(newTab.id, {
+              action: 'fillAllVoteForms',
+              data: playedGames
+            });
+
+            if (response && response.success) {
+              this.updateStatusBar(`✅ 一括入力完了: 成功 ${response.successCount}件, スキップ ${response.skippedCount}件`, 'success', 5000);
+            } else {
+              throw new Error(response?.error || '一括入力に失敗しました。');
+            }
+          }, 2000); // 2秒待機
+        }
+        return;
+      }
+
       if (!confirm(`${playedGames.length}件の評価済み作品のデータをフォームに一括入力しますか？`)) {
         return;
       }
 
       this.updateStatusBar(`🗳️ ${playedGames.length}件の作品を一括入力中...`, 'processing', 0);
 
-      // content.jsにメッセージを送信
       const response = await chrome.tabs.sendMessage(currentTab.id, {
         action: 'fillAllVoteForms',
         data: playedGames
@@ -280,7 +308,38 @@ class GameListManager {
       }
     });
 
+    // 「更新クリア」ボタンの表示制御
+    const clearUpdatesBtn = document.getElementById('clear-updates-btn');
+    if (filter === 'new') {
+      clearUpdatesBtn.classList.remove('hidden');
+    } else {
+      clearUpdatesBtn.classList.add('hidden');
+    }
+
     await this.refreshList();
+  }
+
+  // 更新クリア処理
+  async clearAllUpdates() {
+    const newGames = await window.gameDataManager.filterGames('new');
+    if (newGames.length === 0) {
+      this.showMessage('クリア対象の作品がありません。', 'info');
+      return;
+    }
+
+    if (confirm(`${newGames.length}件の作品の「新着・更新」マークをすべてクリアしますか？`)) {
+      try {
+        this.showLoading(true);
+        await window.gameDataManager.clearAllVersionStatus();
+        await this.refreshList();
+        this.showMessage('✅ 更新情報をクリアしました。', 'success');
+      } catch (error) {
+        console.error('❌ 更新クリアエラー:', error);
+        this.showError('更新情報のクリアに失敗しました。');
+      } finally {
+        this.showLoading(false);
+      }
+    }
   }
 
   // 検索設定
