@@ -409,8 +409,8 @@ body {
 .average-line::before {
   content: '平均';
   position: absolute;
-  top: -20px;
-  left: -10px;
+  top: -10px;
+  left: -8px;
   font-size: 8px;
   color: #a3a3e5;
   font-weight: bold;

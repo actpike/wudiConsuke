@@ -458,11 +458,11 @@ class NavigationController {
             const finalPosition = sliderStartPos + tickPosition;
             
             tick.style.left = `${finalPosition}px`;
-            tick.style.top = '50%';
-            tick.style.transform = 'translateY(-50%)';
+            tick.style.top = '0px';
+            tick.style.transform = '';
             tick.style.width = '1px';
-            tick.style.height = '20px';
-            tick.style.backgroundColor = 'rgba(102, 126, 234, 0.3)';
+            tick.style.height = '5px';
+            tick.style.backgroundColor = 'rgba(102, 126, 234, 0.5)';
             tick.style.pointerEvents = 'none';
             tick.style.zIndex = '4';
             

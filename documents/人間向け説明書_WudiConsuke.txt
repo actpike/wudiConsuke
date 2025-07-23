@@ -1,0 +1,7 @@
+## pushコマンド
+- "\\wsl$\Ubuntu\home\actpike\dev\UdiConsuke\scripts\release-automation\modules\chrome-packager.js"
+- npm run create-release
+	開発用リリースを行うコマンド。zipは更新されない
+
+- npm run create-release:production
+	本番用
