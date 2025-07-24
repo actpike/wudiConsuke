@@ -809,6 +809,18 @@ async function exportAsJSON() {
   URL.revokeObjectURL(url);
 }
 
+// 評価値のCSV出力用変換関数
+function getRatingValue(value) {
+  return (value !== null && value !== undefined) ? value : '';
+}
+
+// CSVからの評価値パース関数
+function parseCSVRating(value) {
+  if (!value || value.trim() === '') return null;
+  const num = parseFloat(value);
+  return isNaN(num) ? null : num;
+}
+
 // CSVエクスポート関数
 async function exportAsCSV() {
   try {
@@ -835,7 +847,7 @@ async function exportAsCSV() {
       '熱中度',
       '斬新さ',
       '物語性',
-      '画像音響',
+      '画像音声',
       '遊びやすさ',
       'その他',
       '感想'
@@ -851,13 +863,13 @@ async function exportAsCSV() {
       const row = [
         game.no || '',
         `"${(game.title || '').replace(/"/g, '""')}"`, // CSV用にダブルクォートをエスケープ
-        game.rating?.熱中度 || '',
-        game.rating?.斬新さ || '',
-        game.rating?.物語性 || '',
-        game.rating?.画像音響 || '',
-        game.rating?.遊びやすさ || '',
-        game.rating?.その他 || '',
-        `"${(game.comment || '').replace(/"/g, '""')}"`
+        getRatingValue(game.rating?.熱中度),
+        getRatingValue(game.rating?.斬新さ),
+        getRatingValue(game.rating?.物語性),
+        getRatingValue(game.rating?.画像音声), // 修正: 画像音響 → 画像音声
+        getRatingValue(game.rating?.遊びやすさ),
+        getRatingValue(game.rating?.その他),
+        `"${(game.comment || game.review || '').replace(/"/g, '""')}"` // commentまたはreviewフィールドを確認
       ];
       csvRows.push(row.join(','));
     }
@@ -916,12 +928,12 @@ async function importFromCSV(csvString) {
         no: fields[0] || '',
         title: fields[1] || '',
         rating: {
-          熱中度: parseFloat(fields[2]) || null,
-          斬新さ: parseFloat(fields[3]) || null,
-          物語性: parseFloat(fields[4]) || null,
-          画像音響: parseFloat(fields[5]) || null,
-          遊びやすさ: parseFloat(fields[6]) || null,
-          その他: parseFloat(fields[7]) || null
+          熱中度: parseCSVRating(fields[2]),
+          斬新さ: parseCSVRating(fields[3]),
+          物語性: parseCSVRating(fields[4]),
+          画像音声: parseCSVRating(fields[5]), // 修正: 画像音響 → 画像音声
+          遊びやすさ: parseCSVRating(fields[6]),
+          その他: parseCSVRating(fields[7])
         },
         comment: fields[8] || '',
         created_at: new Date().toISOString(),
