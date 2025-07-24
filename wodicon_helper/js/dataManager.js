@@ -2,24 +2,43 @@
 
 class GameDataManager {
   constructor() {
-    this.STORAGE_KEY = 'wodicon_games';
-    this.SETTINGS_KEY = 'wodicon_settings';
-    this.METADATA_KEY = 'wodicon_metadata';
+    // レガシーキーは移行時のみ使用
+    this.LEGACY_STORAGE_KEY = 'wodicon_games';
+    this.LEGACY_SETTINGS_KEY = 'wodicon_settings';
+    this.LEGACY_METADATA_KEY = 'wodicon_metadata';
+    
+    // 年度管理モードフラグ
+    this.yearManagerMode = true;
   }
 
   // データ初期化
   async initialize() {
-    const games = await this.getGames();
-    if (games.length === 0) {
-      await this.initializeSampleData();
+    try {
+      // YearManagerが利用可能かチェック
+      if (window.yearManager) {
+        await window.yearManager.initialize();
+      }
+      
+      const games = await this.getGames();
+      if (games.length === 0) {
+        await this.initializeSampleData();
+      }
+    } catch (error) {
+      console.error('GameDataManager初期化エラー:', error);
     }
   }
 
-  // ゲームデータ取得
+  // ゲームデータ取得（年度別対応）
   async getGames() {
     try {
-      const result = await chrome.storage.local.get(this.STORAGE_KEY);
-      return result[this.STORAGE_KEY] || [];
+      if (!window.yearManager) {
+        // フォールバック: レガシーキーから取得
+        const result = await chrome.storage.local.get(this.LEGACY_STORAGE_KEY);
+        return result[this.LEGACY_STORAGE_KEY] || [];
+      }
+      
+      const yearData = await window.yearManager.getYearData();
+      return yearData?.games || [];
     } catch (error) {
       console.error('Failed to get games:', error);
       return [];
@@ -71,7 +90,7 @@ class GameDataManager {
       const index = games.findIndex(game => game.id === existingGame.id);
       games[index] = mergedGame;
       
-      await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+      await this.saveGames(games);
       await this.updateMetadata();
       
       console.log(`✅ データ保護マージ完了: No.${gameData.no} "${mergedGame.title}"`);
@@ -90,7 +109,7 @@ class GameDataManager {
     };
 
     games.push(newGame);
-    await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+    await this.saveGames(games);
     await this.updateMetadata();
     
     console.log(`✅ 新規ゲーム追加: No.${newGame.no} "${newGame.title}"`);
@@ -115,7 +134,7 @@ class GameDataManager {
       games[index].is_played = true;
     }
 
-    await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+    await this.saveGames(games);
     await this.updateMetadata();
     return true;
   }
@@ -138,7 +157,7 @@ class GameDataManager {
     }
     
     const filteredGames = games.filter(game => game.id !== id);
-    await chrome.storage.local.set({ [this.STORAGE_KEY]: filteredGames });
+    await this.saveGames(filteredGames);
     await this.updateMetadata();
     
     if (hasUserData) {
@@ -180,7 +199,7 @@ class GameDataManager {
       games[gameIndex].web_monitoring_enabled = enabled;
       games[gameIndex].updated_at = new Date().toISOString();
       
-      await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+      await this.saveGames(games);
       await this.updateMetadata();
       
       console.log(`🔄 Web監視フラグ更新: Game ${gameId} -> ${enabled}`);
@@ -310,11 +329,32 @@ class GameDataManager {
         throw new Error('Invalid data format: games array not found');
       }
 
-      await chrome.storage.local.set({
-        [this.STORAGE_KEY]: data.games,
-        [this.SETTINGS_KEY]: data.settings || {},
-        [this.METADATA_KEY]: data.metadata || {}
-      });
+      // 年度別対応インポート
+      if (window.yearManager) {
+        const yearData = await window.yearManager.getYearData();
+        if (yearData) {
+          yearData.games = data.games;
+          if (data.settings) yearData.settings = data.settings;
+          if (data.metadata) yearData.metadata = data.metadata;
+          await window.yearManager.setYearData(yearData);
+        } else {
+          // 年度データが存在しない場合は新規初期化
+          const currentYear = await window.yearManager.getCurrentYear();
+          await window.yearManager.initializeYear(currentYear);
+          const newYearData = await window.yearManager.getYearData();
+          newYearData.games = data.games;
+          if (data.settings) newYearData.settings = data.settings;
+          if (data.metadata) newYearData.metadata = data.metadata;
+          await window.yearManager.setYearData(newYearData);
+        }
+      } else {
+        // フォールバック: レガシー形式でインポート
+        await chrome.storage.local.set({
+          [this.LEGACY_STORAGE_KEY]: data.games,
+          [this.LEGACY_SETTINGS_KEY]: data.settings || {},
+          [this.LEGACY_METADATA_KEY]: data.metadata || {}
+        });
+      }
 
       await this.updateMetadata();
       return true;
@@ -345,10 +385,52 @@ class GameDataManager {
            (rating.その他 || 0);
   }
 
-  // 設定管理
+  // ゲームデータ保存（年度別対応）
+  async saveGames(games) {
+    try {
+      if (!window.yearManager) {
+        // フォールバック: レガシーキーに保存
+        await chrome.storage.local.set({ [this.LEGACY_STORAGE_KEY]: games });
+        return;
+      }
+      
+      const yearData = await window.yearManager.getYearData();
+      if (yearData) {
+        yearData.games = games;
+        await window.yearManager.setYearData(yearData);
+      } else {
+        // 年度データが存在しない場合は初期化
+        const currentYear = await window.yearManager.getCurrentYear();
+        await window.yearManager.initializeYear(currentYear);
+        const newYearData = await window.yearManager.getYearData();
+        newYearData.games = games;
+        await window.yearManager.setYearData(newYearData);
+      }
+    } catch (error) {
+      console.error('ゲームデータ保存エラー:', error);
+      throw error;
+    }
+  }
+
+  // 設定管理（年度別対応）
   async getSettings() {
-    const result = await chrome.storage.local.get(this.SETTINGS_KEY);
-    return result[this.SETTINGS_KEY] || {
+    try {
+      if (!window.yearManager) {
+        // フォールバック: レガシーキーから取得
+        const result = await chrome.storage.local.get(this.LEGACY_SETTINGS_KEY);
+        return result[this.LEGACY_SETTINGS_KEY] || this.getDefaultSettings();
+      }
+      
+      const yearData = await window.yearManager.getYearData();
+      return yearData?.settings || this.getDefaultSettings();
+    } catch (error) {
+      console.error('設定取得エラー:', error);
+      return this.getDefaultSettings();
+    }
+  }
+
+  getDefaultSettings() {
+    return {
       default_sort: 'updated_at',
       default_filter: 'all',
       list_view_mode: 'list',
@@ -358,14 +440,44 @@ class GameDataManager {
   }
 
   async updateSettings(settings) {
-    await chrome.storage.local.set({ [this.SETTINGS_KEY]: settings });
+    try {
+      if (!window.yearManager) {
+        // フォールバック: レガシーキーに保存
+        await chrome.storage.local.set({ [this.LEGACY_SETTINGS_KEY]: settings });
+        return;
+      }
+      
+      const yearData = await window.yearManager.getYearData();
+      if (yearData) {
+        yearData.settings = settings;
+        await window.yearManager.setYearData(yearData);
+      }
+    } catch (error) {
+      console.error('設定保存エラー:', error);
+      throw error;
+    }
   }
 
-  // メタデータ管理
+  // メタデータ管理（年度別対応）
   async getMetadata() {
-    const result = await chrome.storage.local.get(this.METADATA_KEY);
-    return result[this.METADATA_KEY] || {
-      version: "1.0.0",
+    try {
+      if (!window.yearManager) {
+        // フォールバック: レガシーキーから取得
+        const result = await chrome.storage.local.get(this.LEGACY_METADATA_KEY);
+        return result[this.LEGACY_METADATA_KEY] || this.getDefaultMetadata();
+      }
+      
+      const yearData = await window.yearManager.getYearData();
+      return yearData?.metadata || this.getDefaultMetadata();
+    } catch (error) {
+      console.error('メタデータ取得エラー:', error);
+      return this.getDefaultMetadata();
+    }
+  }
+
+  getDefaultMetadata() {
+    return {
+      version: "1.0.2",
       last_backup: null,
       total_games: 0,
       storage_usage: 0
@@ -373,18 +485,32 @@ class GameDataManager {
   }
 
   async updateMetadata() {
-    const games = await this.getGames();
-    const usage = await this.getStorageUsage();
-    
-    const metadata = {
-      version: "1.0.0",
-      last_backup: null,
-      total_games: games.length,
-      storage_usage: usage.used,
-      last_updated: new Date().toISOString()
-    };
+    try {
+      const games = await this.getGames();
+      const usage = await this.getStorageUsage();
+      
+      const metadata = {
+        version: "1.0.2",
+        last_backup: null,
+        total_games: games.length,
+        storage_usage: usage.used,
+        last_updated: new Date().toISOString()
+      };
 
-    await chrome.storage.local.set({ [this.METADATA_KEY]: metadata });
+      if (!window.yearManager) {
+        // フォールバック: レガシーキーに保存
+        await chrome.storage.local.set({ [this.LEGACY_METADATA_KEY]: metadata });
+        return;
+      }
+      
+      const yearData = await window.yearManager.getYearData();
+      if (yearData) {
+        yearData.metadata = metadata;
+        await window.yearManager.setYearData(yearData);
+      }
+    } catch (error) {
+      console.error('メタデータ更新エラー:', error);
+    }
   }
 
   // 本番用初期化（空のデータベース）
@@ -411,7 +537,7 @@ class GameDataManager {
       }
 
       if (updated) {
-        await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+        await this.saveGames(games);
         await this.updateMetadata();
         console.log('✅ 作品番号正規化完了');
         return true;
@@ -471,7 +597,7 @@ class GameDataManager {
         // マージ復元の場合
         if (options.mergeRestore) {
           const mergedGames = await this.mergeBackupData(currentGames, backupGames);
-          await chrome.storage.local.set({ [this.STORAGE_KEY]: mergedGames });
+          await this.saveGames(mergedGames);
           console.log(`🔄 マージ復元完了: ${mergedGames.length}作品`);
           return { merged: true, count: mergedGames.length };
         } else {
@@ -479,12 +605,23 @@ class GameDataManager {
         }
       }
       
-      // 完全復元
-      await chrome.storage.local.set({
-        [this.STORAGE_KEY]: backupGames,
-        [this.SETTINGS_KEY]: backupData.data.settings || {},
-        [this.METADATA_KEY]: backupData.data.metadata || {}
-      });
+      // 完全復元（年度別対応）
+      if (window.yearManager) {
+        const yearData = await window.yearManager.getYearData();
+        if (yearData) {
+          yearData.games = backupGames;
+          yearData.settings = backupData.data.settings || {};
+          yearData.metadata = backupData.data.metadata || {};
+          await window.yearManager.setYearData(yearData);
+        }
+      } else {
+        // フォールバック: レガシー形式で復元
+        await chrome.storage.local.set({
+          [this.LEGACY_STORAGE_KEY]: backupGames,
+          [this.LEGACY_SETTINGS_KEY]: backupData.data.settings || {},
+          [this.LEGACY_METADATA_KEY]: backupData.data.metadata || {}
+        });
+      }
       
       console.log(`✅ 完全復元完了: ${backupGames.length}作品`);
       return { restored: true, count: backupGames.length };
@@ -535,7 +672,7 @@ class GameDataManager {
         game.version_status = 'latest';
       }
     });
-    await chrome.storage.local.set({ [this.STORAGE_KEY]: games });
+    await this.saveGames(games);
     await this.updateMetadata();
   }
 }

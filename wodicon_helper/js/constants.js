@@ -66,11 +66,28 @@ const LIMITS = {
   MEMORY_WARNING_THRESHOLD_MB: 50
 };
 
-// URL
+// URL（年度別対応）
 const URLS = {
   WODICON_BASE: 'https://silversecond.com',
   WODICON_CONTEST: 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml',
-  WODICON_CONTEST_BASE: 'https://silversecond.com/WolfRPGEditor/Contest/'
+  WODICON_CONTEST_BASE: 'https://silversecond.com/WolfRPGEditor/Contest/',
+  
+  // 年度別URL生成関数
+  getContestUrl: (year = null) => {
+    // 2025年はデフォルトURL、それ以外は年度特定URL（将来実装）
+    if (!year || year === 2025) {
+      return 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+    }
+    // 将来の年度別URL形式に対応
+    return `https://silversecond.com/WolfRPGEditor/Contest/${year}/entry.shtml`;
+  },
+  
+  getVoteUrl: (year = null) => {
+    if (!year || year === 2025) {
+      return 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi';
+    }
+    return `https://silversecond.com/WolfRPGEditor/Contest/${year}/cgi/contestVote.cgi`;
+  }
 };
 
 // 通知設定

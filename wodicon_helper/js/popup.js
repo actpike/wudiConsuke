@@ -214,7 +214,7 @@ class GameListManager {
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const currentTab = tabs[0];
 
-      if (!currentTab || !currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi')) {
+      if (!currentTab || !currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') || !currentTab.url.includes('contestVote.cgi')) {
         this.showError('投票ページで実行してください。');
         return;
       }
@@ -249,11 +249,13 @@ class GameListManager {
 
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       const currentTab = tabs[0];
-      const isVotePage = currentTab && currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi');
+      const isVotePage = currentTab && currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') && currentTab.url.includes('contestVote.cgi');
 
       if (!isVotePage) {
-        if (confirm('投票ページが開かれていません。投票ページを開いて入力しますか？')) {
-          const votePageUrl = 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi?action=load';
+        if (confirm('投票ページを開きます。その後、再度このボタンを押してください。')) {
+          // 年度別投票URL取得
+          const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+          const votePageUrl = (window.constants?.URLS?.getVoteUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi') + '?action=load';
           const newTab = await chrome.tabs.create({ url: votePageUrl, active: true });
           
           // 新しいタブでコンテンツスクリプトが実行されるのを待つ

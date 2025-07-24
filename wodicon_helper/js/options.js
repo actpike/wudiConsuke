@@ -18,7 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     setVersionInfo();
     console.log('✅ Version info set');
     
-    // 3. 軽い処理: 設定読み込み
+    // 3. 年度管理初期化
+    await initializeYearManager();
+    console.log('✅ Year manager initialized');
+    
+    // 4. 軽い処理: 設定読み込み
     await loadBasicSettings();
     console.log('✅ Basic settings loaded');
     
@@ -113,7 +117,10 @@ function setupEventListeners() {
       'test-notification',
       'export-btn',
       'import-btn',
-      'clear-data-btn'
+      'clear-data-btn',
+      'year-selector',
+      'add-new-year-btn',
+      'refresh-year-data-btn'
     ];
     
     let foundButtons = 0;
@@ -160,7 +167,7 @@ function setupEventListeners() {
       const exportData = {
         ...result,
         export_timestamp: new Date().toISOString(),
-        version: "1.0.0"
+        version: "1.0.2"
       };
 
       const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -308,11 +315,205 @@ function setupEventListeners() {
     // 自動監視履歴クリアボタン
     addButtonListener('clear-auto-monitor-time', clearAutoMonitorTime, 'Clear auto monitor time');
     
+    // 年度管理関連
+    // 年度選択セレクターのイベントリスナー（専用処理）
+    const yearSelector = document.getElementById('year-selector');
+    if (yearSelector) {
+      yearSelector.addEventListener('change', handleYearChange);
+      console.log('✅ Year selector change listener added');
+    } else {
+      console.error('❌ Year selector not found');
+    }
+    addButtonListener('add-new-year-btn', handleAddNewYear, 'Add new year');
+    addButtonListener('delete-year-data-btn', handleDeleteYearData, 'Delete year data');
+    
     console.log('✅ All event listeners setup completed');
     
   } catch (error) {
     console.error('❌ Event listener setup failed:', error);
     throw error;
+  }
+}
+
+// 年度管理初期化
+async function initializeYearManager() {
+  try {
+    console.log('🗓️ 年度管理初期化開始');
+    
+    // YearManagerの初期化
+    if (window.yearManager) {
+      await window.yearManager.initialize();
+      await updateYearSelector();
+      await updateYearInfo();
+    } else {
+      throw new Error('YearManager not loaded');
+    }
+    
+    console.log('✅ 年度管理初期化完了');
+  } catch (error) {
+    console.error('❌ 年度管理初期化エラー:', error);
+    showStatus('error', '年度管理の初期化に失敗しました: ' + error.message);
+  }
+}
+
+// 年度選択プルダウンを更新
+async function updateYearSelector() {
+  try {
+    const yearSelector = document.getElementById('year-selector');
+    if (!yearSelector) return;
+
+    const currentYear = await window.yearManager.getCurrentYear();
+    const availableYears = await window.yearManager.getAvailableYears();
+    
+    // プルダウンクリア
+    yearSelector.innerHTML = '';
+    
+    // 年度選択肢を追加
+    availableYears.forEach(year => {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = window.yearManager.formatYearDisplay(year);
+      if (year === currentYear) {
+        option.selected = true;
+      }
+      yearSelector.appendChild(option);
+    });
+    
+    console.log(`✅ 年度選択プルダウン更新完了: 現在=${currentYear}, 利用可能=${availableYears.join(',')}`);
+  } catch (error) {
+    console.error('年度選択プルダウン更新エラー:', error);
+  }
+}
+
+// 年度情報表示を更新
+async function updateYearInfo() {
+  try {
+    const currentYear = await window.yearManager.getCurrentYear();
+    const availableYears = await window.yearManager.getAvailableYears();
+    const storageUsage = await window.yearManager.getStorageUsage();
+    
+    // 表示更新
+    const currentYearDisplay = document.getElementById('current-year-display');
+    const availableYearsDisplay = document.getElementById('available-years-display');
+    const storageUsageDisplay = document.getElementById('storage-usage-display');
+    
+    if (currentYearDisplay) {
+      currentYearDisplay.textContent = window.yearManager.formatYearDisplay(currentYear);
+    }
+    
+    if (availableYearsDisplay) {
+      availableYearsDisplay.textContent = availableYears.map(year => 
+        window.yearManager.formatYearDisplay(year)
+      ).join(', ');
+    }
+    
+    if (storageUsageDisplay) {
+      storageUsageDisplay.textContent = `${storageUsage.totalMB}MB (${storageUsage.yearCount}年度)`;
+    }
+    
+    console.log('✅ 年度情報表示更新完了');
+  } catch (error) {
+    console.error('年度情報表示更新エラー:', error);
+  }
+}
+
+// 年度変更ハンドラー
+async function handleYearChange(event) {
+  try {
+    const newYear = parseInt(event.target.value);
+    if (!newYear) return;
+    
+    console.log(`🔄 年度変更: ${newYear}`);
+    showStatus('info', `年度を${window.yearManager.formatYearDisplay(newYear)}に変更中...`);
+    
+    await window.yearManager.setCurrentYear(newYear);
+    await updateYearInfo();
+    
+    showStatus('success', `年度を${window.yearManager.formatYearDisplay(newYear)}に変更しました`);
+    
+    // 他の設定も再読み込み
+    setTimeout(() => {
+      location.reload();
+    }, 1000);
+    
+  } catch (error) {
+    console.error('年度変更エラー:', error);
+    showStatus('error', '年度変更に失敗しました: ' + error.message);
+    await updateYearSelector(); // プルダウンを元に戻す
+  }
+}
+
+// 新年度追加ハンドラー
+async function handleAddNewYear() {
+  try {
+    const newYear = prompt('追加する年度を入力してください (例: 2026)');
+    if (!newYear) return;
+    
+    const year = parseInt(newYear);
+    if (isNaN(year) || year < 2009 || year > 2050) {
+      throw new Error('有効な年度を入力してください (2009-2050)');
+    }
+    
+    console.log(`🆕 新年度追加: ${year}`);
+    showStatus('info', `${window.yearManager.formatYearDisplay(year)}のデータを初期化中...`);
+    
+    await window.yearManager.initializeYear(year);
+    await updateYearSelector();
+    await updateYearInfo();
+    
+    showStatus('success', `${window.yearManager.formatYearDisplay(year)}を追加しました`);
+    
+  } catch (error) {
+    console.error('新年度追加エラー:', error);
+    showStatus('error', '新年度追加に失敗しました: ' + error.message);
+  }
+}
+
+// 年度データ削除ハンドラー
+async function handleDeleteYearData() {
+  try {
+    const currentYear = await window.yearManager.getCurrentYear();
+    const availableYears = await window.yearManager.getAvailableYears();
+    
+    // 最後の年度の場合は削除不可
+    if (availableYears.length <= 1) {
+      showStatus('error', '最後の年度データは削除できません');
+      return;
+    }
+    
+    // 確認ダイアログ
+    const yearDisplay = window.yearManager.formatYearDisplay(currentYear);
+    const confirmMessage = `${yearDisplay}のデータを完全に削除しますか？\n\nこの操作は取り消せません。`;
+    
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+    
+    console.log(`🗑️ 年度データ削除開始: ${currentYear}`);
+    showStatus('info', `${yearDisplay}のデータを削除中...`);
+    
+    // 先に他の年度に切り替え
+    const remainingYears = availableYears.filter(year => year !== currentYear);
+    const newCurrentYear = remainingYears[0];
+    await window.yearManager.setCurrentYear(newCurrentYear);
+    
+    // その後、年度データ削除
+    await window.yearManager.deleteYear(currentYear);
+    
+    // UI更新
+    await updateYearSelector();
+    await updateYearInfo();
+    
+    showStatus('success', `${yearDisplay}のデータを削除し、${window.yearManager.formatYearDisplay(newCurrentYear)}に切り替えました`);
+    
+    // 設定画面をリロード
+    setTimeout(() => {
+      location.reload();
+    }, 2000);
+    
+  } catch (error) {
+    console.error('年度データ削除エラー:', error);
+    showStatus('error', '年度データ削除に失敗しました: ' + error.message);
   }
 }
 

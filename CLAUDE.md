@@ -10,15 +10,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 作業やドキュメント類は英語
 - Claude回答や、ユーザとのコミュニケーションは日本語で行う
 
-## 関連資料
-- 機能追加・修正等が完了し、git操作を行う際VERSION.mdに従う
-	`VERSION.md`
-- ユーザから配布準備の依頼を受けた場合、下記資料を参照する
-	'UdiConsuke\documents\chromeStore\releaseReference(配布指南書).md'
-- 自動化スクリプトの詳細は下記を参照
-	`scripts/README.md`
-- 今後もバージョンアップの度に、READMEの更新履歴を3行で要約して追記する
-- 紹介ページ（website/release/index.html）の更新履歴セクションも同時に更新する
+## 重要なプロジェクト指針
+
+### プロジェクト成熟度
+このプロジェクトは**正式リリース完了済み**（v1.0.0）の実用プロダクトです。現在は微調整・改善フェーズにあり、大幅な機能追加よりも品質向上と保守性を重視します。
+
+### 関連資料
+- バージョン管理: `VERSION.md` - git操作時は必ずバージョン情報を確認
+- リリース自動化: `scripts/README.md` - 自動化システムの詳細仕様
+- 配布指南書: `documents/chromeStore/releaseReference(配布指南書).md`
+- 紹介ページ更新: `website/release/index.html` - バージョンアップ時は必ず更新
 
 ## プロジェクト構造
 
@@ -67,13 +68,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **コードベース最適化**（データ処理統一化・重複削除）
 
 ### 現在のバージョン
-- **最新リリース**: v0.0.6
-- **主な新機能**: 
-  - alarms/scriptsアクセス権限削除（Chrome Web Store準拠）
-  - コードクリーンアップ：constants.js/errorHandler.js追加
-  - GeminiCLI統合：並列実行機能、開発フロー文書化
-  - 重複ファイル削除（622行削除）
-  - 統一エラーハンドリングシステム
+- **最新本番リリース**: v1.0.2（複数年度対応機能追加）
+- **最新開発版**: v1.0.2-pre
+- **プロジェクト状況**: 主要機能実装完了、現在は微調整・改善フェーズ
+- **v1.0.0の主な成果**: 
+  - 正式リリース達成（Chrome Web Store準拠）
+  - 統一エラーハンドリング・定数管理システム
+  - GeminiCLI統合による品質向上
+  - 完全自動化リリースシステム
 - **配布URL**: https://wudi-consuke.vercel.app/
 
 ### リリース管理・zip圧縮ルール

@@ -152,7 +152,12 @@ class WebMonitor {
       
       // 設定からURLを取得
       const settings = await chrome.storage.local.get('web_monitor_settings');
-      const contestUrl = settings.web_monitor_settings?.contest_url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+      // 年度別URL取得
+      let contestUrl = settings.web_monitor_settings?.contest_url;
+      if (!contestUrl) {
+        const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+        contestUrl = window.constants?.URLS?.getContestUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+      }
       
       // 解析実行
       const parseResult = await window.pageParser.parseContestPage(html, contestUrl);
@@ -230,7 +235,12 @@ class WebMonitor {
   async fetchContestPage() {
     // 設定からURLを取得
     const settings = await chrome.storage.local.get('web_monitor_settings');
-    const configuredUrl = settings.web_monitor_settings?.contest_url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+    // 年度別URL取得
+    let configuredUrl = settings.web_monitor_settings?.contest_url;
+    if (!configuredUrl) {
+      const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+      configuredUrl = window.constants?.URLS?.getContestUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+    }
     const targetUrls = [configuredUrl];
     
     for (const url of targetUrls) {
@@ -523,7 +533,10 @@ class WebMonitor {
       
       // 解析実行（既存のpageParserを使用）
       console.log('🔍 ページ解析実行中...');
-      parseResult = await window.pageParser.parseContestPage(html, 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml');
+      // 年度別URL取得
+      const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+      const contestUrl = window.constants?.URLS?.getContestUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
+      parseResult = await window.pageParser.parseContestPage(html, contestUrl);
       
       if (!parseResult.success) {
         throw new Error(`ページ解析失敗: ${parseResult.error}`);
@@ -600,7 +613,7 @@ class WebMonitor {
       author: workData.author || '不明',
       genre: 'その他',
       description: 'バックグラウンド更新で自動取得された作品です。',
-      wodicon_url: workData.url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1',
+      wodicon_url: workData.url || (window.constants?.URLS?.getContestUrl?.() || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml') + '#1',
       local_folder_path: '',
       is_played: false,
       rating: {
@@ -625,7 +638,7 @@ class WebMonitor {
       web_monitoring: {
         detected_at: new Date().toISOString(),
         last_update: workData.lastUpdate || new Date().toISOString(),
-        source_url: workData.url || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1',
+        source_url: workData.url || (window.constants?.URLS?.getContestUrl?.() || 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml') + '#1',
         detection_type: 'background_update'
       },
       // 検出元

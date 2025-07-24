@@ -91,6 +91,24 @@
       background: linear-gradient(to right, #28a745, #ffc107, #dc3545); 
       transition: width 0.3s ease;
     }
+    
+    .help-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+    
+    .year-info p {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    
+    .year-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
   </style>
 </head>
 <body>
@@ -99,6 +117,30 @@
     <p>Chrome拡張機能の設定とデータ管理</p>
   </div>
 
+  <!-- 年度選択セクション -->
+  <div class="section" id="year-selection">
+    <h2>📅 年度選択</h2>
+    <div class="setting-item">
+      <label for="year-selector">対象年度:</label>
+      <select id="year-selector">
+        <option value="">読み込み中...</option>
+      </select>
+      <p class="help-text">
+        年度を変更すると、該当年度のデータのみが表示されます。各年度のデータは独立して管理されます。
+      </p>
+      <div id="year-info" class="year-info" style="margin-top: 15px;">
+        <p><strong>現在の年度:</strong> <span id="current-year-display">-</span></p>
+        <p><strong>利用可能な年度:</strong> <span id="available-years-display">-</span></p>
+        <p><strong>ストレージ使用量:</strong> <span id="storage-usage-display">-</span></p>
+      </div>
+      <div class="year-actions" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
+        <button id="add-new-year-btn" class="secondary">新年度を追加</button>
+        <div style="margin-left: auto;">
+          <button id="delete-year-data-btn" class="danger">年度データ削除</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="section">
     <h2>💾 データ管理</h2>
@@ -227,9 +269,10 @@
 
   <div class="section">
     <h2>ℹ️ 情報</h2>
-    <p><strong>バージョン:</strong> <span id="version">1.0.0</span></p>
+    <p><strong>バージョン:</strong> <span id="version">1.0.2</span></p>
   </div>
 
+  <script src="js/yearManager.js"></script>
   <script src="js/options.js"></script>
 </body>
 </html>
