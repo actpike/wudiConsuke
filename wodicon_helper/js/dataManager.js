@@ -2,9 +2,9 @@
 
 class GameDataManager {
   constructor() {
-    // レガシーキーは移行時のみ使用
-    this.LEGACY_STORAGE_KEY = 'wodicon_games';
-    this.LEGACY_SETTINGS_KEY = 'wodicon_settings';
+    // constants.jsの定数を使用
+    this.LEGACY_STORAGE_KEY = window.constants.STORAGE_KEYS.GAMES;
+    this.LEGACY_SETTINGS_KEY = window.constants.STORAGE_KEYS.WODICON_SETTINGS;
     this.LEGACY_METADATA_KEY = 'wodicon_metadata';
     
     // 年度管理モードフラグ
@@ -296,12 +296,12 @@ class GameDataManager {
       const usage = await chrome.storage.local.getBytesInUse();
       return {
         used: usage,
-        total: 5 * 1024 * 1024, // 5MB
-        percentage: Math.round((usage / (5 * 1024 * 1024)) * 100)
+        total: window.constants.LIMITS.STORAGE_LIMIT_BYTES,
+        percentage: Math.round((usage / window.constants.LIMITS.STORAGE_LIMIT_BYTES) * 100)
       };
     } catch (error) {
       console.error('Failed to get storage usage:', error);
-      return { used: 0, total: 5 * 1024 * 1024, percentage: 0 };
+      return { used: 0, total: window.constants.LIMITS.STORAGE_LIMIT_BYTES, percentage: 0 };
     }
   }
 
@@ -316,7 +316,7 @@ class GameDataManager {
       settings,
       metadata,
       export_timestamp: new Date().toISOString(),
-      version: "1.0.0"
+      version: window.constants.VERSION_INFO.CURRENT
     };
   }
 

@@ -671,17 +671,6 @@ async function sendTestNotification() {
   }
 }
 
-async function clearAllMarkers() {
-  if (confirm('全ての更新マーカーをクリアしますか？')) {
-    try {
-      await chrome.storage.local.remove('update_markers');
-      showStatus('success', '✅ 全マーカーをクリアしました');
-      await loadMonitoringData(); // 表示を更新
-    } catch (error) {
-      showStatus('error', '❌ マーカークリア失敗: ' + error.message);
-    }
-  }
-}
 
 function updateLastMonitorTime(timestamp) {
   const timeSpan = document.getElementById('last-monitor-time');

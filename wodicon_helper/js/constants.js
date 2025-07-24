@@ -3,7 +3,7 @@
 
 // ストレージキー
 const STORAGE_KEYS = {
-  GAMES: 'games',
+  GAMES: 'wodicon_games', // レガシーキーと統一
   RATINGS: 'ratings',
   WODICON_SETTINGS: 'wodicon_settings',
   WEB_MONITOR_SETTINGS: 'web_monitor_settings',
@@ -14,23 +14,19 @@ const STORAGE_KEYS = {
   PENDING_MONITOR_CHECK: 'pending_monitor_check'
 };
 
-// フィルタータイプ
+// フィルタータイプ（実装済みのみ）
 const FILTER_TYPES = {
   ALL: 'all',
   PLAYED: 'played',
   UNPLAYED: 'unplayed',
-  NEW: 'new',
-  RATED: 'rated',
-  UNRATED: 'unrated'
+  NEW: 'new'
+  // 'rated', 'unrated' は未実装のため削除
 };
 
-// ソートタイプ
+// ソートタイプ（実装済みのみ）
 const SORT_TYPES = {
-  NO: 'no',
-  TITLE: 'title',
-  AUTHOR: 'author',
-  OVERALL: 'overall',
-  LAST_PLAYED: 'lastPlayed'
+  NO: 'no'
+  // 'title', 'author', 'overall', 'lastPlayed' は未実装のため削除
 };
 
 // 監視モード
@@ -119,7 +115,7 @@ const SUCCESS_MESSAGES = {
 
 // バージョン情報
 const VERSION_INFO = {
-  CURRENT: '0.0.6',
+  CURRENT: '1.0.2', // 最新バージョンに統一
   MANIFEST_VERSION: 3
 };
 
@@ -129,3 +125,21 @@ const DEBUG = {
   VERBOSE_LOGGING: false,
   PERFORMANCE_MONITORING: true
 };
+
+// グローバルオブジェクトに登録
+window.constants = {
+  STORAGE_KEYS,
+  FILTER_TYPES,
+  SORT_TYPES,
+  MONITOR_MODES,
+  RATING_CATEGORIES,
+  LIMITS,
+  URLS,
+  NOTIFICATION_CONFIG,
+  ERROR_MESSAGES,
+  SUCCESS_MESSAGES,
+  VERSION_INFO,
+  DEBUG
+};
+
+console.log('🔧 Constants loaded and registered globally');

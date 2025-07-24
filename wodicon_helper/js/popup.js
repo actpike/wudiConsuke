@@ -493,45 +493,77 @@ class GameListManager {
       return;
     }
 
-    tbody.innerHTML = games.map(game => this.createGameRowHTML(game)).join('');
+    // XSS対策: innerHTML使用を避けて安全なDOM操作を実装
+    tbody.innerHTML = ''; // 既存の内容をクリア
+    games.forEach(game => {
+      const row = this.createGameRowElement(game);
+      tbody.appendChild(row);
+    });
   }
 
-  // ゲーム行HTML生成
-  createGameRowHTML(game) {
-    const monitoringChecked = game.web_monitoring_enabled ? 'checked' : '';
-    const versionIcon = this.getVersionIcon(game.version_status);
-    const ratingDisplay = this.formatRatingDisplay(game.rating);
+  // ゲーム行DOM要素生成（XSS対策: 安全なDOM操作）
+  createGameRowElement(game) {
+    const row = document.createElement('tr');
     const rowClass = game.is_played ? 'game-row played' : 'game-row';
+    row.className = rowClass;
+    row.setAttribute('data-game-id', game.id);
 
-    // 状態表示の改善
-    let statusDisplay = '';
+    // チェックボックス列
+    const checkCell = document.createElement('td');
+    checkCell.className = 'col-check';
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'monitor-checkbox';
+    checkbox.setAttribute('data-game-id', game.id);
+    checkbox.checked = game.web_monitoring_enabled || false;
+    checkCell.appendChild(checkbox);
+    row.appendChild(checkCell);
+
+    // No列
+    const noCell = document.createElement('td');
+    noCell.className = 'col-no';
+    noCell.textContent = game.no || '---';
+    row.appendChild(noCell);
+
+    // タイトル列（XSS対策: textContentで安全に設定）
+    const titleCell = document.createElement('td');
+    titleCell.className = 'col-title';
+    const titleSpan = document.createElement('span');
+    titleSpan.className = 'game-title';
+    titleSpan.title = game.title || '';
+    titleSpan.textContent = game.title || '';
+    
+    // 状態表示の追加（安全なDOM操作）
     if (!game.id || game.id.toString().startsWith('temp_')) {
-      statusDisplay = ' <small style="color: #ff6b35; font-weight: bold;">【読み込み失敗・新規作成】</small>';
+      const statusSpan = document.createElement('small');
+      statusSpan.style.color = '#ff6b35';
+      statusSpan.style.fontWeight = 'bold';
+      statusSpan.textContent = ' 【読み込み失敗・新規作成】';
+      titleSpan.appendChild(statusSpan);
     }
+    
+    titleCell.appendChild(titleSpan);
+    row.appendChild(titleCell);
 
-    // Ver列はアイコンのみ（従来仕様）
-    let versionInfo = versionIcon;
+    // Ver列
+    const verCell = document.createElement('td');
+    verCell.className = 'col-ver';
+    const verSpan = document.createElement('span');
+    verSpan.className = 'version-status';
+    verSpan.innerHTML = this.getVersionIcon(game.version_status); // アイコンHTMLは安全な内部生成
+    verCell.appendChild(verSpan);
+    row.appendChild(verCell);
 
-    return `
-      <tr class="${rowClass}" data-game-id="${game.id}">
-        <td class="col-check">
-          <input type="checkbox" class="monitor-checkbox" data-game-id="${game.id}" ${monitoringChecked}>
-        </td>
-        <td class="col-no">${game.no || '---'}</td>
-        <td class="col-title">
-          <span class="game-title" title="${game.title}">${game.title}${statusDisplay}</span>
-        </td>
-        <td class="col-ver">
-          <span class="version-status">${versionInfo}</span>
-        </td>
-        <td class="col-rating">${game.rating?.熱中度 || '-'}</td>
-        <td class="col-rating">${game.rating?.斬新さ || '-'}</td>
-        <td class="col-rating">${game.rating?.物語性 || '-'}</td>
-        <td class="col-rating">${game.rating?.画像音声 || '-'}</td>
-        <td class="col-rating">${game.rating?.遊びやすさ || '-'}</td>
-        <td class="col-rating">${game.rating?.その他 || '-'}</td>
-      </tr>
-    `;
+    // 評価列（6項目）
+    const ratingKeys = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+    ratingKeys.forEach(key => {
+      const ratingCell = document.createElement('td');
+      ratingCell.className = 'col-rating';
+      ratingCell.textContent = game.rating?.[key] || '-';
+      row.appendChild(ratingCell);
+    });
+
+    return row;
   }
 
   // バージョンアイコン取得
@@ -599,28 +631,6 @@ class GameListManager {
     return names[filter] || filter;
   }
 
-  // データエクスポート
-  async exportData() {
-    try {
-      const data = await window.gameDataManager.exportData();
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const filename = `wodicon_data_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-      
-      await chrome.downloads.download({
-        url: url,
-        filename: filename,
-        saveAs: true
-      });
-
-      this.showMessage('✅ データエクスポート完了');
-
-    } catch (error) {
-      console.error('Export failed:', error);
-      this.showError('エクスポートに失敗しました');
-    }
-  }
 
   // ヘルプ表示
   showHelp() {
@@ -667,291 +677,6 @@ class GameListManager {
     
     alert(helpText);
   }
-
-  // Web監視手動実行
-  async performManualMonitoring() {
-    const btn = document.getElementById('manual-monitor-btn');
-    const resultDiv = document.getElementById('monitor-result');
-    const contentDiv = document.getElementById('monitor-result-content');
-
-    try {
-      btn.disabled = true;
-      btn.textContent = '🔄 監視実行中...';
-      
-      console.log('🔍 手動Web監視開始');
-      
-      // Web監視実行
-      const result = await window.webMonitor.manualCheck();
-      
-      // 結果表示
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = this.formatMonitoringResult(result);
-      
-      // リスト更新
-      await this.refreshList();
-      
-      console.log('✅ 手動Web監視完了:', result);
-      
-    } catch (error) {
-      console.error('❌ 手動Web監視エラー:', error);
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = `エラー: ${error.message}`;
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '🔍 手動監視実行';
-    }
-  }
-
-  // 監視状態表示
-  async showMonitoringStatus() {
-    const resultDiv = document.getElementById('monitor-result');
-    const contentDiv = document.getElementById('monitor-result-content');
-
-    try {
-      // Web監視ステータス取得
-      const webStatus = window.webMonitor.getStatus();
-      const updateStatus = window.updateManager.getStatus();
-      const diagnostics = await window.webMonitor.getDiagnostics();
-
-      // ステータス情報をフォーマット
-      const statusText = this.formatStatusInfo(webStatus, updateStatus, diagnostics);
-      
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = statusText;
-      
-    } catch (error) {
-      console.error('❌ 監視状態取得エラー:', error);
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = `ステータス取得エラー: ${error.message}`;
-    }
-  }
-
-  // 監視結果フォーマット
-  formatMonitoringResult(result) {
-    if (!result) {
-      return '監視結果が取得できませんでした';
-    }
-
-    if (!result.success) {
-      return `監視エラー: ${result.error || '不明なエラー'}`;
-    }
-
-    const lines = [
-      `✅ 監視完了 [${result.checkId}]`,
-      `実行時間: ${new Date(result.timestamp).toLocaleString()}`,
-      '',
-      `🆕 新規作品: ${result.newWorks ? result.newWorks.length : 0}件`,
-      `🔄 更新作品: ${result.updatedWorks ? result.updatedWorks.length : 0}件`
-    ];
-
-    if (result.newWorks && result.newWorks.length > 0) {
-      lines.push('', '【新規作品】');
-      result.newWorks.forEach(work => {
-        lines.push(`• ${work.title} (No.${work.no})`);
-      });
-    }
-
-    if (result.updatedWorks && result.updatedWorks.length > 0) {
-      lines.push('', '【更新作品】');
-      result.updatedWorks.forEach(work => {
-        lines.push(`• ${work.title} (No.${work.no})`);
-      });
-    }
-
-    return lines.join('\n');
-  }
-
-  // ステータス情報フォーマット
-  formatStatusInfo(webStatus, updateStatus, diagnostics) {
-    const lines = [
-      '📊 Web監視ステータス',
-      '',
-      `監視状態: ${webStatus.isMonitoring ? '✅ 有効' : '❌ 無効'}`,
-      `監視間隔: ${webStatus.monitoringInterval}分`,
-      `監視モード: ${webStatus.monitoringMode}`,
-      `注目作品数: ${webStatus.selectedWorksCount}件`,
-      `最終チェック: ${webStatus.lastCheckTime ? new Date(webStatus.lastCheckTime).toLocaleString() : '未実行'}`,
-      `連続エラー: ${webStatus.consecutiveErrors}回`,
-      '',
-      '📬 通知設定',
-      `通知: ${updateStatus.notificationSettings.enabled ? '✅ 有効' : '❌ 無効'}`,
-      `新規作品通知: ${updateStatus.notificationSettings.showNewWorks ? '✅' : '❌'}`,
-      `更新作品通知: ${updateStatus.notificationSettings.showUpdatedWorks ? '✅' : '❌'}`,
-      `更新マーカー数: ${updateStatus.updateMarkersCount}件`,
-      ''
-    ];
-
-    if (diagnostics && diagnostics.recentHistory) {
-      lines.push('📈 最近の監視履歴');
-      if (diagnostics.recentHistory.length === 0) {
-        lines.push('履歴なし');
-      } else {
-        diagnostics.recentHistory.slice(0, 3).forEach(history => {
-          const time = new Date(history.timestamp).toLocaleTimeString();
-          const newCount = history.newWorks ? history.newWorks.length : 0;
-          const updateCount = history.updatedWorks ? history.updatedWorks.length : 0;
-          lines.push(`${time}: 新規${newCount}件, 更新${updateCount}件`);
-        });
-      }
-    }
-
-    return lines.join('\n');
-  }
-
-  // ページ解析情報表示
-  async showParsingInfo() {
-    const resultDiv = document.getElementById('monitor-result');
-    const contentDiv = document.getElementById('monitor-result-content');
-
-    try {
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = '🔍 ページ解析情報を取得中...';
-
-      // 現在のタブ情報取得
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      const currentTab = tabs[0];
-
-      let parseInfo = {
-        currentUrl: currentTab?.url || 'Unknown',
-        title: currentTab?.title || 'Unknown',
-        isWodiconPage: false,
-        parseResult: null,
-        error: null
-      };
-
-      // ウディコンページかチェック
-      if (currentTab?.url?.includes('silversecond.com')) {
-        parseInfo.isWodiconPage = true;
-        
-        try {
-          // Content Scriptに解析を依頼
-          const result = await chrome.tabs.sendMessage(currentTab.id, {
-            action: 'parse_current_page'
-          });
-          
-          parseInfo.parseResult = result;
-          
-        } catch (error) {
-          parseInfo.error = error.message;
-        }
-      }
-
-      // Web監視の最新結果も取得
-      const lastResult = window.webMonitor?.lastResult;
-
-      // 結果を表示
-      contentDiv.innerHTML = this.formatParsingInfo(parseInfo, lastResult);
-      
-    } catch (error) {
-      console.error('❌ 解析情報表示エラー:', error);
-      resultDiv.classList.remove('hidden');
-      contentDiv.textContent = `解析情報取得エラー: ${error.message}`;
-    }
-  }
-
-  // 解析情報フォーマット
-  formatParsingInfo(parseInfo, lastResult) {
-    const lines = [
-      '📋 ページ解析情報',
-      '',
-      `現在のURL: ${parseInfo.currentUrl}`,
-      `ページタイトル: ${parseInfo.title}`,
-      `ウディコンページ: ${parseInfo.isWodiconPage ? '✅' : '❌'}`,
-      ''
-    ];
-
-    if (parseInfo.error) {
-      lines.push('❌ 解析エラー:', parseInfo.error);
-    } else if (parseInfo.parseResult) {
-      const result = parseInfo.parseResult;
-      lines.push(
-        `解析結果: ${result.success ? '✅ 成功' : '❌ 失敗'}`,
-        `検出作品数: ${result.works?.length || 0}件`,
-        `解析時刻: ${result.timestamp ? new Date(result.timestamp).toLocaleString() : '不明'}`,
-        ''
-      );
-
-      if (result.works && result.works.length > 0) {
-        lines.push('📊 検出された作品 (最初の3件):');
-        result.works.slice(0, 3).forEach((work, i) => {
-          lines.push(
-            `${i+1}. No.${work.no || '---'} ${work.title || '無題'}`,
-            `   作者: ${work.author || '不明'}`,
-            `   URL: ${work.url || 'なし'}`,
-            ''
-          );
-        });
-        
-        if (result.works.length > 3) {
-          lines.push(`... 他 ${result.works.length - 3} 件`);
-        }
-      }
-
-      if (result.diagnosis) {
-        lines.push('', '🔍 診断情報:');
-        if (result.diagnosis.info) {
-          lines.push(`テーブル数: ${result.diagnosis.info.tables || 0}`);
-          lines.push(`テーブル行数: ${result.diagnosis.info.tableRows || 0}`);
-          lines.push(`リンク数: ${result.diagnosis.info.links || 0}`);
-          lines.push(`エントリーリンク数: ${result.diagnosis.info.entryLinks || 0}`);
-        }
-      }
-    }
-
-    if (lastResult) {
-      lines.push('', '🔍 最新監視結果:', `最終チェック: ${lastResult.timestamp ? new Date(lastResult.timestamp).toLocaleString() : '不明'}`);
-      lines.push(`新規: ${lastResult.newWorks?.length || 0}件, 更新: ${lastResult.updatedWorks?.length || 0}件`);
-    }
-
-    return `<pre style="white-space: pre-wrap; font-size: 11px;">${lines.join('\n')}</pre>`;
-  }
-
-
-
-
-  // Web監視システムテスト
-  async testWebMonitoringSystem() {
-    try {
-      // 監視システムの初期化確認
-      if (!window.webMonitor) {
-        throw new Error('WebMonitorインスタンスが存在しません');
-      }
-      if (!window.pageParser) {
-        throw new Error('PageParserインスタンスが存在しません');
-      }
-      if (!window.updateManager) {
-        throw new Error('UpdateManagerインスタンスが存在しません');
-      }
-
-      // ステータス取得テスト
-      const status = window.webMonitor.getStatus();
-      if (!status || typeof status !== 'object') {
-        throw new Error('監視ステータスが取得できません');
-      }
-
-      // 診断情報取得テスト
-      const diagnostics = await window.webMonitor.getDiagnostics();
-      if (!diagnostics) {
-        throw new Error('診断情報が取得できません');
-      }
-
-      return {
-        name: 'Web監視システム',
-        status: 'passed',
-        details: `監視状態: ${status.isMonitoring ? 'ON' : 'OFF'}, 診断: OK`
-      };
-    } catch (error) {
-      return {
-        name: 'Web監視システム',
-        status: 'failed',
-        details: error.message
-      };
-    }
-  }
-
-
-
-
 
   // 監視チェックボックス変更ハンドラー
   async handleMonitoringToggle(checkbox) {
