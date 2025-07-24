@@ -149,7 +149,7 @@
       <p>全ての作品データと設定を指定した形式で保存できます。</p>
       <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
         <label for="export-format">形式:</label>
-        <select id="export-format">
+        <select id="export-format" style="width: auto; min-width: 180px;">
           <option value="json">JSON (全データ)</option>
           <option value="csv">CSV (作品評価データ)</option>
         </select>
@@ -280,6 +280,7 @@
   </div>
 
   <script src="js/yearManager.js"></script>
+  <script src="js/dataManager.js"></script>
   <script src="js/options.js"></script>
 </body>
 </html>

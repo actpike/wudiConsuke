@@ -812,6 +812,11 @@ async function exportAsJSON() {
 // CSVエクスポート関数
 async function exportAsCSV() {
   try {
+    // GameDataManagerの存在確認
+    if (!window.gameDataManager) {
+      throw new Error('データ管理システムが初期化されていません。ページをリロードしてください。');
+    }
+
     // 現在年度の取得
     const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
     const yearDisplay = window.yearManager ? window.yearManager.formatYearDisplay(currentYear) : `第17回（${currentYear}）`;
@@ -930,6 +935,11 @@ async function importFromCSV(csvString) {
 
     if (games.length === 0) {
       throw new Error('インポート可能なデータが見つかりませんでした');
+    }
+
+    // GameDataManagerの存在確認
+    if (!window.gameDataManager) {
+      throw new Error('データ管理システムが初期化されていません。ページをリロードしてください。');
     }
 
     // 既存のゲームデータに追加
