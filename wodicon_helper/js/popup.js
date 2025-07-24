@@ -446,20 +446,20 @@ class GameListManager {
       let aValue, bValue;
       
       switch (this.currentSort) {
-        case 'no':
+        case window.constants.SORT_TYPES.NO:
           aValue = parseInt(a.no);
           bValue = parseInt(b.no);
           break;
-        case 'title':
+        case window.constants.SORT_TYPES.TITLE:
           aValue = a.title.toLowerCase();
           bValue = b.title.toLowerCase();
           break;
-        case '熱中度':
-        case '斬新さ':
-        case '物語性':
-        case '画像音声':
-        case '遊びやすさ':
-        case 'その他':
+        case window.constants.SORT_TYPES.RATING_ENTHUSIASM:
+        case window.constants.SORT_TYPES.RATING_NOVELTY:
+        case window.constants.SORT_TYPES.RATING_STORY:
+        case window.constants.SORT_TYPES.RATING_GRAPHICS_AUDIO:
+        case window.constants.SORT_TYPES.RATING_USABILITY:
+        case window.constants.SORT_TYPES.RATING_OTHER:
           aValue = a.rating ? (a.rating[this.currentSort] || 0) : 0;
           bValue = b.rating ? (b.rating[this.currentSort] || 0) : 0;
           break;
@@ -555,7 +555,7 @@ class GameListManager {
     row.appendChild(verCell);
 
     // 評価列（6項目）
-    const ratingKeys = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+    const ratingKeys = window.constants.RATING_CATEGORIES;
     ratingKeys.forEach(key => {
       const ratingCell = document.createElement('td');
       ratingCell.className = 'col-rating';
@@ -582,7 +582,7 @@ class GameListManager {
       return '-/-/-/-/-/-';
     }
     
-    return `${rating.熱中度}/${rating.斬新さ}/${rating.物語性}/${rating.画像音声}/${rating.遊びやすさ}/${rating.その他}`;
+    return window.constants.RATING_CATEGORIES.map(category => rating[category] || '-').join('/');
   }
 
   // ステータスバー更新
@@ -681,7 +681,7 @@ class GameListManager {
   // 監視チェックボックス変更ハンドラー
   async handleMonitoringToggle(checkbox) {
     try {
-      const gameId = parseInt(checkbox.dataset.gameId);
+      const gameId = checkbox.dataset.gameId;
       const enabled = checkbox.checked;
       
       console.log(`🔄 監視設定変更: Game ${gameId} -> ${enabled}`);
@@ -745,7 +745,7 @@ class GameListManager {
       // 全てのチェックボックスを更新
       for (const checkbox of checkboxes) {
         try {
-          const gameId = parseInt(checkbox.dataset.gameId);
+          const gameId = checkbox.dataset.gameId;
           const success = await window.gameDataManager.updateWebMonitoringFlag(gameId, willSelectAll);
           
           if (success) {

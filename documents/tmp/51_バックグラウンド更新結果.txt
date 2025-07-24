@@ -1,0 +1,60 @@
+📡 ウディコンページ取得中...
+webMonitor.js:657 🔄 ページ取得 実行: 試行 1/3
+webMonitor.js:248 📡 ページ取得中: https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml
+popup.html:1 Access to fetch at 'http://www.silversecond.net/404.html' (redirected from 'https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml') from origin 'chrome-extension://iocamfldemgokpegchollkhcppgpbfdh' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.Understand this error
+www.silversecond.net/404.html:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+webMonitor.js:282 ❌ ページ取得エラー [https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml]: TypeError: Failed to fetch
+    at WebMonitor.fetchContestPage (webMonitor.js:250:32)
+    at async WebMonitor.performWithRetry (webMonitor.js:658:24)
+    at async WebMonitor.executeBackgroundUpdate (webMonitor.js:532:20)
+    at async GameListManager.performBackgroundUpdate (popup.js:821:22)
+fetchContestPage @ webMonitor.js:282Understand this error
+webMonitor.js:670 ⚠️ ページ取得 失敗 (試行 1/3): Failed to fetch
+performWithRetry @ webMonitor.js:670Understand this warning
+webMonitor.js:675 ⏳ 1000ms後にリトライします
+webMonitor.js:657 🔄 ページ取得 実行: 試行 2/3
+webMonitor.js:248 📡 ページ取得中: https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml
+popup.html:1 Access to fetch at 'http://www.silversecond.net/404.html' (redirected from 'https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml') from origin 'chrome-extension://iocamfldemgokpegchollkhcppgpbfdh' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.Understand this error
+www.silversecond.net/404.html:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+webMonitor.js:282 ❌ ページ取得エラー [https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml]: TypeError: Failed to fetch
+    at WebMonitor.fetchContestPage (webMonitor.js:250:32)
+    at async WebMonitor.performWithRetry (webMonitor.js:658:24)
+    at async WebMonitor.executeBackgroundUpdate (webMonitor.js:532:20)
+    at async GameListManager.performBackgroundUpdate (popup.js:821:22)
+fetchContestPage @ webMonitor.js:282Understand this error
+webMonitor.js:670 ⚠️ ページ取得 失敗 (試行 2/3): Failed to fetch
+performWithRetry @ webMonitor.js:670Understand this warning
+webMonitor.js:675 ⏳ 2000ms後にリトライします
+webMonitor.js:657 🔄 ページ取得 実行: 試行 3/3
+webMonitor.js:248 📡 ページ取得中: https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml
+popup.html:1 Access to fetch at 'http://www.silversecond.net/404.html' (redirected from 'https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml') from origin 'chrome-extension://iocamfldemgokpegchollkhcppgpbfdh' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request.Understand this error
+webMonitor.js:250  GET http://www.silversecond.net/404.html net::ERR_FAILED
+fetchContestPage @ webMonitor.js:250
+await in fetchContestPage
+(anonymous) @ webMonitor.js:532
+performWithRetry @ webMonitor.js:658Understand this error
+webMonitor.js:282 ❌ ページ取得エラー [https://silversecond.com/WolfRPGEditor/Contest/2027/entry.shtml]: TypeError: Failed to fetch
+    at WebMonitor.fetchContestPage (webMonitor.js:250:32)
+    at async WebMonitor.performWithRetry (webMonitor.js:658:24)
+    at async WebMonitor.executeBackgroundUpdate (webMonitor.js:532:20)
+    at async GameListManager.performBackgroundUpdate (popup.js:821:22)
+fetchContestPage @ webMonitor.js:282
+await in fetchContestPage
+(anonymous) @ webMonitor.js:532
+performWithRetry @ webMonitor.js:658Understand this error
+webMonitor.js:670 ⚠️ ページ取得 失敗 (試行 3/3): Failed to fetch
+performWithRetry @ webMonitor.js:670Understand this warning
+webMonitor.js:710 ❌ ページ取得 完全失敗 (連続 1回目): Failed to fetch
+handleOperationFailure @ webMonitor.js:710
+performWithRetry @ webMonitor.js:682Understand this error
+webMonitor.js:710 ❌ バックグラウンド更新 完全失敗 (連続 2回目): Failed to fetch
+handleOperationFailure @ webMonitor.js:710
+executeBackgroundUpdate @ webMonitor.js:593Understand this error
+webMonitor.js:595 ❌ バックグラウンド更新失敗 [bg_update_1753357410900]: TypeError: Failed to fetch
+    at WebMonitor.fetchContestPage (webMonitor.js:250:32)
+    at async WebMonitor.performWithRetry (webMonitor.js:658:24)
+    at async WebMonitor.executeBackgroundUpdate (webMonitor.js:532:20)
+    at async GameListManager.performBackgroundUpdate (popup.js:821:22)
+executeBackgroundUpdate @ webMonitor.js:595Understand this error
+popup.js:851 ❌ バックグラウンド更新エラー: Error: Failed to fetch
+    at GameListManager.performBackgroundUpdate (popup.js:846:15)

@@ -38,7 +38,7 @@ class NavigationController {
       if ((isNoColumn || isTitleColumn || isVersionColumn || isRatingColumn) && this.currentView === 'main') {
         const gameRow = e.target.closest('.game-row');
         if (gameRow) {
-          const gameId = parseInt(gameRow.dataset.gameId);
+          const gameId = gameRow.dataset.gameId;
           this.showDetailView(gameId);
         }
       }
@@ -218,8 +218,13 @@ class NavigationController {
   // ゲームデータ読み込み
   async loadGameData(gameId) {
     try {
+      console.log(`🔍 詳細画面でゲーム検索: ID = ${gameId}`);
       const game = await window.gameDataManager.getGame(gameId);
       if (!game) {
+        // デバッグ: 現在のゲーム一覧を確認
+        const allGames = await window.gameDataManager.getGames();
+        console.log(`❌ ゲームが見つかりません。現在のゲーム数: ${allGames.length}`);
+        console.log(`📋 利用可能なID一覧:`, allGames.map(g => g.id).slice(0, 5));
         throw new Error('Game not found');
       }
 
@@ -360,7 +365,7 @@ class NavigationController {
 
   // 評価データ読み込み
   loadRatingData(rating) {
-    const categories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+    const categories = window.constants.RATING_CATEGORIES;
     
     categories.forEach(category => {
       const slider = document.querySelector(`[data-category="${category}"]`);
@@ -390,7 +395,7 @@ class NavigationController {
       
       if (playedGames.length === 0) return;
       
-      const categories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+      const categories = window.constants.RATING_CATEGORIES;
       const averages = {};
       
       categories.forEach(category => {
@@ -417,7 +422,7 @@ class NavigationController {
 
   // 目盛りを追加
   addTickMarks() {
-    const categories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+    const categories = window.constants.RATING_CATEGORIES;
     
     categories.forEach(category => {
       const slider = document.querySelector(`[data-category="${category}"]`);
@@ -477,7 +482,7 @@ class NavigationController {
 
   // 平均点インジケータを更新
   updateAverageIndicators(averages) {
-    const categories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+    const categories = window.constants.RATING_CATEGORIES;
     
     categories.forEach(category => {
       const slider = document.querySelector(`[data-category="${category}"]`);
@@ -566,15 +571,13 @@ class NavigationController {
     // const folderPath = document.getElementById('folder-path').value.trim();
     const review = document.getElementById('review-textarea').value.trim();
     
-    // 評価データ収集
-    const rating = {
-      熱中度: parseInt(document.querySelector('[data-category="熱中度"]').value),
-      斬新さ: parseInt(document.querySelector('[data-category="斬新さ"]').value),
-      物語性: parseInt(document.querySelector('[data-category="物語性"]').value),
-      画像音声: parseInt(document.querySelector('[data-category="画像音声"]').value),
-      遊びやすさ: parseInt(document.querySelector('[data-category="遊びやすさ"]').value),
-      その他: parseInt(document.querySelector('[data-category="その他"]').value)
-    };
+    // 評価データ収集（定数使用）
+    const rating = Object.fromEntries(
+      window.constants.RATING_CATEGORIES.map(category => [
+        category, 
+        parseInt(document.querySelector(`[data-category="${category}"]`).value)
+      ])
+    );
     
     rating.total = window.gameDataManager.calculateTotalRating(rating);
 
@@ -636,7 +639,7 @@ class NavigationController {
   resetUI() {
     try {
       // 評価スライダーをリセット
-      const ratingCategories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+      const ratingCategories = window.constants.RATING_CATEGORIES;
       ratingCategories.forEach(category => {
         const slider = document.querySelector(`input[data-category="${category}"]`);
         if (slider) {
@@ -693,7 +696,7 @@ class NavigationController {
   resetInputsOnly() {
     try {
       // 評価スライダーをリセット
-      const ratingCategories = ['熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];
+      const ratingCategories = window.constants.RATING_CATEGORIES;
       ratingCategories.forEach(category => {
         const slider = document.querySelector(`input[data-category="${category}"]`);
         if (slider) {
@@ -885,7 +888,7 @@ class NavigationController {
     try {
       // GameListManagerから直接作品情報を取得
       if (window.gameListManager && window.gameListManager.games) {
-        const game = window.gameListManager.games.find(g => g.id === gameId);
+        const game = window.gameListManager.games.find(g => g.id == gameId);
         if (game) {
           return {
             no: game.no,
@@ -899,7 +902,7 @@ class NavigationController {
       
       // dataManagerから作品リストを取得
       const allGames = await window.gameDataManager.getGames();
-      const targetGame = allGames.find(g => g.id === gameId);
+      const targetGame = allGames.find(g => g.id == gameId);
       if (targetGame) {
         return {
           no: targetGame.no,

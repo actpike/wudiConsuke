@@ -428,10 +428,43 @@ class YearManager {
       throw error;
     }
   }
+
+  // 削除済み年度リストをクリア（JSONインポート対応）
+  async clearDeletedYears() {
+    try {
+      console.log('🔄 削除済み年度リストをクリア中...');
+      
+      let appSettings = await this.getAppSettings();
+      if (appSettings) {
+        const oldDeletedYears = appSettings.deleted_years || [];
+        appSettings.deleted_years = [];
+        await this.setAppSettings(appSettings);
+        
+        console.log(`✅ 削除済み年度リストクリア完了: [${oldDeletedYears.join(', ')}] → []`);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('❌ 削除済み年度リストクリアエラー:', error);
+      throw error;
+    }
+  }
 }
 
 // グローバルインスタンス作成
 if (typeof window !== 'undefined') {
   window.yearManager = new YearManager();
   console.log('🗓️ YearManager グローバルインスタンス作成完了');
+  
+  // デバッグ用グローバル関数
+  window.clearDeletedYearsDebug = async () => {
+    console.log('🛠️ [DEBUG] 削除済み年度リストを手動クリア...');
+    const result = await window.yearManager.clearDeletedYears();
+    if (result) {
+      console.log('✅ [DEBUG] 削除済み年度リストクリア完了。ページをリロードしてください。');
+      console.log('💡 [TIP] location.reload() を実行するか、F5でリロードしてください。');
+    }
+    return result;
+  };
 }

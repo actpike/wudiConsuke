@@ -179,7 +179,7 @@ function setupEventListeners() {
   });
 
   // インポート
-  document.getElementById('import-btn').addEventListener('click', () => {
+  document.getElementById('import-btn').addEventListener('click', async () => {
     const file = document.getElementById('import-file').files[0];
     if (!file) {
       showStatus('error', '❌ ファイルが選択されていません');
@@ -192,7 +192,9 @@ function setupEventListeners() {
     if (fileExtension === 'json') {
       confirmMessage = 'JSONファイルをインポートします。\n\n⚠️ 既存の全データが上書きされます。\n現在のデータは完全に置き換わりますがよろしいですか？';
     } else if (fileExtension === 'csv') {
-      confirmMessage = 'CSVファイルをインポートします。\n\n📝 既存データに追加されます。\n重複を避けるため、該当年度のデータ削除後の実施を推奨します。\n\n続行しますか？';
+      // 年度別確認メッセージ（getCurrentYear()はPromiseを返すためawait必要）
+      const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+      confirmMessage = `【${currentYear}年】のデータが更新されます。\n該当年の既存のデータは上書きされ、復元できません。\n\n続行しますか？`;
     } else {
       showStatus('error', '❌ サポートされていないファイル形式です（JSON、CSVのみ対応）');
       return;
@@ -925,7 +927,7 @@ async function importFromCSV(csvString) {
       }
 
       const game = {
-        id: `csv_import_${Date.now()}_${i}`,
+        id: `csv_import_temp_${Date.now()}_${i}`, // 仮ID（後で年度付きIDに変更）
         no: fields[0] || '',
         title: fields[1] || '',
         rating: {
@@ -950,17 +952,35 @@ async function importFromCSV(csvString) {
       throw new Error('インポート可能なデータが見つかりませんでした');
     }
 
-    // GameDataManagerの存在確認
+    // GameDataManagerとYearManagerの存在確認
     if (!window.gameDataManager) {
       throw new Error('データ管理システムが初期化されていません。ページをリロードしてください。');
     }
 
-    // 既存のゲームデータに追加
-    const existingGames = await window.gameDataManager.getGames();
-    const mergedGames = [...existingGames, ...games];
+    if (!window.yearManager) {
+      throw new Error('年度管理システムが初期化されていません。ページをリロードしてください。');
+    }
+
+    // 該当年データクリア（上書き対応）
+    const yearData = await window.yearManager.getYearData();
+    const currentYear = await window.yearManager.getCurrentYear();
     
-    await window.gameDataManager.saveGames(mergedGames);
-    console.log(`📄 CSV インポート完了: ${games.length}件の作品データを追加`);
+    // 現在年度のゲームデータをクリア
+    yearData.games = [];
+    await window.yearManager.setYearData(yearData);
+    
+    console.log(`🗑️ ${currentYear}年のデータをクリアしました`);
+    
+    // ゲームIDを現在年度に合わせて再生成（年度間インポート対応）
+    const gamesWithUpdatedIds = games.map((game, index) => ({
+      ...game,
+      id: `csv_import_${currentYear}_${Date.now()}_${index}`,
+      updated_at: new Date().toISOString()
+    }));
+
+    // 新しいCSVデータをインポート
+    await window.gameDataManager.saveGames(gamesWithUpdatedIds);
+    console.log(`📄 CSV インポート完了: ${gamesWithUpdatedIds.length}件の作品データを【${currentYear}年】に上書き保存（ID再生成済み）`);
     
   } catch (error) {
     console.error('CSV インポートエラー:', error);

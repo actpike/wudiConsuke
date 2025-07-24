@@ -24,7 +24,7 @@ class ChromePackager {
   }
 
   // Chrome拡張フォルダをWudiConsukeとしてコピー
-  async copyExtensionFiles() {
+  async copyExtensionFiles(mode = 'development') {
     console.log('📁 Chrome拡張ファイルをコピー中...');
     
     const targetDir = path.join(this.tempDir, ZIP_CONFIG.FOLDER_NAME);
@@ -48,11 +48,37 @@ class ChromePackager {
     
     await fs.copy(EXTENSION_DIR, targetDir, copyOptions);
     
+    // リリース時（開発・本番共通）、メインアイコンを適用
+    await this.applyMainIcon(targetDir);
+    
     if (LOG_CONFIG.VERBOSE) {
       console.log(`✅ ファイルコピー完了: ${targetDir}`);
     }
     
     return targetDir;
+  }
+
+  // リリース用メインアイコン適用
+  async applyMainIcon(targetDir) {
+    try {
+      const mainIconSource = path.join(EXTENSION_DIR, 'icons/icon16_main.png');
+      const mainIconTarget = path.join(targetDir, 'icons/icon16.png');
+      
+      // メインアイコンファイルが存在するかチェック
+      if (await fs.pathExists(mainIconSource)) {
+        console.log('🎯 リリース用メインアイコンを適用中...');
+        
+        // icon16_main.png を icon16.png として上書きコピー
+        await fs.copy(mainIconSource, mainIconTarget);
+        
+        console.log('✅ メインアイコン適用完了: icon16_main.png → icon16.png');
+      } else {
+        console.warn('⚠️ メインアイコンファイルが見つかりません: icons/icon16_main.png');
+        console.log('ℹ️ 既存のicon16.pngをそのまま使用します');
+      }
+    } catch (error) {
+      console.error('❌ メインアイコン適用エラー:', error.message);
+    }
   }
 
   // 古いpre版zipファイルを削除
@@ -176,7 +202,7 @@ class ChromePackager {
       }
       
       // 2. ファイルコピー
-      const copiedDir = await this.copyExtensionFiles();
+      const copiedDir = await this.copyExtensionFiles(mode);
       
       // 3. zip作成
       const zipResult = await this.createZipFile(copiedDir, version, suffix);

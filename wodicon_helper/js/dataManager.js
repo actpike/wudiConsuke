@@ -2,13 +2,25 @@
 
 class GameDataManager {
   constructor() {
-    // constants.jsの定数を使用
-    this.LEGACY_STORAGE_KEY = window.constants.STORAGE_KEYS.GAMES;
+    // constants.jsの定数を使用（年度別アーキテクチャ対応）
+    this.DATA_PREFIX = window.constants.STORAGE_KEYS.DATA_PREFIX;
+    this.LEGACY_STORAGE_KEY = window.constants.STORAGE_KEYS.LEGACY_GAMES;
     this.LEGACY_SETTINGS_KEY = window.constants.STORAGE_KEYS.WODICON_SETTINGS;
     this.LEGACY_METADATA_KEY = 'wodicon_metadata';
     
     // 年度管理モードフラグ
     this.yearManagerMode = true;
+  }
+
+  // 年度別ストレージキー取得
+  async getCurrentStorageKey() {
+    if (!window.yearManager) {
+      console.warn('YearManager not available, using legacy key');
+      return this.LEGACY_STORAGE_KEY;
+    }
+    
+    const currentYear = await window.yearManager.getCurrentYear();
+    return this.DATA_PREFIX + currentYear;
   }
 
   // データ初期化
@@ -48,7 +60,7 @@ class GameDataManager {
   // 単一ゲーム取得
   async getGame(id) {
     const games = await this.getGames();
-    return games.find(game => game.id === id) || null;
+    return games.find(game => game.id == id) || null;
   }
 
   // 作品番号でゲーム取得
@@ -119,7 +131,7 @@ class GameDataManager {
   // ゲーム更新
   async updateGame(id, updates) {
     const games = await this.getGames();
-    const index = games.findIndex(game => game.id === id);
+    const index = games.findIndex(game => game.id == id);
     
     if (index === -1) return false;
 
@@ -142,7 +154,7 @@ class GameDataManager {
   // ゲーム削除（安全確認付き）
   async deleteGame(id, options = {}) {
     const games = await this.getGames();
-    const targetGame = games.find(game => game.id === id);
+    const targetGame = games.find(game => game.id == id);
     
     if (!targetGame) return false;
     
@@ -172,7 +184,10 @@ class GameDataManager {
   // ユーザーデータ存在チェック
   hasUserData(game) {
     // 評価がnull初期値以外、またはコメントがある場合
-    const defaultRating = { 熱中度: null, 斬新さ: null, 物語性: null, 画像音声: null, 遊びやすさ: null, その他: null, total: 0 };
+    const defaultRating = Object.fromEntries(
+      window.constants.RATING_CATEGORIES.map(category => [category, null])
+    );
+    defaultRating.total = 0;
     const hasCustomRating = JSON.stringify(game.rating) !== JSON.stringify(defaultRating);
     const hasReview = game.review && game.review.trim().length > 0;
     const isPlayed = game.is_played === true;
@@ -325,9 +340,30 @@ class GameDataManager {
     try {
       const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
       
-      if (!data.games || !Array.isArray(data.games)) {
+      // 古いフォーマット（wodicon_games）を新フォーマット（games）に変換
+      let games = null;
+      if (data.games && Array.isArray(data.games)) {
+        // 新フォーマット
+        games = data.games;
+      } else if (data.wodicon_games && Array.isArray(data.wodicon_games)) {
+        // 古いフォーマット（互換性対応）
+        console.log('🔄 古いJSONフォーマットを検出、2025年データとして変換中...');
+        games = data.wodicon_games;
+        
+        // 古いフォーマットのメタデータも変換
+        if (data.wodicon_settings) data.settings = data.wodicon_settings;
+        if (data.wodicon_metadata) data.metadata = data.wodicon_metadata;
+        
+        // 古いフォーマットインポート時は削除済み年度リストをクリア
+        if (window.yearManager) {
+          await window.yearManager.clearDeletedYears();
+        }
+      } else {
         throw new Error('Invalid data format: games array not found');
       }
+      
+      // gamesを新しいdataオブジェクトに設定
+      data.games = games;
 
       // 年度別対応インポート
       if (window.yearManager) {
@@ -364,25 +400,23 @@ class GameDataManager {
     }
   }
 
-  // 評価完了チェック
+  // 評価完了チェック（定数使用）
   isRatingComplete(rating) {
-    return rating && 
-           rating.熱中度 !== null && rating.熱中度 !== undefined && rating.熱中度 > 0 && 
-           rating.斬新さ !== null && rating.斬新さ !== undefined && rating.斬新さ > 0 && 
-           rating.物語性 !== null && rating.物語性 !== undefined && rating.物語性 > 0 && 
-           rating.画像音声 !== null && rating.画像音声 !== undefined && rating.画像音声 > 0 && 
-           rating.遊びやすさ !== null && rating.遊びやすさ !== undefined && rating.遊びやすさ > 0 && 
-           rating.その他 !== null && rating.その他 !== undefined && rating.その他 >= 0;
+    if (!rating) return false;
+    
+    return window.constants.RATING_CATEGORIES.every(category => {
+      const value = rating[category];
+      // 「その他」だけは0以上、他は1以上
+      const minValue = category === 'その他' ? 0 : 1;
+      return value !== null && value !== undefined && value >= minValue;
+    });
   }
 
-  // 合計点計算
+  // 合計点計算（定数使用）
   calculateTotalRating(rating) {
-    return (rating.熱中度 || 0) + 
-           (rating.斬新さ || 0) + 
-           (rating.物語性 || 0) + 
-           (rating.画像音声 || 0) + 
-           (rating.遊びやすさ || 0) + 
-           (rating.その他 || 0);
+    return window.constants.RATING_CATEGORIES.reduce((total, category) => {
+      return total + (rating[category] || 0);
+    }, 0);
   }
 
   // ゲームデータ保存（年度別対応）

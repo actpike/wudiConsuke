@@ -1,9 +1,14 @@
 // ウディこん助 - 定数定義
 // マジックナンバー・文字列の一元管理
 
-// ストレージキー
+// ストレージキー（年度別アーキテクチャ対応）
 const STORAGE_KEYS = {
-  GAMES: 'wodicon_games', // レガシーキーと統一
+  // 年度別データ管理
+  DATA_PREFIX: 'wodicon_data_',
+  LEGACY_GAMES: 'wodicon_games', // 移行専用レガシーキー
+  APP_SETTINGS: 'app_settings',
+  
+  // 設定・状態管理
   RATINGS: 'ratings',
   WODICON_SETTINGS: 'wodicon_settings',
   WEB_MONITOR_SETTINGS: 'web_monitor_settings',
@@ -23,10 +28,17 @@ const FILTER_TYPES = {
   // 'rated', 'unrated' は未実装のため削除
 };
 
-// ソートタイプ（実装済みのみ）
+// ソートタイプ（実装済み項目完全対応）
 const SORT_TYPES = {
-  NO: 'no'
-  // 'title', 'author', 'overall', 'lastPlayed' は未実装のため削除
+  NO: 'no',
+  TITLE: 'title',
+  RATING_ENTHUSIASM: '熱中度',
+  RATING_NOVELTY: '斬新さ',
+  RATING_STORY: '物語性',
+  RATING_GRAPHICS_AUDIO: '画像音声',
+  RATING_USABILITY: '遊びやすさ',
+  RATING_OTHER: 'その他',
+  UPDATED_AT: 'updated_at' // デフォルトソート
 };
 
 // 監視モード
@@ -36,16 +48,15 @@ const MONITOR_MODES = {
   DISABLED: 'disabled'
 };
 
-// 評価項目
-const RATING_CATEGORIES = {
-  STORY: 'story',
-  GRAPHICS: 'graphics',
-  MUSIC: 'music',
-  ORIGINALITY: 'originality',
-  GAMEPLAY: 'gameplay',
-  OTHER: 'other',
-  OVERALL: 'overall'
-};
+// 評価項目（実装で使用される日本語配列）
+const RATING_CATEGORIES = [
+  '熱中度',
+  '斬新さ',
+  '物語性',
+  '画像音声',
+  '遊びやすさ',
+  'その他'
+];
 
 // 制限値
 const LIMITS = {
@@ -69,20 +80,14 @@ const URLS = {
   WODICON_CONTEST_BASE: 'https://silversecond.com/WolfRPGEditor/Contest/',
   
   // 年度別URL生成関数
-  getContestUrl: (year = null) => {
-    // 2025年はデフォルトURL、それ以外は年度特定URL（将来実装）
-    if (!year || year === 2025) {
-      return 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
-    }
-    // 将来の年度別URL形式に対応
-    return `https://silversecond.com/WolfRPGEditor/Contest/${year}/entry.shtml`;
+  getContestUrl: (/* year = null */) => {
+    // 全ての年度で同じURLを使用
+    return 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml';
   },
   
-  getVoteUrl: (year = null) => {
-    if (!year || year === 2025) {
-      return 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi';
-    }
-    return `https://silversecond.com/WolfRPGEditor/Contest/${year}/cgi/contestVote.cgi`;
+  getVoteUrl: (/* year = null */) => {
+    // 全ての年度で同じURLを使用
+    return 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi';
   }
 };
 
