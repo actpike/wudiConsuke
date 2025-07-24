@@ -91,7 +91,7 @@ class YearManager {
         appSettings = {
           current_year: this.DEFAULT_YEAR,
           available_years: [this.DEFAULT_YEAR],
-          version: '1.0.2'
+          version: '1.0.3'
         };
       }
       appSettings.current_year = year;
@@ -139,7 +139,7 @@ class YearManager {
         monitor_history: [],
         metadata: {
           created_at: new Date().toISOString(),
-          version: '1.0.2',
+          version: '1.0.3',
           year: year
         }
       };
@@ -155,7 +155,7 @@ class YearManager {
         appSettings = {
           current_year: this.DEFAULT_YEAR,
           available_years: [this.DEFAULT_YEAR],
-          version: '1.0.2'
+          version: '1.0.3'
         };
       }
       if (!appSettings.available_years.includes(year)) {

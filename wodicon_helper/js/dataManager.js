@@ -477,7 +477,7 @@ class GameDataManager {
 
   getDefaultMetadata() {
     return {
-      version: "1.0.2",
+      version: "1.0.3",
       last_backup: null,
       total_games: 0,
       storage_usage: 0
@@ -490,7 +490,7 @@ class GameDataManager {
       const usage = await this.getStorageUsage();
       
       const metadata = {
-        version: "1.0.2",
+        version: "1.0.3",
         last_backup: null,
         total_games: games.length,
         storage_usage: usage.used,

@@ -163,19 +163,13 @@ function setupEventListeners() {
   document.getElementById('export-btn').addEventListener('click', async () => {
     console.log('📤 Export button clicked');
     try {
-      const result = await chrome.storage.local.get();
-      const exportData = {
-        ...result,
-        export_timestamp: new Date().toISOString(),
-        version: "1.0.2"
-      };
-
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `wodicon_data_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-      a.click();
+      const format = document.getElementById('export-format').value;
+      
+      if (format === 'json') {
+        await exportAsJSON();
+      } else if (format === 'csv') {
+        await exportAsCSV();
+      }
 
       showStatus('success', '✅ エクスポート完了');
     } catch (error) {
@@ -195,8 +189,16 @@ function setupEventListeners() {
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
-        const data = JSON.parse(e.target.result);
-        await chrome.storage.local.set(data);
+        const fileExtension = file.name.toLowerCase().split('.').pop();
+        
+        if (fileExtension === 'json') {
+          await importFromJSON(e.target.result);
+        } else if (fileExtension === 'csv') {
+          await importFromCSV(e.target.result);
+        } else {
+          throw new Error('サポートされていないファイル形式です（JSON、CSVのみ対応）');
+        }
+        
         showStatus('success', '✅ インポート完了');
         setTimeout(() => location.reload(), 1000);
       } catch (error) {
@@ -787,6 +789,188 @@ async function clearAutoMonitorTime() {
     console.error('自動監視履歴クリアエラー:', error);
     showStatus('error', '❌ 履歴クリアに失敗しました');
   }
+}
+
+// JSONエクスポート関数
+async function exportAsJSON() {
+  const result = await chrome.storage.local.get();
+  const exportData = {
+    ...result,
+    export_timestamp: new Date().toISOString(),
+    version: "1.0.3"
+  };
+
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `wodicon_data_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// CSVエクスポート関数
+async function exportAsCSV() {
+  try {
+    // 現在年度の取得
+    const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+    const yearDisplay = window.yearManager ? window.yearManager.formatYearDisplay(currentYear) : `第17回（${currentYear}）`;
+    
+    // 作品データの取得
+    const games = await window.gameDataManager.getGames();
+    
+    if (!games || games.length === 0) {
+      throw new Error('エクスポートする作品データがありません');
+    }
+
+    // CSVヘッダーの作成
+    const headers = [
+      '作品No',
+      '作品名',
+      '熱中度',
+      '斬新さ',
+      '物語性',
+      '画像音響',
+      '遊びやすさ',
+      'その他',
+      '感想'
+    ];
+
+    // CSVデータの生成
+    const csvRows = [];
+    csvRows.push(`# ${yearDisplay}ウディコン評価・感想`);
+    csvRows.push('');
+    csvRows.push(headers.join(','));
+
+    for (const game of games) {
+      const row = [
+        game.no || '',
+        `"${(game.title || '').replace(/"/g, '""')}"`, // CSV用にダブルクォートをエスケープ
+        game.rating?.熱中度 || '',
+        game.rating?.斬新さ || '',
+        game.rating?.物語性 || '',
+        game.rating?.画像音響 || '',
+        game.rating?.遊びやすさ || '',
+        game.rating?.その他 || '',
+        `"${(game.comment || '').replace(/"/g, '""')}"`
+      ];
+      csvRows.push(row.join(','));
+    }
+
+    // BOMを追加してExcelで文字化けを防ぐ
+    const csvContent = '\uFEFF' + csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${yearDisplay}ウディコン評価感想_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    console.log(`📄 CSV出力完了: ${games.length}件の作品データ`);
+  } catch (error) {
+    console.error('CSV生成エラー:', error);
+    throw error;
+  }
+}
+
+// JSONインポート関数
+async function importFromJSON(jsonString) {
+  const data = JSON.parse(jsonString);
+  await chrome.storage.local.set(data);
+  console.log('📄 JSON インポート完了');
+}
+
+// CSVインポート関数
+async function importFromCSV(csvString) {
+  try {
+    const lines = csvString.split('\n').map(line => line.trim()).filter(line => line && !line.startsWith('#'));
+    
+    if (lines.length < 2) {
+      throw new Error('CSVファイルの形式が正しくありません');
+    }
+
+    // ヘッダー行をスキップ（1行目がヘッダー）
+    const dataLines = lines.slice(1);
+    const games = [];
+
+    for (let i = 0; i < dataLines.length; i++) {
+      const line = dataLines[i];
+      if (!line) continue;
+
+      // CSVパース（簡易版）
+      const fields = parseCSVLine(line);
+      
+      if (fields.length < 9) {
+        console.warn(`CSVの${i + 2}行目: フィールド数が不足しています`);
+        continue;
+      }
+
+      const game = {
+        id: `csv_import_${Date.now()}_${i}`,
+        no: fields[0] || '',
+        title: fields[1] || '',
+        rating: {
+          熱中度: parseFloat(fields[2]) || null,
+          斬新さ: parseFloat(fields[3]) || null,
+          物語性: parseFloat(fields[4]) || null,
+          画像音響: parseFloat(fields[5]) || null,
+          遊びやすさ: parseFloat(fields[6]) || null,
+          その他: parseFloat(fields[7]) || null
+        },
+        comment: fields[8] || '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_played: true, // CSVからのインポートは既プレイとして扱う
+        source: 'csv_import'
+      };
+
+      games.push(game);
+    }
+
+    if (games.length === 0) {
+      throw new Error('インポート可能なデータが見つかりませんでした');
+    }
+
+    // 既存のゲームデータに追加
+    const existingGames = await window.gameDataManager.getGames();
+    const mergedGames = [...existingGames, ...games];
+    
+    await window.gameDataManager.saveGames(mergedGames);
+    console.log(`📄 CSV インポート完了: ${games.length}件の作品データを追加`);
+    
+  } catch (error) {
+    console.error('CSV インポートエラー:', error);
+    throw error;
+  }
+}
+
+// CSV行パース関数（簡易版）
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      if (inQuotes && line[i + 1] === '"') {
+        current += '"';
+        i++; // 次の"をスキップ
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  result.push(current);
+  return result;
 }
 
 // バージョン情報表示（DOMContentLoaded後に実行）

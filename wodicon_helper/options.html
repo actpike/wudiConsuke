@@ -146,15 +146,22 @@
     <h2>💾 データ管理</h2>
     <div class="setting-item">
       <h3>エクスポート</h3>
-      <p>全ての作品データと設定をJSONファイルとして保存できます。</p>
-      <button id="export-btn">📤 データエクスポート</button>
+      <p>全ての作品データと設定を指定した形式で保存できます。</p>
+      <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
+        <label for="export-format">形式:</label>
+        <select id="export-format">
+          <option value="json">JSON (全データ)</option>
+          <option value="csv">CSV (作品評価データ)</option>
+        </select>
+        <button id="export-btn">📤 データエクスポート</button>
+      </div>
     </div>
     
     <div class="setting-item">
       <h3>インポート</h3>
-      <p>以前にエクスポートしたデータファイルを読み込むことができます。</p>
+      <p>エクスポートしたデータファイル（JSON/CSV）を読み込むことができます。</p>
       <div class="file-input">
-        <input type="file" id="import-file" accept=".json">
+        <input type="file" id="import-file" accept=".json,.csv">
         <button id="import-btn">📥 データインポート</button>
       </div>
     </div>
@@ -269,7 +276,7 @@
 
   <div class="section">
     <h2>ℹ️ 情報</h2>
-    <p><strong>バージョン:</strong> <span id="version">1.0.2</span></p>
+    <p><strong>バージョン:</strong> <span id="version">1.0.3</span></p>
   </div>
 
   <script src="js/yearManager.js"></script>
