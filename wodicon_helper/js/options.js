@@ -517,6 +517,7 @@ async function handleDeleteYearData() {
   }
 }
 
+
 async function saveSettings() {
   try {
     // 基本設定

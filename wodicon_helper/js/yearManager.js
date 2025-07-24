@@ -359,8 +359,19 @@ class YearManager {
       let appSettings = await this.getAppSettings();
       if (!appSettings) return;
 
+      // 削除済み年度リストの初期化
+      if (!appSettings.deleted_years) {
+        appSettings.deleted_years = [];
+      }
+
       let updated = false;
       for (const testYear of this.TEST_YEARS) {
+        // 削除済み年度は復活させない
+        if (appSettings.deleted_years.includes(testYear)) {
+          console.log(`🚫 削除済み年度のため追加をスキップ: ${testYear}`);
+          continue;
+        }
+
         if (!appSettings.available_years.includes(testYear)) {
           // テスト年度が利用可能年度リストにない場合は追加
           appSettings.available_years.push(testYear);
@@ -396,6 +407,16 @@ class YearManager {
       if (appSettings && appSettings.available_years) {
         appSettings.available_years = appSettings.available_years.filter(y => y !== year);
         appSettings.available_years.sort((a, b) => b - a); // 降順ソート
+        
+        // 削除済み年度リストに追加（復活防止）
+        if (!appSettings.deleted_years) {
+          appSettings.deleted_years = [];
+        }
+        if (!appSettings.deleted_years.includes(year)) {
+          appSettings.deleted_years.push(year);
+          console.log(`📝 削除済み年度リストに追加: ${year}`);
+        }
+        
         await this.setAppSettings(appSettings);
         console.log(`✅ 利用可能年度リストから削除: ${year}`);
       }

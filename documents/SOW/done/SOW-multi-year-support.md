@@ -1,9 +1,9 @@
 ---
 project_name: "ウディこん助 複数年度対応機能"
-status: "In Progress"
+status: "Done"
 owner: "Claude Code Assistant"
 created_at: "2025-07-24"
-updated_at: "2025-07-24"
+updated_at: "2025-01-24"
 ---
 
 - **Project Name:** `ウディこん助 複数年度対応機能`
