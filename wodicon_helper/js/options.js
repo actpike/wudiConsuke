@@ -186,17 +186,29 @@ function setupEventListeners() {
       return;
     }
 
+    const fileExtension = file.name.toLowerCase().split('.').pop();
+    let confirmMessage = '';
+    
+    if (fileExtension === 'json') {
+      confirmMessage = 'JSONファイルをインポートします。\n\n⚠️ 既存の全データが上書きされます。\n現在のデータは完全に置き換わりますがよろしいですか？';
+    } else if (fileExtension === 'csv') {
+      confirmMessage = 'CSVファイルをインポートします。\n\n📝 既存データに追加されます。\n重複を避けるため、該当年度のデータ削除後の実施を推奨します。\n\n続行しますか？';
+    } else {
+      showStatus('error', '❌ サポートされていないファイル形式です（JSON、CSVのみ対応）');
+      return;
+    }
+
+    if (!confirm(confirmMessage)) {
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
-        const fileExtension = file.name.toLowerCase().split('.').pop();
-        
         if (fileExtension === 'json') {
           await importFromJSON(e.target.result);
         } else if (fileExtension === 'csv') {
           await importFromCSV(e.target.result);
-        } else {
-          throw new Error('サポートされていないファイル形式です（JSON、CSVのみ対応）');
         }
         
         showStatus('success', '✅ インポート完了');
