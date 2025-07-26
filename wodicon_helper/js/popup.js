@@ -18,6 +18,9 @@ class GameListManager {
       versionBadge.textContent = `v${manifest.version}`;
     }
 
+    // 年度・回数情報を表示
+    await this.updateYearDisplay();
+
     await window.gameDataManager.initialize();
     
     // ポップアップ開時の自動監視チェック
@@ -782,6 +785,23 @@ class GameListManager {
       loading.classList.remove('hidden');
     } else {
       loading.classList.add('hidden');
+    }
+  }
+
+  // 年度・回数表示更新
+  async updateYearDisplay() {
+    try {
+      if (window.yearManager) {
+        const currentYear = await window.yearManager.getCurrentYear();
+        const roundNumber = currentYear - 2008; // 第1回が2009年
+        
+        const yearBadge = document.getElementById('year-badge');
+        if (yearBadge) {
+          yearBadge.textContent = `第${roundNumber}回(${currentYear})`;
+        }
+      }
+    } catch (error) {
+      console.error('年度表示更新エラー:', error);
     }
   }
 

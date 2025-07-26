@@ -1,0 +1,2548 @@
+{
+  "export_timestamp": "2025-07-26T01:46:28.544Z",
+  "last_auto_monitor_time": "2025-07-26T01:46:23.240Z",
+  "update_manager_settings": {
+    "enabled": true,
+    "maxNotifications": 5,
+    "showNewWorks": true,
+    "showUpdatedWorks": true,
+    "soundEnabled": false
+  },
+  "update_markers": {
+    "49": {
+      "changeType": [
+        "updated"
+      ],
+      "confirmed": false,
+      "timestamp": "2025-07-26T01:46:23.240Z",
+      "type": "updated"
+    }
+  },
+  "version": "1.0.0",
+  "web_monitor_history": [
+    {
+      "checkId": "bg_update_1753494383147",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-26T01:46:23.226Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753485181024",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-25T23:13:01.227Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753368190644",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-24T14:43:10.711Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753361648195",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-24T12:54:08.257Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753361022742",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-24T12:43:42.906Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753354707957",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-24T10:58:28.024Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753350634454",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-24T09:50:34.525Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753345974748",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-24T08:32:54.924Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753236794995",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-23T02:13:15.081Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753232570552",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-23T01:02:50.600Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753229651167",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-23T00:14:11.302Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753190945427",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-22T13:29:05.947Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753185187002",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-22T11:53:07.205Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753106448504",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-21T14:00:48.592Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753101204566",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-21T12:33:24.651Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753092036819",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-21T10:00:36.903Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753066964368",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-21T03:02:44.517Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753014709277",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T12:31:49.344Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753005869636",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T10:04:29.809Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1753003715301",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T09:28:35.359Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752997259142",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T07:40:59.201Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752990777510",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T05:52:57.567Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752986725906",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T04:45:25.966Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752980391135",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-20T02:59:51.299Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752935765840",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-19T14:36:05.889Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752932269953",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-19T13:37:50.058Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752927076231",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-19T12:11:16.305Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752921666542",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-19T10:41:06.615Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752921664055",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-19T10:41:04.152Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752917966601",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-19T09:39:26.675Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752853374676",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-18T15:42:54.785Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752835954211",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-18T10:52:34.257Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752835295539",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-18T10:41:35.712Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752768395306",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T16:06:35.346Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752758978311",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T13:29:38.354Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752758138877",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T13:15:38.930Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752749574851",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T10:52:54.908Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752745174449",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T09:39:34.485Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752745171212",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T09:39:31.285Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752721822489",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T03:10:22.588Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752717866247",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-17T02:04:26.410Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752710158310",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-16T23:55:58.491Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752675606470",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-16T14:20:06.519Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752673583091",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-16T13:46:23.135Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752671749255",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-16T13:15:49.304Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752657298577",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-16T09:14:58.663Z",
+      "updatedWorks": []
+    },
+    {
+      "checkId": "bg_update_1752652916509",
+      "newWorks": [],
+      "success": true,
+      "timestamp": "2025-07-16T08:01:56.587Z",
+      "updatedWorks": []
+    }
+  ],
+  "web_monitor_last_result": {
+    "checkId": "bg_update_1753494383147",
+    "newWorks": [],
+    "success": true,
+    "timestamp": "2025-07-26T01:46:23.226Z",
+    "updatedWorks": []
+  },
+  "web_monitor_settings": {
+    "checkOnStartup": false,
+    "interval": 30,
+    "lastCheckTime": "2025-07-26T01:46:23.147Z",
+    "mode": "all",
+    "selectedWorks": []
+  },
+  "wodicon_games": [
+    {
+      "author": "冒険者@シロヰ a.k.a 阿部狐",
+      "created_at": "2025-07-16T08:01:56.589Z",
+      "description": "",
+      "genre": "その他",
+      "id": 1,
+      "is_played": false,
+      "lastUpdate": "[7/20 更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "1",
+      "rating": null,
+      "review": "",
+      "review_length": 1,
+      "title": "Stellight",
+      "update_notification": false,
+      "updated_at": "2025-07-24T14:44:21.399Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.589Z",
+        "detection_type": "new",
+        "last_check": "2025-07-20T02:59:51.329Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#1"
+    },
+    {
+      "author": "すたーあいす＊",
+      "created_at": "2025-07-16T08:01:56.591Z",
+      "description": "",
+      "genre": "その他",
+      "id": 2,
+      "is_played": false,
+      "lastUpdate": "[7/19更新] ver1.03 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "2",
+      "rating": null,
+      "review": "",
+      "review_length": 0,
+      "title": "月下美人狂詩曲",
+      "update_notification": false,
+      "updated_at": "2025-07-20T05:53:36.792Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.590Z",
+        "detection_type": "new",
+        "last_check": "2025-07-19T09:39:26.705Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#2"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#2"
+    },
+    {
+      "author": "ケモプレデーションゲームス＋ろぜちは080＆Mr.H",
+      "created_at": "2025-07-16T08:01:56.592Z",
+      "description": "",
+      "genre": "その他",
+      "id": 3,
+      "is_played": false,
+      "lastUpdate": "[7/20] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "3",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "ReviveIV＆ペンタ",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:00:51.671Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.591Z",
+        "detection_type": "new",
+        "last_check": "2025-07-21T03:02:44.519Z",
+        "last_update": "2025-07-19T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#3"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#3"
+    },
+    {
+      "author": "ケイ素",
+      "created_at": "2025-07-16T08:01:56.593Z",
+      "description": "",
+      "genre": "その他",
+      "id": 4,
+      "is_played": true,
+      "lastUpdate": "[7/21更新]Ver1.6に修正 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "4",
+      "rating": {
+        "total": 35,
+        "その他": 0,
+        "斬新さ": 8,
+        "熱中度": 5,
+        "物語性": 7,
+        "画像音声": 8,
+        "遊びやすさ": 7
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "デスペレートエランド",
+      "update_notification": false,
+      "updated_at": "2025-07-22T11:56:35.908Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.593Z",
+        "detection_type": "new",
+        "last_check": "2025-07-21T14:00:48.593Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#4"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#4"
+    },
+    {
+      "author": "Mr.H",
+      "created_at": "2025-07-16T08:01:56.594Z",
+      "description": "",
+      "genre": "その他",
+      "id": 5,
+      "is_played": false,
+      "lastUpdate": "[7/12] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "5",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "勇者の憂鬱",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:00.423Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.594Z",
+        "detection_type": "new",
+        "last_update": "2025-07-11T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#5"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#5"
+    },
+    {
+      "author": "餓鬼郎党",
+      "created_at": "2025-07-16T08:01:56.595Z",
+      "description": "",
+      "genre": "その他",
+      "id": 6,
+      "is_played": false,
+      "lastUpdate": "[7/16] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "6",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "禍流転 -MAGARUTEN-",
+      "update_notification": false,
+      "updated_at": "2025-07-16T14:20:17.078Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.595Z",
+        "detection_type": "new",
+        "last_check": "2025-07-16T14:20:06.526Z",
+        "last_update": "2025-07-15T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#6"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#6"
+    },
+    {
+      "author": "餓鬼郎党",
+      "created_at": "2025-07-16T08:01:56.597Z",
+      "description": "",
+      "genre": "その他",
+      "id": 7,
+      "is_played": false,
+      "lastUpdate": "[7/24] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "7",
+      "rating": null,
+      "review": "",
+      "review_length": 0,
+      "title": "陰影遊戯 -魔王の命題-",
+      "update_notification": true,
+      "updated_at": "2025-07-24T14:43:10.715Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.597Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T14:43:10.713Z",
+        "last_update": "2025-07-23T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#7"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#7"
+    },
+    {
+      "author": "明野",
+      "created_at": "2025-07-16T08:01:56.598Z",
+      "description": "",
+      "genre": "その他",
+      "id": 8,
+      "is_played": false,
+      "lastUpdate": "[7/25]更新 1.02 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "8",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "夢遊猫ミステリウム",
+      "update_notification": true,
+      "updated_at": "2025-07-25T23:13:01.230Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.598Z",
+        "detection_type": "new",
+        "last_check": "2025-07-25T23:13:01.229Z",
+        "last_update": "2025-07-24T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#8"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#8"
+    },
+    {
+      "author": "こうさか",
+      "created_at": "2025-07-16T08:01:56.600Z",
+      "description": "",
+      "genre": "その他",
+      "id": 9,
+      "is_played": false,
+      "lastUpdate": "[7/23更新]1.05_不具合修正 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "9",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "悪魔の遊戯",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.927Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.600Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.926Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#9"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#9"
+    },
+    {
+      "author": "銀ノ薺道",
+      "created_at": "2025-07-16T08:01:56.602Z",
+      "description": "",
+      "genre": "その他",
+      "id": 10,
+      "is_played": false,
+      "lastUpdate": "[7/12] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "10",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "双炎姉弟と奇蹟の薬草",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:03.919Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.601Z",
+        "detection_type": "new",
+        "last_update": "2025-07-11T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#10"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#10"
+    },
+    {
+      "author": "ろくぞう",
+      "created_at": "2025-07-16T08:01:56.604Z",
+      "description": "",
+      "genre": "その他",
+      "id": 11,
+      "is_played": false,
+      "lastUpdate": "[7/13更新]ver1.01に修正 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "11",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "さいごの射手の銀弾は",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:05.145Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.604Z",
+        "detection_type": "new",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#11"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#11"
+    },
+    {
+      "author": "ルーカス",
+      "created_at": "2025-07-16T08:01:56.606Z",
+      "description": "",
+      "genre": "その他",
+      "id": 12,
+      "is_played": false,
+      "lastUpdate": "[7/24更新]ver2.60 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "12",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "ワイたちはどうイキるか",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.932Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.606Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.931Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#12"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#12"
+    },
+    {
+      "author": "Qbit",
+      "created_at": "2025-07-16T08:01:56.608Z",
+      "description": "",
+      "genre": "その他",
+      "id": 13,
+      "is_played": true,
+      "lastUpdate": "[7/17更新]22:40ごろ更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "13",
+      "rating": {
+        "total": 30,
+        "その他": 0,
+        "斬新さ": 7,
+        "熱中度": 6,
+        "物語性": 5,
+        "画像音声": 6,
+        "遊びやすさ": 6
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "落ちさえしなけりゃクリアはできる",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:00:57.969Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.608Z",
+        "detection_type": "new",
+        "last_check": "2025-07-17T16:06:35.361Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#13"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#13"
+    },
+    {
+      "author": "えばぐり",
+      "created_at": "2025-07-16T08:01:56.610Z",
+      "description": "",
+      "genre": "その他",
+      "id": 14,
+      "is_played": false,
+      "lastUpdate": "[7/12] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "14",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "月神決戦弾",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:06.821Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.610Z",
+        "detection_type": "new",
+        "last_update": "2025-07-11T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#14"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#14"
+    },
+    {
+      "author": "ブ瓶",
+      "created_at": "2025-07-16T08:01:56.612Z",
+      "description": "",
+      "genre": "その他",
+      "id": 15,
+      "is_played": false,
+      "lastUpdate": "[7/12] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "15",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "にわとりの襲来他二種のミニゲーム",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:08.044Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.612Z",
+        "detection_type": "new",
+        "last_update": "2025-07-11T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#15"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#15"
+    },
+    {
+      "author": "スパロー",
+      "created_at": "2025-07-16T08:01:56.614Z",
+      "description": "",
+      "genre": "その他",
+      "id": 16,
+      "is_played": false,
+      "lastUpdate": "[7/22 更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "16",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "S.W.A.T.(Special Wizard Assault Team)",
+      "update_notification": true,
+      "updated_at": "2025-07-23T00:14:11.316Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.614Z",
+        "detection_type": "new",
+        "last_check": "2025-07-23T00:14:11.315Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#16"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#16"
+    },
+    {
+      "author": "エルトン",
+      "created_at": "2025-07-16T08:01:56.616Z",
+      "description": "",
+      "genre": "その他",
+      "id": 17,
+      "is_played": false,
+      "lastUpdate": "[7/23更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "17",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "ウルファール5分生き残れゲーム",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.936Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.616Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.935Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#17"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#17"
+    },
+    {
+      "author": "ゾローク",
+      "created_at": "2025-07-16T08:01:56.619Z",
+      "description": "",
+      "genre": "その他",
+      "id": 18,
+      "is_played": false,
+      "lastUpdate": "[7/12:リリース,7/24:更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "18",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "Desire",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.941Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.618Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.940Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#18"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#18"
+    },
+    {
+      "author": "ＧＳＡ０３＆ ナカマサ",
+      "created_at": "2025-07-16T08:01:56.622Z",
+      "description": "",
+      "genre": "その他",
+      "id": 19,
+      "is_played": false,
+      "lastUpdate": "[7/12] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "19",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "うちのとりはイタズラしたい！",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:11.224Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.621Z",
+        "detection_type": "new",
+        "last_update": "2025-07-11T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#19"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#19"
+    },
+    {
+      "author": "WAIT & かげろう",
+      "created_at": "2025-07-16T08:01:56.624Z",
+      "description": "",
+      "genre": "その他",
+      "id": 20,
+      "is_played": false,
+      "lastUpdate": "[7/26]ver104 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "20",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "リザレクション！",
+      "update_notification": true,
+      "updated_at": "2025-07-25T23:13:01.236Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.624Z",
+        "detection_type": "new",
+        "last_check": "2025-07-25T23:13:01.235Z",
+        "last_update": "2025-07-25T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#20"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#20"
+    },
+    {
+      "author": "ガミジ",
+      "created_at": "2025-07-16T08:01:56.627Z",
+      "description": "",
+      "genre": "その他",
+      "id": 21,
+      "is_played": false,
+      "lastUpdate": "[7/22更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "21",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "太宰府カンコー奇聞わたる",
+      "update_notification": true,
+      "updated_at": "2025-07-22T11:53:07.219Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.626Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T11:53:07.218Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#21"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#21"
+    },
+    {
+      "author": "カラアゲ・ニュートリノ",
+      "created_at": "2025-07-16T08:01:56.629Z",
+      "description": "",
+      "genre": "その他",
+      "id": 22,
+      "is_played": false,
+      "lastUpdate": "[7/23更新] ver1.06に更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "22",
+      "rating": null,
+      "review": "",
+      "review_length": 0,
+      "title": "MA-FŪ 魔封",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.945Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.629Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.944Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#22"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#22"
+    },
+    {
+      "author": "二義屋活者（にぎやかっしゃ）",
+      "created_at": "2025-07-16T08:01:56.632Z",
+      "description": "",
+      "genre": "その他",
+      "id": 23,
+      "is_played": true,
+      "lastUpdate": "[7/22更新]Ver1.0.2に更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "23",
+      "rating": {
+        "total": 53,
+        "その他": 8,
+        "斬新さ": 7,
+        "熱中度": 10,
+        "物語性": 8,
+        "画像音声": 10,
+        "遊びやすさ": 10
+      },
+      "review": "快適操作に激アツBGM。特に演出面には脱帽し、語彙を失うほどの感嘆の一言。新しい発見として、戦闘時の敵の攻撃モーション、静止画でも映えますね。これは発明なのでは。",
+      "review_length": 81,
+      "title": "BIG BANG",
+      "update_notification": false,
+      "updated_at": "2025-07-23T00:14:46.737Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.631Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T13:29:05.949Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#23"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#23"
+    },
+    {
+      "author": "ロンバート",
+      "created_at": "2025-07-16T08:01:56.634Z",
+      "description": "",
+      "genre": "その他",
+      "id": 24,
+      "is_played": false,
+      "lastUpdate": "[7/13] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "24",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "Return to the Wildlife",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:15.641Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.634Z",
+        "detection_type": "new",
+        "last_update": "2025-07-12T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#24"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#24"
+    },
+    {
+      "author": "らんどるふ るどるふ",
+      "created_at": "2025-07-16T08:01:56.638Z",
+      "description": "",
+      "genre": "その他",
+      "id": 25,
+      "is_played": false,
+      "lastUpdate": "[7/25更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "25",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "王国の肖像",
+      "update_notification": true,
+      "updated_at": "2025-07-25T23:13:01.241Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.638Z",
+        "detection_type": "new",
+        "last_check": "2025-07-25T23:13:01.240Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#25"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#25"
+    },
+    {
+      "author": "はるしし",
+      "created_at": "2025-07-16T08:01:56.641Z",
+      "description": "",
+      "genre": "その他",
+      "id": 26,
+      "is_played": false,
+      "lastUpdate": "[7/22更新] ver1.02チュートリアルに加筆修正他 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "26",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "訳アリ領主とヒミツの武器屋",
+      "update_notification": true,
+      "updated_at": "2025-07-22T11:53:07.224Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.640Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T11:53:07.223Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#26"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#26"
+    },
+    {
+      "author": "abon",
+      "created_at": "2025-07-16T08:01:56.644Z",
+      "description": "",
+      "genre": "その他",
+      "id": 27,
+      "is_played": false,
+      "lastUpdate": "[7/20]いくつかの不具合を修正。戦闘バランス調整。戦闘中のメッセージが自動で消えないように修正。「オパール」を実装。吸収属性や反射属性を突いたことがわかるようになりました。それに伴い、「オパール」",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "27",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "魔女学級のドタバタ探検記",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:04.164Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.643Z",
+        "detection_type": "new",
+        "last_check": "2025-07-21T03:02:44.535Z",
+        "last_update": "2025-07-19T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#27"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#27"
+    },
+    {
+      "author": "苺いちえ",
+      "created_at": "2025-07-16T08:01:56.646Z",
+      "description": "",
+      "genre": "その他",
+      "id": 28,
+      "is_played": true,
+      "lastUpdate": "[7/23]ver1.07に更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "28",
+      "rating": {
+        "total": 49,
+        "その他": 1,
+        "斬新さ": 9,
+        "熱中度": 10,
+        "物語性": 10,
+        "画像音声": 10,
+        "遊びやすさ": 9
+      },
+      "review": "★。.:*:゛゜☆ヽ(о>ω・)ノ●Welcome●ヽ(・ω<о)ノ☆゜゛:*:.。★",
+      "review_length": 43,
+      "title": "Ayaのホームページへようこそ！",
+      "update_notification": false,
+      "updated_at": "2025-07-24T14:44:07.460Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.646Z",
+        "detection_type": "new",
+        "last_check": "2025-07-23T00:14:11.320Z",
+        "last_update": "2025-07-22T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#28"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#28"
+    },
+    {
+      "author": "ハニーナゲット0508",
+      "created_at": "2025-07-16T08:01:56.650Z",
+      "description": "",
+      "genre": "その他",
+      "id": 29,
+      "is_played": false,
+      "lastUpdate": "[7/14] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "29",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "ゴートマウンテン スラムロード",
+      "update_notification": true,
+      "updated_at": "2025-07-16T13:16:19.421Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-16T08:01:56.649Z",
+        "detection_type": "new",
+        "last_update": "2025-07-13T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#29"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#29"
+    },
+    {
+      "author": "朝倉くもり＆亜蟹",
+      "created_at": "2025-07-16T08:01:56.654Z",
+      "description": "",
+      "genre": "その他",
+      "id": 30,
+      "is_played": true,
+      "lastUpdate": "[7/24更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "30",
+      "rating": {
+        "total": 40,
+        "その他": 1,
+        "斬新さ": 7,
+        "熱中度": 9,
+        "物語性": 7,
+        "画像音声": 8,
+        "遊びやすさ": 8
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "スーパーウーパールーパー",
+      "update_notification": false,
+      "updated_at": "2025-07-24T14:44:46.714Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.653Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.953Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#30"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#30"
+    },
+    {
+      "author": "霞流 薺",
+      "created_at": "2025-07-16T08:01:56.658Z",
+      "description": "",
+      "genre": "その他",
+      "id": 31,
+      "is_played": false,
+      "lastUpdate": "[7/18更新]ver1.10 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "31",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "End Of The Lost World",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:05.027Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.657Z",
+        "detection_type": "new",
+        "last_check": "2025-07-18T10:41:35.739Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#31"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#31"
+    },
+    {
+      "author": "flote",
+      "created_at": "2025-07-16T08:01:56.661Z",
+      "description": "",
+      "genre": "その他",
+      "id": 32,
+      "is_played": false,
+      "lastUpdate": "[7/21更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "32",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "白雛芥子の夢の果てに",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:05.467Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.660Z",
+        "detection_type": "new",
+        "last_check": "2025-07-21T03:02:44.545Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#32"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#32"
+    },
+    {
+      "author": "雪見大介",
+      "created_at": "2025-07-16T08:01:56.664Z",
+      "description": "",
+      "genre": "その他",
+      "id": 33,
+      "is_played": false,
+      "lastUpdate": "[7/24更新]ゲームオーバー中にメニューが開けるバグ修正など → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "33",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "1969年のゼロデイ",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.959Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.663Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.958Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#33"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#33"
+    },
+    {
+      "author": "もっともやし",
+      "created_at": "2025-07-16T08:01:56.667Z",
+      "description": "",
+      "genre": "その他",
+      "id": 34,
+      "is_played": false,
+      "lastUpdate": "[7/20更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "34",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "雨を乞う弔鐘",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:06.699Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.667Z",
+        "detection_type": "new",
+        "last_check": "2025-07-20T02:59:51.347Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#34"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#34"
+    },
+    {
+      "author": "シブサワ・コウの名を継ぐ者",
+      "created_at": "2025-07-16T08:01:56.671Z",
+      "description": "",
+      "genre": "その他",
+      "id": 35,
+      "is_played": false,
+      "lastUpdate": "[7/21] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "35",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "アイドルライバー",
+      "update_notification": true,
+      "updated_at": "2025-07-21T12:33:24.653Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-16T08:01:56.670Z",
+        "detection_type": "new",
+        "last_check": "2025-07-21T12:33:24.652Z",
+        "last_update": "2025-07-20T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#35"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#35"
+    },
+    {
+      "author": "バル",
+      "created_at": "2025-07-18T10:41:35.714Z",
+      "description": "",
+      "genre": "その他",
+      "id": 36,
+      "is_played": false,
+      "lastUpdate": "[7/20]更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "36",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "SIMPLE ROOM ～部屋からの脱出～",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:07.740Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-18T10:41:35.714Z",
+        "detection_type": "new",
+        "last_check": "2025-07-20T04:45:25.972Z",
+        "last_update": "2025-07-19T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#36"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#36"
+    },
+    {
+      "author": "今門 楽々",
+      "created_at": "2025-07-18T10:41:35.719Z",
+      "description": "",
+      "genre": "その他",
+      "id": 37,
+      "is_played": false,
+      "lastUpdate": "[7/18] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "37",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "名もなき記録",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:08.347Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-18T10:41:35.718Z",
+        "detection_type": "new",
+        "last_update": "2025-07-17T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#37"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#37"
+    },
+    {
+      "author": "Masaqq",
+      "created_at": "2025-07-18T10:41:35.723Z",
+      "description": "",
+      "genre": "その他",
+      "id": 38,
+      "is_played": false,
+      "lastUpdate": "[7/24更新]ver1.50 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "38",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "ガレキノシップ",
+      "update_notification": true,
+      "updated_at": "2025-07-24T12:43:42.908Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-18T10:41:35.722Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T12:43:42.907Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#38"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#38"
+    },
+    {
+      "author": "ブラックダナー",
+      "created_at": "2025-07-18T15:42:54.789Z",
+      "description": "",
+      "genre": "その他",
+      "id": 39,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "39",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "AI伝説消えたツイート",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:09.497Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-18T15:42:54.788Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#39"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#39"
+    },
+    {
+      "author": "植物の灰",
+      "created_at": "2025-07-18T15:42:54.795Z",
+      "description": "",
+      "genre": "その他",
+      "id": 40,
+      "is_played": false,
+      "lastUpdate": "[7/21更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "40",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "Rewot.16ーリワット イチロクー",
+      "update_notification": false,
+      "updated_at": "2025-07-22T13:33:14.171Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-18T15:42:54.794Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T11:53:07.237Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#40"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#40"
+    },
+    {
+      "author": "たゐせふ",
+      "created_at": "2025-07-19T09:39:26.678Z",
+      "description": "",
+      "genre": "その他",
+      "id": 41,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "41",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "小謎解きs",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:10.645Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-19T09:39:26.677Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#41"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#41"
+    },
+    {
+      "author": "テッコウ",
+      "created_at": "2025-07-19T09:39:26.684Z",
+      "description": "",
+      "genre": "その他",
+      "id": 42,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "42",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "あねさがし",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:11.259Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-19T09:39:26.683Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#42"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#42"
+    },
+    {
+      "author": "ろぜちは080",
+      "created_at": "2025-07-19T09:39:26.690Z",
+      "description": "",
+      "genre": "その他",
+      "id": 43,
+      "is_played": false,
+      "lastUpdate": "[7/22更新] 0-03に修正と更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "43",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "巡る時と死せる魂の仔",
+      "update_notification": true,
+      "updated_at": "2025-07-22T11:53:07.242Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T09:39:26.689Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T11:53:07.241Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#43"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#43"
+    },
+    {
+      "author": "かに",
+      "created_at": "2025-07-19T09:39:26.695Z",
+      "description": "",
+      "genre": "その他",
+      "id": 44,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "44",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "土下座事典",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:12.441Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-19T09:39:26.694Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#44"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#44"
+    },
+    {
+      "author": "あまてん海老",
+      "created_at": "2025-07-19T09:39:26.702Z",
+      "description": "",
+      "genre": "その他",
+      "id": 45,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "45",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "僧侶竜の導き",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:13.093Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-19T09:39:26.701Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#45"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#45"
+    },
+    {
+      "author": "KAZUTO",
+      "created_at": "2025-07-19T12:11:16.310Z",
+      "description": "",
+      "genre": "その他",
+      "id": 46,
+      "is_played": false,
+      "lastUpdate": "[7/23]更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "46",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "メカトモ2",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.963Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T12:11:16.308Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.962Z",
+        "last_update": "2025-07-22T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#46"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#46"
+    },
+    {
+      "author": "クリムＳ",
+      "created_at": "2025-07-19T13:37:50.062Z",
+      "description": "",
+      "genre": "その他",
+      "id": 47,
+      "is_played": false,
+      "lastUpdate": "[7/23]エンディング呼び出し時顔を出すロゴを殺す → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "47",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "月を生む話",
+      "update_notification": true,
+      "updated_at": "2025-07-24T14:43:10.721Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T13:37:50.060Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T14:43:10.720Z",
+        "last_update": "2025-07-22T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#47"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#47"
+    },
+    {
+      "author": "カッパ永久寺",
+      "created_at": "2025-07-19T13:37:50.085Z",
+      "description": "",
+      "genre": "その他",
+      "id": 48,
+      "is_played": false,
+      "lastUpdate": "[7/22更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "48",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "しかきたん-オカルトノート寧楽奇譚-",
+      "update_notification": false,
+      "updated_at": "2025-07-22T11:53:42.302Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T13:37:50.083Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T11:53:07.246Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#48"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#48"
+    },
+    {
+      "author": "ぱちさん",
+      "created_at": "2025-07-19T13:37:50.091Z",
+      "description": "",
+      "genre": "その他",
+      "id": 49,
+      "is_played": false,
+      "lastUpdate": "[7/26更新]バグ報告分の修正 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "49",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "mudai 0",
+      "update_notification": true,
+      "updated_at": "2025-07-26T01:46:23.229Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T13:37:50.090Z",
+        "detection_type": "new",
+        "last_check": "2025-07-26T01:46:23.228Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#49"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#49"
+    },
+    {
+      "author": "遊句",
+      "created_at": "2025-07-19T13:37:50.098Z",
+      "description": "",
+      "genre": "その他",
+      "id": 50,
+      "is_played": false,
+      "lastUpdate": "[7/24]更新 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "50",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "蠅叩キー",
+      "update_notification": true,
+      "updated_at": "2025-07-24T08:32:54.972Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T13:37:50.097Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.971Z",
+        "last_update": "2025-07-23T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#50"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#50"
+    },
+    {
+      "author": "みやの",
+      "created_at": "2025-07-19T14:36:05.893Z",
+      "description": "",
+      "genre": "その他",
+      "id": 51,
+      "is_played": false,
+      "lastUpdate": "[7/21更新]Ver1.12に修正 グラフィックバグを修正しました。 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "51",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "みてくれというけれど",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:16.772Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T14:36:05.892Z",
+        "detection_type": "new",
+        "last_check": "2025-07-21T03:02:44.563Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#51"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#51"
+    },
+    {
+      "author": "たこやき",
+      "created_at": "2025-07-19T14:36:05.898Z",
+      "description": "",
+      "genre": "その他",
+      "id": 52,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "52",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "金欠勇者",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:17.356Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-19T14:36:05.897Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#52"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#52"
+    },
+    {
+      "author": "犬コロン",
+      "created_at": "2025-07-19T14:36:05.903Z",
+      "description": "",
+      "genre": "その他",
+      "id": 53,
+      "is_played": false,
+      "lastUpdate": "[7/19] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "53",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "犬の魔王討伐",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:17.972Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-19T14:36:05.902Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#53"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#53"
+    },
+    {
+      "author": "なべのひと＆北街かな",
+      "created_at": "2025-07-19T14:36:05.908Z",
+      "description": "",
+      "genre": "その他",
+      "id": 54,
+      "is_played": true,
+      "lastUpdate": "[7/22更新]ver0.931に修正 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "54",
+      "rating": {
+        "total": 32,
+        "その他": 0,
+        "斬新さ": 6,
+        "熱中度": 5,
+        "物語性": 6,
+        "画像音声": 8,
+        "遊びやすさ": 7
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "STELLA FORMULA",
+      "update_notification": false,
+      "updated_at": "2025-07-24T14:44:48.036Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T14:36:05.907Z",
+        "detection_type": "new",
+        "last_check": "2025-07-22T11:53:07.255Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#54"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#54"
+    },
+    {
+      "author": "あたりメ",
+      "created_at": "2025-07-19T14:36:05.913Z",
+      "description": "",
+      "genre": "その他",
+      "id": 55,
+      "is_played": false,
+      "lastUpdate": "[7/23]ver1.02 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "55",
+      "rating": null,
+      "review": "",
+      "review_length": 0,
+      "title": "光の精霊が死んだ",
+      "update_notification": false,
+      "updated_at": "2025-07-25T23:13:21.926Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-19T14:36:05.912Z",
+        "detection_type": "new",
+        "last_check": "2025-07-24T08:32:54.976Z",
+        "last_update": "2025-07-22T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#55"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#55"
+    },
+    {
+      "author": "ナナナナ ナナナ",
+      "created_at": "2025-07-20T02:59:51.303Z",
+      "description": "",
+      "genre": "その他",
+      "id": 56,
+      "is_played": false,
+      "lastUpdate": "[7/19]",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "56",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "ひよのお宝大冒険Ⅲ",
+      "update_notification": true,
+      "updated_at": "2025-07-21T10:01:18.523Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "detected_at": "2025-07-20T02:59:51.301Z",
+        "detection_type": "new",
+        "last_update": "2025-07-18T15:00:00.000Z",
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#56"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#56"
+    },
+    {
+      "author": "なす太郎",
+      "created_at": "2025-07-20T02:59:51.309Z",
+      "description": "",
+      "genre": "その他",
+      "id": 57,
+      "is_played": false,
+      "lastUpdate": "[7/20更新]Ver.2.00に修正 → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "57",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "Go Down, B-Girl!",
+      "update_notification": false,
+      "updated_at": "2025-07-21T10:01:19.036Z",
+      "version_status": "latest",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-20T02:59:51.307Z",
+        "detection_type": "new",
+        "last_check": "2025-07-20T05:52:57.583Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#57"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#57"
+    },
+    {
+      "author": "秋月ねこ柳",
+      "created_at": "2025-07-20T02:59:51.315Z",
+      "description": "",
+      "genre": "その他",
+      "id": 58,
+      "is_played": false,
+      "lastUpdate": "[7/22 v1.22] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "58",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "夕五千兆",
+      "update_notification": true,
+      "updated_at": "2025-07-23T00:14:11.332Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-20T02:59:51.314Z",
+        "detection_type": "new",
+        "last_check": "2025-07-23T00:14:11.331Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#58"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#58"
+    },
+    {
+      "author": "３のっと/s",
+      "created_at": "2025-07-20T02:59:51.320Z",
+      "description": "",
+      "genre": "その他",
+      "id": 59,
+      "is_played": false,
+      "lastUpdate": "[7/25更新] → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "59",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "深蒼の航路",
+      "update_notification": true,
+      "updated_at": "2025-07-25T23:13:01.246Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-20T02:59:51.319Z",
+        "detection_type": "new",
+        "last_check": "2025-07-25T23:13:01.245Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#59"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#59"
+    },
+    {
+      "author": "もののふげーむず",
+      "created_at": "2025-07-20T02:59:51.326Z",
+      "description": "",
+      "genre": "その他",
+      "id": 60,
+      "is_played": false,
+      "lastUpdate": "[7/25更新]バランス調整・不具合を修正しました → ご意見/バグ報告BBS",
+      "last_played": null,
+      "local_folder_path": "",
+      "no": "60",
+      "rating": {
+        "total": 0,
+        "その他": null,
+        "斬新さ": null,
+        "熱中度": null,
+        "物語性": null,
+        "画像音声": null,
+        "遊びやすさ": null
+      },
+      "review": "",
+      "review_length": 0,
+      "title": "あんでっどハザード",
+      "update_notification": true,
+      "updated_at": "2025-07-25T23:13:01.250Z",
+      "version_status": "updated",
+      "web_monitoring": {
+        "change_type": [
+          "updated"
+        ],
+        "detected_at": "2025-07-20T02:59:51.324Z",
+        "detection_type": "new",
+        "last_check": "2025-07-25T23:13:01.249Z",
+        "last_update": null,
+        "source_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#60"
+      },
+      "wodicon_url": "https://silversecond.com/WolfRPGEditor/Contest/entry.shtml#60"
+    }
+  ],
+  "wodicon_metadata": {
+    "last_backup": null,
+    "last_updated": "2025-07-26T01:46:23.233Z",
+    "storage_usage": 58220,
+    "total_games": 60,
+    "version": "1.0.0"
+  }
+}

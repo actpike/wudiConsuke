@@ -205,7 +205,7 @@ class GameDataManager {
   async updateWebMonitoringFlag(gameId, enabled) {
     try {
       const games = await this.getGames();
-      const gameIndex = games.findIndex(game => game.id === gameId);
+      const gameIndex = games.findIndex(game => game.id == gameId);
       
       if (gameIndex === -1) {
         throw new Error(`Game with id ${gameId} not found`);
