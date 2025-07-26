@@ -84,7 +84,7 @@ class NavigationController {
           this.updateTotalRating();
         }
         this.markAsChanged();
-        this.debouncedAutoSave();
+        // debouncedAutoSave削除：イベント駆動型に変更済み
       }
     });
 
@@ -106,6 +106,7 @@ class NavigationController {
   async showMainView() {
     this.stopAutoSave();
     
+    // 画面遷移時保存（既存機能を継続使用）
     if (this.hasUnsavedChanges && this.editingGameId) {
       await this.saveCurrentEdit();
     }
@@ -133,7 +134,7 @@ class NavigationController {
     this.lastDetailGameId = gameId;
     
     await this.loadGameData(gameId);
-    this.startAutoSave();
+    this.startAutoSave(); // イベント駆動型自動保存を開始
   }
 
   // 更新通知をリセット（ベルアイコンを消す）とNEWステータスを☑に変更
@@ -769,33 +770,50 @@ class NavigationController {
     }
   }
 
-  // 自動保存開始
+  // 自動保存開始（イベント駆動型）
   startAutoSave() {
     this.stopAutoSave();
-    this.autoSaveTimer = setInterval(() => {
-      if (this.hasUnsavedChanges) {
-        this.saveCurrentEdit();
-      }
-    }, 3000); // 3秒間隔
+    // beforeUnloadイベントリスナーを追加（拡張機能終了時保存）
+    this.setupBeforeUnloadSave();
   }
 
   // 自動保存停止
   stopAutoSave() {
-    if (this.autoSaveTimer) {
-      clearInterval(this.autoSaveTimer);
-      this.autoSaveTimer = null;
+    // beforeUnloadイベントリスナーを削除
+    this.removeBeforeUnloadSave();
+  }
+
+  // 拡張機能終了時保存の設定（visibilitychange使用）
+  setupBeforeUnloadSave() {
+    // Chrome拡張機能ではbeforeunloadが動作しない場合があるため
+    // visibilitychangeイベントを使用（タブ切り替え時・拡張機能終了時）
+    this.visibilityChangeHandler = async () => {
+      if (document.visibilityState === 'hidden' && this.hasUnsavedChanges && this.editingGameId) {
+        try {
+          const updates = this.collectFormData();
+          await window.gameDataManager.updateGame(this.editingGameId, updates);
+          this.hasUnsavedChanges = false;
+          console.log('🔄 拡張機能終了時自動保存完了');
+        } catch (error) {
+          console.error('❌ 拡張機能終了時保存エラー:', error);
+        }
+      }
+    };
+    
+    // visibilitychangeイベントを追加
+    document.addEventListener('visibilitychange', this.visibilityChangeHandler);
+  }
+
+  // 拡張機能終了時保存の削除
+  removeBeforeUnloadSave() {
+    if (this.visibilityChangeHandler) {
+      document.removeEventListener('visibilitychange', this.visibilityChangeHandler);
+      this.visibilityChangeHandler = null;
     }
   }
 
-  // 遅延自動保存
-  debouncedAutoSave() {
-    clearTimeout(this.debouncedTimer);
-    this.debouncedTimer = setTimeout(() => {
-      if (this.hasUnsavedChanges) {
-        this.saveCurrentEdit();
-      }
-    }, 1000); // 1秒後
-  }
+  // 遅延自動保存は削除済み（イベント駆動型に変更）
+  // debouncedAutoSave() - 削除完了
 
   // 変更フラグ設定
   markAsChanged() {

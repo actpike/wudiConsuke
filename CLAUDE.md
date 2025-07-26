@@ -228,7 +228,7 @@ Chrome Manifest V3ベースのSingle Page Application。Service Worker + Content
 - **評価システム**: 新規作品は全項目null初期値、UI上「-」表示
 - **null値処理**: 詳細画面・一覧画面・平均計算でnull値を適切に除外
 - **データ統一**: updateManager.jsがすべてのデータ処理を担当（重複防止）
-- **自動保存**: 3秒間隔でのdebounced自動保存（navigation.js）
+- **自動保存**: イベント駆動型保存（画面遷移時・拡張機能終了時、navigation.js）
 - **モジュール初期化**: popup.htmlで順次読み込み、windowオブジェクトにインスタンス作成
 - **統一エラーハンドリング**: window.errorHandlerによる分類・通知・履歴管理（v0.0.6追加）
 - **定数管理**: window.constantsによるマジックナンバー・文字列の統一管理（v0.0.6追加）
