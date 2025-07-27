@@ -511,10 +511,7 @@ class GameListManager {
     row.className = rowClass;
     row.setAttribute('data-game-id', game.id);
 
-    // 感想入力促進ハイライト判定
-    if (this.shouldHighlightForReviewReminder(game)) {
-      row.classList.add('review-reminder-highlight');
-    }
+    // 感想入力促進ハイライト判定は評価列作成時に個別に行う
 
     // チェックボックス列
     const checkCell = document.createElement('td');
@@ -568,6 +565,12 @@ class GameListManager {
       const ratingCell = document.createElement('td');
       ratingCell.className = 'col-rating';
       ratingCell.textContent = game.rating?.[key] || '-';
+      
+      // 「その他」列のみ感想入力促進ハイライト判定
+      if (key === 'その他' && this.shouldHighlightForReviewReminder(game)) {
+        ratingCell.classList.add('review-reminder-highlight');
+      }
+      
       row.appendChild(ratingCell);
     });
 
