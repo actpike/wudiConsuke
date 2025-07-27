@@ -309,6 +309,9 @@ class NavigationController {
       this.hasUnsavedChanges = false;
       this.updateSaveStatus('💾 読み込み完了');
 
+      // 感想入力促進ハイライト判定
+      this.updateReviewTextareaHighlight();
+
     } catch (error) {
       console.error('Failed to load game data:', error);
       this.updateSaveStatus('❌ 読み込み失敗・新規作成', 'error');
@@ -687,8 +690,8 @@ class NavigationController {
     await this.loadGameData(this.editingGameId);
   }
 
-  // UI要素をリセット（削除時など、平均バーも含めて完全リセット）
-  resetUI() {
+  // 共通のフォームリセット処理
+  resetFormInputs() {
     try {
       // 評価スライダーをリセット
       const ratingCategories = window.constants.RATING_CATEGORIES;
@@ -707,6 +710,8 @@ class NavigationController {
       const reviewTextarea = document.getElementById('review-textarea');
       if (reviewTextarea) {
         reviewTextarea.value = '';
+        // 感想入力促進ハイライトをクリア
+        reviewTextarea.classList.remove('review-textarea-highlight');
       }
 
       // 文字数カウンターをクリア
@@ -720,6 +725,20 @@ class NavigationController {
       if (totalRating) {
         totalRating.textContent = '6';
       }
+
+      // 変更フラグをリセット
+      this.hasUnsavedChanges = false;
+
+    } catch (error) {
+      console.error('resetFormInputs エラー:', error);
+    }
+  }
+
+  // UI要素をリセット（削除時など、平均バーも含めて完全リセット）
+  resetUI() {
+    try {
+      // 共通のフォームリセット
+      this.resetFormInputs();
 
       // 平均バーを完全にリセット
       const averageBars = document.querySelectorAll('.average-bar');
@@ -736,9 +755,6 @@ class NavigationController {
         value.style.display = 'none';
       });
 
-      // 変更フラグをリセット
-      this.hasUnsavedChanges = false;
-
     } catch (error) {
       console.error('resetUI エラー:', error);
     }
@@ -746,44 +762,7 @@ class NavigationController {
 
   // 入力フィールドのみリセット（平均バーは保持）
   resetInputsOnly() {
-    try {
-      // 評価スライダーをリセット
-      const ratingCategories = window.constants.RATING_CATEGORIES;
-      ratingCategories.forEach(category => {
-        const slider = document.querySelector(`input[data-category="${category}"]`);
-        if (slider) {
-          slider.value = 1;
-          const valueSpan = slider.nextElementSibling;
-          if (valueSpan) {
-            valueSpan.textContent = '1';
-          }
-        }
-      });
-
-      // 感想テキストエリアをクリア
-      const reviewTextarea = document.getElementById('review-textarea');
-      if (reviewTextarea) {
-        reviewTextarea.value = '';
-      }
-
-      // 文字数カウンターをクリア
-      const charCount = document.getElementById('character-count');
-      if (charCount) {
-        charCount.textContent = '0';
-      }
-
-      // 合計評価をリセット
-      const totalRating = document.getElementById('total-rating');
-      if (totalRating) {
-        totalRating.textContent = '6';
-      }
-
-      // 変更フラグをリセット
-      this.hasUnsavedChanges = false;
-
-    } catch (error) {
-      console.error('resetInputsOnly エラー:', error);
-    }
+    this.resetFormInputs();
   }
 
   // ゲームデータ削除
