@@ -776,9 +776,14 @@ class NavigationController {
     if (!confirmed) return;
 
     try {
-      // 評価と感想をクリア（ratingをnullにして自動フラグ更新を回避）
+      // 評価と感想をクリア（適切なデフォルト評価オブジェクトで自動フラグ更新を回避）
+      const defaultRating = Object.fromEntries(
+        window.constants.RATING_CATEGORIES.map(category => [category, null])
+      );
+      defaultRating.total = 0;
+      
       await window.gameDataManager.updateGame(this.editingGameId, {
-        rating: null,
+        rating: defaultRating,
         review: '',
         is_played: false
       });
