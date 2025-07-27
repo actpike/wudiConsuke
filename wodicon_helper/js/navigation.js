@@ -85,7 +85,17 @@ class NavigationController {
           
           // 🔄 NEW: リアルタイム平均バー更新
           this.updateAverageBarRealtime();
+          
+          // 感想入力促進ハイライト更新（評価変更時）
+          this.updateReviewTextareaHighlight();
         }
+        
+        // 感想テキストエリア変更時
+        if (e.target.matches('#review-textarea')) {
+          // 感想入力促進ハイライト更新（感想入力時）
+          this.updateReviewTextareaHighlight();
+        }
+        
         this.markAsChanged();
         // debouncedAutoSave削除：イベント駆動型に変更済み
       }
@@ -361,6 +371,9 @@ class NavigationController {
       
       // 平均バーを表示（全作品の平均値）
       await this.displayAverageRating();
+      
+      // 感想入力促進ハイライト判定
+      this.updateReviewTextareaHighlight();
       
     } catch (error) {
       console.error('Failed to initialize detail view:', error);
@@ -1010,6 +1023,30 @@ class NavigationController {
     } catch (error) {
       console.error('Failed to load game data from list:', error);
       return null;
+    }
+  }
+
+  // 感想入力促進ハイライト更新
+  updateReviewTextareaHighlight() {
+    try {
+      const reviewTextarea = document.getElementById('review-textarea');
+      if (!reviewTextarea) return;
+
+      // 現在の「その他」評価値を取得
+      const otherSlider = document.querySelector('input[data-category="その他"]');
+      const otherValue = otherSlider ? parseInt(otherSlider.value) : 0;
+
+      // 現在の感想内容を取得
+      const reviewValue = reviewTextarea.value.trim();
+
+      // 「その他」評価が0より大きく、感想が未入力の場合にハイライト
+      if (otherValue > 0 && reviewValue === '') {
+        reviewTextarea.classList.add('review-textarea-highlight');
+      } else {
+        reviewTextarea.classList.remove('review-textarea-highlight');
+      }
+    } catch (error) {
+      console.error('感想入力促進ハイライト更新エラー:', error);
     }
   }
 }

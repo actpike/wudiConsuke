@@ -40,6 +40,20 @@ body {
   display: none !important;
 }
 
+/* 感想入力促進ハイライト */
+.review-reminder-highlight {
+  background-color: #ffe5b4 !important;
+}
+
+.review-reminder-highlight:hover {
+  background-color: #ffd89e !important;
+}
+
+.review-textarea-highlight {
+  background-color: #ffe5b4 !important;
+  border-color: #ffb84d;
+}
+
 /* ソート機能 */
 .sortable {
   cursor: pointer;

@@ -511,6 +511,11 @@ class GameListManager {
     row.className = rowClass;
     row.setAttribute('data-game-id', game.id);
 
+    // 感想入力促進ハイライト判定
+    if (this.shouldHighlightForReviewReminder(game)) {
+      row.classList.add('review-reminder-highlight');
+    }
+
     // チェックボックス列
     const checkCell = document.createElement('td');
     checkCell.className = 'col-check';
@@ -884,6 +889,15 @@ class GameListManager {
         btn.className = originalClass;
       }, 3000);
     }
+  }
+
+  // 感想入力促進ハイライト判定
+  shouldHighlightForReviewReminder(game) {
+    // 「その他」評価が0より大きく、感想が未入力の場合
+    const hasOtherRating = game.rating && game.rating['その他'] && game.rating['その他'] > 0;
+    const hasNoReview = !game.review || game.review.trim() === '';
+    
+    return hasOtherRating && hasNoReview;
   }
 
   // ステータスバー更新の共通メソッド
