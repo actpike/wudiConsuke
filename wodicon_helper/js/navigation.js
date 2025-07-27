@@ -82,6 +82,9 @@ class NavigationController {
           const valueSpan = e.target.parentElement.querySelector('.rating-value');
           valueSpan.textContent = e.target.value;
           this.updateTotalRating();
+          
+          // 🔄 NEW: リアルタイム平均バー更新
+          this.updateAverageBarRealtime();
         }
         this.markAsChanged();
         // debouncedAutoSave削除：イベント駆動型に変更済み
@@ -387,12 +390,47 @@ class NavigationController {
     this.updateTotalRating();
   }
 
-  // 平均点表示
-  async displayAverageRating() {
+  // 平均点表示（リアルタイム対応版）
+  async displayAverageRating(currentFormRating = null) {
     try {
       // 各項目ごとの平均を計算
       const games = await window.gameDataManager.getGames();
-      const playedGames = games.filter(game => game.is_played && game.rating);
+      let playedGames = games.filter(game => game.is_played && game.rating);
+      
+      // リアルタイム更新の場合、現在編集中ゲームのデータを一時的に置き換え
+      if (currentFormRating && this.editingGameId) {
+        playedGames = [...playedGames];
+        
+        // 型安全な重複判定（文字列・数値両対応）
+        const editingGameId = String(this.editingGameId);
+        const currentGameIndex = playedGames.findIndex(g => String(g.id) === editingGameId);
+        
+        const currentGameData = {
+          id: this.editingGameId,
+          rating: currentFormRating,
+          is_played: window.gameDataManager.isRatingComplete(currentFormRating)
+        };
+        
+        if (currentGameIndex >= 0) {
+          // 既存ゲームの評価を一時的に置き換え（重複排除）
+          playedGames[currentGameIndex] = { ...playedGames[currentGameIndex], ...currentGameData };
+        } else {
+          // 現在編集中ゲームが元々playedGamesに含まれていない場合のみ
+          // 且つ評価完了の場合のみ追加（重複防止）
+          if (currentGameData.is_played) {
+            // 全ゲーム配列からも重複チェック（念の為の安全装置）
+            const allGamesHasThis = games.some(g => String(g.id) === editingGameId);
+            if (allGamesHasThis) {
+              // 既存ゲームなのにplayedGamesに含まれていない = is_played=falseだった
+              // 新たに評価完了したので追加
+              playedGames.push(currentGameData);
+            } else {
+              // 完全新規ゲーム（通常はここに来ない）
+              playedGames.push(currentGameData);
+            }
+          }
+        }
+      }
       
       if (playedGames.length === 0) return;
       
@@ -880,6 +918,43 @@ class NavigationController {
       countElement.style.color = '#666';
     }
   }
+
+  // フォームから現在の評価値を取得
+  getCurrentFormRating() {
+    const categories = window.constants.RATING_CATEGORIES;
+    const rating = {};
+    
+    categories.forEach(category => {
+      const slider = document.querySelector(`[data-category="${category}"]`);
+      const valueSpan = slider.parentElement.querySelector('.rating-value');
+      
+      // null値処理（Requirement 3対応）
+      if (valueSpan.textContent === '-') {
+        rating[category] = null;
+      } else {
+        rating[category] = parseInt(slider.value);
+      }
+    });
+    
+    return rating;
+  }
+
+  // リアルタイム平均バー更新（統一ロジック版）
+  async updateAverageBarRealtime() {
+    try {
+      // 現在のフォーム値を取得
+      const currentRating = this.getCurrentFormRating();
+      
+      // 既存の正確な平均計算ロジックを現在のフォーム値付きで実行
+      await this.displayAverageRating(currentRating);
+      
+    } catch (error) {
+      // 統一エラーハンドリング（Requirement 4対応）
+      window.errorHandler.handleError(error, 'realtime-average-update');
+      console.warn('平均バー更新エラー - 前回表示を維持します');
+    }
+  }
+
 
   // ローカルフォルダ機能は削除済み（未使用コードクリーンアップ）
 
