@@ -1,0 +1,641 @@
+<!DOCTYPE html><html><head>
+      <title>design</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:////home/actpike/.vscode-server/extensions/shd101wyy.markdown-preview-enhanced-0.8.18/crossnote/dependencies/katex/katex.min.css">
+      
+      
+      <script type="text/javascript" src="file:////home/actpike/.vscode-server/extensions/shd101wyy.markdown-preview-enhanced-0.8.18/crossnote/dependencies/mermaid/mermaid.min.js" charset="UTF-8"></script>
+      
+      
+      <style>
+      code[class*=language-],pre[class*=language-]{color:#333;background:0 0;font-family:Consolas,"Liberation Mono",Menlo,Courier,monospace;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.4;-moz-tab-size:8;-o-tab-size:8;tab-size:8;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:.8em;overflow:auto;border-radius:3px;background:#f5f5f5}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal;background:#f5f5f5}.token.blockquote,.token.comment{color:#969896}.token.cdata{color:#183691}.token.doctype,.token.macro.property,.token.punctuation,.token.variable{color:#333}.token.builtin,.token.important,.token.keyword,.token.operator,.token.rule{color:#a71d5d}.token.attr-value,.token.regex,.token.string,.token.url{color:#183691}.token.atrule,.token.boolean,.token.code,.token.command,.token.constant,.token.entity,.token.number,.token.property,.token.symbol{color:#0086b3}.token.prolog,.token.selector,.token.tag{color:#63a35c}.token.attr-name,.token.class,.token.class-name,.token.function,.token.id,.token.namespace,.token.pseudo-class,.token.pseudo-element,.token.url-reference .token.variable{color:#795da3}.token.entity{cursor:help}.token.title,.token.title .token.punctuation{font-weight:700;color:#1d3e81}.token.list{color:#ed6a43}.token.inserted{background-color:#eaffea;color:#55a532}.token.deleted{background-color:#ffecec;color:#bd2c00}.token.bold{font-weight:700}.token.italic{font-style:italic}.language-json .token.property{color:#183691}.language-markup .token.tag .token.punctuation{color:#333}.language-css .token.function,code.language-css{color:#0086b3}.language-yaml .token.atrule{color:#63a35c}code.language-yaml{color:#183691}.language-ruby .token.function{color:#333}.language-markdown .token.url{color:#795da3}.language-makefile .token.symbol{color:#795da3}.language-makefile .token.variable{color:#183691}.language-makefile .token.builtin{color:#0086b3}.language-bash .token.keyword{color:#0086b3}pre[data-line]{position:relative;padding:1em 0 1em 3em}pre[data-line] .line-highlight-wrapper{position:absolute;top:0;left:0;background-color:transparent;display:block;width:100%}pre[data-line] .line-highlight{position:absolute;left:0;right:0;padding:inherit 0;margin-top:1em;background:hsla(24,20%,50%,.08);background:linear-gradient(to right,hsla(24,20%,50%,.1) 70%,hsla(24,20%,50%,0));pointer-events:none;line-height:inherit;white-space:pre}pre[data-line] .line-highlight:before,pre[data-line] .line-highlight[data-end]:after{content:attr(data-start);position:absolute;top:.4em;left:.6em;min-width:1em;padding:0 .5em;background-color:hsla(24,20%,50%,.4);color:#f4f1ef;font:bold 65%/1.5 sans-serif;text-align:center;vertical-align:.3em;border-radius:999px;text-shadow:none;box-shadow:0 1px #fff}pre[data-line] .line-highlight[data-end]:after{content:attr(data-end);top:auto;bottom:.4em}html body{font-family:'Helvetica Neue',Helvetica,'Segoe UI',Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ol,html body>ul{margin-bottom:16px}html body ol,html body ul{padding-left:2em}html body ol.no-list,html body ul.no-list{padding:0;list-style-type:none}html body ol ol,html body ol ul,html body ul ol,html body ul ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:700;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::after,html body code::before{letter-spacing:-.2em;content:'\00a0'}html body pre>code{padding:0;margin:0;word-break:normal;white-space:pre;background:0 0;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:after,html body pre code:before,html body pre tt:after,html body pre tt:before{content:normal}html body blockquote,html body dl,html body ol,html body p,html body pre,html body ul{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body code,html body pre{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview ul{list-style:disc}.markdown-preview ul ul{list-style:circle}.markdown-preview ul ul ul{list-style:square}.markdown-preview ol{list-style:decimal}.markdown-preview ol ol,.markdown-preview ul ol{list-style-type:lower-roman}.markdown-preview ol ol ol,.markdown-preview ol ul ol,.markdown-preview ul ol ol,.markdown-preview ul ul ol{list-style-type:lower-alpha}.markdown-preview .newpage,.markdown-preview .pagebreak{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center!important}.markdown-preview:not([data-for=preview]) .code-chunk .code-chunk-btn-group{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .status{display:none}.markdown-preview:not([data-for=preview]) .code-chunk .output-div{margin-bottom:16px}.markdown-preview .md-toc{padding:0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link div,.markdown-preview .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}.markdown-preview .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0;min-height:100vh}@media screen and (min-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode]) .markdown-preview{font-size:14px!important;padding:1em}}@media print{html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for=html-export]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,.66);border:4px solid rgba(150,150,150,.66);background-clip:content-box}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc{padding:0 16px}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link{display:inline;padding:.25rem 0}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link div,html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper .md-toc-link p{display:inline}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc .md-toc .md-toc-link-wrapper.highlighted .md-toc-link{font-weight:800}html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% - 300px);padding:2em calc(50% - 457px - 300px / 2);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for=html-export]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for=html-export]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+      <!-- The content below will be included at the end of the <head> element. --><script type="text/javascript">
+  document.addEventListener("DOMContentLoaded", function () {
+    // your code here
+  });
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<h1 id="technical-design">Technical Design </h1>
+<h2 id="overview">Overview </h2>
+<p>ウディこん助Chrome拡張機能の包括的アーキテクチャドキュメント作成プロジェクトの技術設計書です。現在実装済みの全コンポーネント間の相互作用をMermaid記法によるシーケンス図で可視化し、Chrome Manifest V3アーキテクチャに基づく3層構成（Service Worker、Content Script、Popup）のデータフローを詳細に記載します。v1.0.3時点の実装状況を正確に反映した技術ドキュメントを生成します。</p>
+<h2 id="requirements-mapping">Requirements Mapping </h2>
+<h3 id="design-component-traceability">Design Component Traceability </h3>
+<p>各設計コンポーネントが対応する要件：</p>
+<ul>
+<li><strong>アーキテクチャ概要図</strong> → REQ-1: Chrome Manifest V3の3層構成とコンポーネント役割</li>
+<li><strong>データフロー図</strong> → REQ-2: chrome.storage.local中心のデータ永続化フロー</li>
+<li><strong>Web監視システムシーケンス図</strong> → REQ-3: 実用的自動監視の処理フロー</li>
+<li><strong>UI操作フローシーケンス図</strong> → REQ-4: ポップアップと画面遷移の操作フロー</li>
+<li><strong>コンポーネント通信図</strong> → REQ-5: Service Worker通信と依存関係</li>
+</ul>
+<h3 id="user-story-coverage">User Story Coverage </h3>
+<p>要件定義の全ユーザーストーリーへの対応：</p>
+<ul>
+<li><strong>開発者向けアーキテクチャ理解</strong> → Chrome Manifest V3の3層構成図とコンポーネント役割表</li>
+<li><strong>保守担当者向けデータフロー追跡</strong> → chrome.storage.local中心のデータ永続化フロー図</li>
+<li><strong>機能拡張担当者向けWeb監視理解</strong> → 自動監視システムのシーケンス図</li>
+<li><strong>UI設計担当者向け操作フロー追跡</strong> → ポップアップと画面遷移のシーケンス図</li>
+<li><strong>アーキテクト向けコンポーネント通信理解</strong> → Service Worker通信と依存関係図</li>
+</ul>
+<h2 id="architecture">Architecture </h2>
+<h3 id="chrome-manifest-v3-アーキテクチャ">Chrome Manifest V3 アーキテクチャ </h3>
+<p>ウディこん助は Chrome Manifest V3 に完全対応した3層構成アーキテクチャを採用：</p>
+<div class="mermaid">graph TB
+    subgraph "Chrome Extension Architecture (Manifest V3)"
+        subgraph "Popup Layer"
+            PopupHTML[popup.html]
+            PopupJS[popup.js - GameListManager]
+            NavJS[navigation.js - Navigation]
+            DataMgrJS[dataManager.js - GameDataManager]
+            YearMgrJS[yearManager.js - YearManager]
+        end
+        
+        subgraph "Service Worker Layer"
+            ServiceWorker[background.js - Service Worker]
+            WebMonitorJS[webMonitor.js - WebMonitor]
+            PageParserJS[pageParser.js - PageParser]
+            UpdateMgrJS[updateManager.js - UpdateManager]
+        end
+        
+        subgraph "Content Script Layer"
+            ContentJS[content.js - Auto Monitor]
+        end
+        
+        subgraph "Shared Services"
+            Constants[constants.js - Constants]
+            ErrorHandler[errorHandler.js - ErrorHandler]
+        end
+        
+        subgraph "Storage Layer"
+            ChromeStorage[(chrome.storage.local)]
+        end
+        
+        subgraph "External Services"
+            WodiconSite[silversecond.com]
+        end
+    end
+    
+    PopupJS --&gt; DataMgrJS
+    PopupJS --&gt; NavJS
+    NavJS --&gt; YearMgrJS
+    ServiceWorker --&gt; WebMonitorJS
+    WebMonitorJS --&gt; PageParserJS
+    PageParserJS --&gt; UpdateMgrJS
+    ContentJS --&gt; ServiceWorker
+    PopupJS --&gt; ServiceWorker
+    DataMgrJS --&gt; ChromeStorage
+    UpdateMgrJS --&gt; ChromeStorage
+    WebMonitorJS --&gt; WodiconSite
+    PageParserJS --&gt; WodiconSite
+    
+    PopupJS --&gt; Constants
+    ServiceWorker --&gt; Constants
+    PopupJS --&gt; ErrorHandler
+    ServiceWorker --&gt; ErrorHandler
+</div><h3 id="technology-stack">Technology Stack </h3>
+<p>実装済み技術スタック：</p>
+<ul>
+<li><strong>Chrome Extension</strong>: Manifest V3 準拠</li>
+<li><strong>Frontend</strong>: Vanilla JavaScript (ES2022) + HTML5 + CSS3</li>
+<li><strong>Data Storage</strong>: chrome.storage.local (5MB制限)</li>
+<li><strong>Architecture Pattern</strong>: MVC + Service Layer</li>
+<li><strong>Module System</strong>: ES6 Modules with Global Instance Pattern</li>
+<li><strong>Communication</strong>: chrome.runtime.onMessage API</li>
+<li><strong>Web Monitoring</strong>: Fetch API + HTML Parsing</li>
+<li><strong>Notification</strong>: chrome.notifications API</li>
+</ul>
+<h3 id="architecture-decision-rationale">Architecture Decision Rationale </h3>
+<ul>
+<li><strong>なぜ Vanilla JavaScript</strong>: Chrome拡張機能の軽量性とセキュリティ制約のため</li>
+<li><strong>なぜ chrome.storage.local</strong>: 完全ローカル動作要件とデータ永続化のため</li>
+<li><strong>なぜ Global Instance Pattern</strong>: popup.html での順次モジュール読み込みと依存関係解決のため</li>
+<li><strong>なぜ Service Worker</strong>: Chrome Manifest V3 要件とバックグラウンド処理のため</li>
+</ul>
+<h2 id="data-flow">Data Flow </h2>
+<h3 id="primary-data-flow-web監視システム">Primary Data Flow: Web監視システム </h3>
+<p>Web監視システムの主要データフロー：</p>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant ContentScript as content.js
+    participant ServiceWorker as background.js
+    participant WebMonitor as webMonitor.js
+    participant PageParser as pageParser.js
+    participant UpdateManager as updateManager.js
+    participant Storage as chrome.storage.local
+    participant Notification as chrome.notifications
+    
+    Note over User,Notification: 1. サイト訪問時の自動監視（30分間隔制限）
+    User-&gt;&gt;ContentScript: silversecond.com訪問
+    ContentScript-&gt;&gt;ContentScript: 前回監視時刻チェック
+    ContentScript-&gt;&gt;ServiceWorker: 自動監視実行要求
+    ServiceWorker-&gt;&gt;WebMonitor: Web監視開始
+    WebMonitor-&gt;&gt;PageParser: HTML取得・解析要求
+    PageParser-&gt;&gt;PageParser: 作品一覧HTML解析
+    PageParser--&gt;&gt;WebMonitor: 解析結果返却
+    WebMonitor-&gt;&gt;UpdateManager: 更新検知・処理要求
+    UpdateManager-&gt;&gt;Storage: 既存データ読み込み
+    Storage--&gt;&gt;UpdateManager: 現在のゲームデータ
+    UpdateManager-&gt;&gt;UpdateManager: 差分検出・新規作品検出
+    UpdateManager-&gt;&gt;Storage: 更新データ保存
+    UpdateManager-&gt;&gt;Notification: 通知作成
+    Notification--&gt;&gt;User: デスクトップ通知表示
+</div><h3 id="secondary-data-flow-ui操作フロー">Secondary Data Flow: UI操作フロー </h3>
+<p>ポップアップでのUI操作データフロー：</p>
+<div class="mermaid">sequenceDiagram
+    participant User
+    participant PopupHTML as popup.html
+    participant GameListMgr as GameListManager
+    participant Navigation as navigation.js
+    participant DataManager as GameDataManager
+    participant YearManager as YearManager
+    participant Storage as chrome.storage.local
+    
+    Note over User,Storage: 2. ポップアップ操作フロー
+    User-&gt;&gt;PopupHTML: 拡張機能アイコンクリック
+    PopupHTML-&gt;&gt;GameListMgr: initialize()
+    GameListMgr-&gt;&gt;DataManager: initialize()
+    DataManager-&gt;&gt;YearManager: getCurrentYear()
+    YearManager-&gt;&gt;Storage: 年度設定読み込み
+    Storage--&gt;&gt;YearManager: 現在年度情報
+    YearManager--&gt;&gt;DataManager: 年度情報返却
+    DataManager-&gt;&gt;Storage: ゲームデータ読み込み
+    Storage--&gt;&gt;DataManager: 年度別ゲームデータ
+    DataManager--&gt;&gt;GameListMgr: 初期化完了
+    GameListMgr-&gt;&gt;GameListMgr: UI描画・イベント設定
+    GameListMgr--&gt;&gt;PopupHTML: 画面表示完了
+    
+    Note over User,Storage: 3. 作品詳細画面遷移
+    User-&gt;&gt;GameListMgr: 作品行クリック
+    GameListMgr-&gt;&gt;Navigation: showDetailView(gameId)
+    Navigation-&gt;&gt;DataManager: getGameById(gameId)
+    DataManager--&gt;&gt;Navigation: ゲーム詳細データ
+    Navigation-&gt;&gt;Navigation: 詳細画面描画・評価スライダー表示
+    Navigation--&gt;&gt;User: 詳細画面表示
+    
+    Note over User,Storage: 4. 評価入力・自動保存
+    User-&gt;&gt;Navigation: 評価スライダー操作
+    Navigation-&gt;&gt;Navigation: リアルタイム平均計算
+    User-&gt;&gt;Navigation: 画面遷移操作
+    Navigation-&gt;&gt;DataManager: saveGame(gameData)
+    DataManager-&gt;&gt;Storage: 自動保存実行
+    Storage--&gt;&gt;DataManager: 保存完了
+</div><h2 id="components-and-interfaces">Components and Interfaces </h2>
+<h3 id="backend-services-service-worker">Backend Services (Service Worker) </h3>
+<p>Service Worker層の主要サービス：</p>
+<pre data-role="codeBlock" data-info="javascript" class="language-javascript javascript"><code><span class="token comment">// WebMonitor クラス</span>
+<span class="token keyword keyword-class">class</span> <span class="token class-name">WebMonitor</span> <span class="token punctuation">{</span>
+    <span class="token keyword keyword-async">async</span> <span class="token function">executeMonitoring</span><span class="token punctuation">(</span><span class="token punctuation">)</span>          <span class="token comment">// Web監視実行</span>
+    <span class="token keyword keyword-async">async</span> <span class="token function">fetchWodiconPage</span><span class="token punctuation">(</span><span class="token punctuation">)</span>           <span class="token comment">// ウディコンページ取得</span>
+    <span class="token keyword keyword-async">async</span> <span class="token function">checkForUpdates</span><span class="token punctuation">(</span><span class="token punctuation">)</span>            <span class="token comment">// 更新チェック実行</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// PageParser クラス  </span>
+<span class="token keyword keyword-class">class</span> <span class="token class-name">PageParser</span> <span class="token punctuation">{</span>
+    <span class="token function">parseGameList</span><span class="token punctuation">(</span>html<span class="token punctuation">)</span>                <span class="token comment">// ゲーム一覧HTML解析</span>
+    <span class="token function">extractGameData</span><span class="token punctuation">(</span>gameElement<span class="token punctuation">)</span>       <span class="token comment">// 個別ゲームデータ抽出</span>
+    <span class="token function">detectVersionChanges</span><span class="token punctuation">(</span>newData<span class="token punctuation">,</span> oldData<span class="token punctuation">)</span>  <span class="token comment">// バージョン変更検出</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// UpdateManager クラス</span>
+<span class="token keyword keyword-class">class</span> <span class="token class-name">UpdateManager</span> <span class="token punctuation">{</span>
+    <span class="token function">processNewGames</span><span class="token punctuation">(</span>gamesList<span class="token punctuation">)</span>         <span class="token comment">// 新規ゲーム処理</span>
+    <span class="token function">processUpdatedGames</span><span class="token punctuation">(</span>gamesList<span class="token punctuation">)</span>     <span class="token comment">// 更新ゲーム処理  </span>
+    <span class="token function">createNotification</span><span class="token punctuation">(</span>message<span class="token punctuation">)</span>        <span class="token comment">// 通知作成</span>
+<span class="token punctuation">}</span>
+</code></pre><h3 id="frontend-components">Frontend Components </h3>
+<p>Popup層のUIコンポーネント：</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsibility</th>
+<th>Props/State Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GameListManager</td>
+<td>メイン画面管理</td>
+<td>games[], currentFilter, currentSort</td>
+</tr>
+<tr>
+<td>Navigation</td>
+<td>画面遷移・詳細表示</td>
+<td>currentView, gameData, evaluationSliders</td>
+</tr>
+<tr>
+<td>GameDataManager</td>
+<td>データCRUD操作</td>
+<td>localStorageKey, gameDatabase</td>
+</tr>
+<tr>
+<td>YearManager</td>
+<td>年度別データ管理</td>
+<td>currentYear, availableYears, yearDataStructure</td>
+</tr>
+</tbody>
+</table>
+<h3 id="api-interfaces-chromeruntimeonmessage">API Interfaces (chrome.runtime.onMessage) </h3>
+<p>コンポーネント間通信API：</p>
+<table>
+<thead>
+<tr>
+<th>Message Type</th>
+<th>Direction</th>
+<th>Purpose</th>
+<th>Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WEB_MONITOR_REQUEST</td>
+<td>popup → background</td>
+<td>Web監視実行要求</td>
+<td>{ action: 'monitor' }</td>
+</tr>
+<tr>
+<td>WEB_MONITOR_RESULT</td>
+<td>background → popup</td>
+<td>Web監視結果通知</td>
+<td>{ success: true, newGames: [], updatedGames: [] }</td>
+</tr>
+<tr>
+<td>AUTO_MONITOR_TRIGGER</td>
+<td>content → background</td>
+<td>自動監視トリガー</td>
+<td>{ source: 'content', timestamp: Date.now() }</td>
+</tr>
+<tr>
+<td>YEAR_CHANGE_NOTIFY</td>
+<td>popup → background</td>
+<td>年度変更通知</td>
+<td>{ newYear: 2025, oldYear: 2024 }</td>
+</tr>
+</tbody>
+</table>
+<h2 id="data-models">Data Models </h2>
+<h3 id="domain-entities">Domain Entities </h3>
+<ol>
+<li><strong>Game</strong>: ゲーム作品エンティティ（評価・感想・メタデータ）</li>
+<li><strong>YearData</strong>: 年度別データ構造（複数年度対応）</li>
+<li><strong>MonitoringState</strong>: Web監視状態（実行履歴・設定）</li>
+<li><strong>EvaluationCriteria</strong>: 評価基準（6カテゴリシステム）</li>
+</ol>
+<h3 id="entity-relationships">Entity Relationships </h3>
+<div class="mermaid">erDiagram
+    YEAR_DATA ||--|{ GAME : "contains"
+    GAME ||--|| EVALUATION : "has"
+    GAME ||--o{ COMMENT : "has"
+    MONITORING_STATE ||--o{ MONITOR_LOG : "tracks"
+    EVALUATION ||--|| EVALUATION_CRITERIA : "follows"
+    
+    YEAR_DATA {
+        string year PK
+        string contestName
+        number contestNumber
+        object metadata
+    }
+    
+    GAME {
+        string id PK
+        string title
+        string author
+        string url
+        string version_status
+        date created_at
+        date updated_at
+    }
+    
+    EVALUATION {
+        string gameId FK
+        number enthusiasm
+        number novelty  
+        number story
+        number graphics_audio
+        number playability
+        number others
+        number average
+    }
+    
+    COMMENT {
+        string gameId FK
+        string comment_text
+        date created_at
+    }
+</div><h3 id="data-model-definitions">Data Model Definitions </h3>
+<p>TypeScript インターフェース定義：</p>
+<pre data-role="codeBlock" data-info="typescript" class="language-typescript typescript"><code><span class="token comment">// ゲームデータ構造</span>
+<span class="token keyword keyword-interface">interface</span> <span class="token class-name">GameData</span> <span class="token punctuation">{</span>
+  id<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
+  title<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
+  author<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
+  url<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>
+  version_status<span class="token operator">:</span> <span class="token string">'new'</span> <span class="token operator">|</span> <span class="token string">'updated'</span> <span class="token operator">|</span> <span class="token string">'viewed'</span> <span class="token operator">|</span> <span class="token string">'default'</span><span class="token punctuation">;</span>
+  
+  <span class="token comment">// 6カテゴリ評価システム（null許可）</span>
+  enthusiasm<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span>     <span class="token comment">// 熱中度 (1-10)</span>
+  novelty<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span>        <span class="token comment">// 斬新さ (1-10)  </span>
+  story<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span>          <span class="token comment">// 物語性 (1-10)</span>
+  graphics_audio<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span> <span class="token comment">// 画像音響 (1-10)</span>
+  playability<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span>    <span class="token comment">// 遊びやすさ (1-10)</span>
+  others<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span>         <span class="token comment">// その他 (0-10)</span>
+  
+  average<span class="token operator">:</span> <span class="token builtin">number</span> <span class="token operator">|</span> <span class="token keyword keyword-null">null</span><span class="token punctuation">;</span>        <span class="token comment">// 平均値（null値除外計算）</span>
+  comment<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>               <span class="token comment">// 感想・コメント</span>
+  
+  created_at<span class="token operator">:</span> Date<span class="token punctuation">;</span>
+  updated_at<span class="token operator">:</span> Date<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// 年度別データ構造</span>
+<span class="token keyword keyword-interface">interface</span> <span class="token class-name">YearData</span> <span class="token punctuation">{</span>
+  year<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>                  <span class="token comment">// "2025", "2026"</span>
+  contestName<span class="token operator">:</span> <span class="token builtin">string</span><span class="token punctuation">;</span>           <span class="token comment">// "第17回ウディコン"</span>
+  contestNumber<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>         <span class="token comment">// 17</span>
+  isActive<span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>             <span class="token comment">// アクティブ年度フラグ</span>
+  games<span class="token operator">:</span> Record<span class="token operator">&lt;</span><span class="token builtin">string</span><span class="token punctuation">,</span> GameData<span class="token operator">&gt;</span><span class="token punctuation">;</span> <span class="token comment">// ゲームデータマップ</span>
+  lastUpdated<span class="token operator">:</span> Date<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// Web監視状態</span>
+<span class="token keyword keyword-interface">interface</span> <span class="token class-name">MonitoringState</span> <span class="token punctuation">{</span>
+  lastExecutionTime<span class="token operator">:</span> Date<span class="token punctuation">;</span>
+  autoMonitorEnabled<span class="token operator">:</span> <span class="token builtin">boolean</span><span class="token punctuation">;</span>
+  intervalMinutes<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>       <span class="token comment">// 30分間隔制限</span>
+  executionCount<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+  lastResults<span class="token operator">:</span> <span class="token punctuation">{</span>
+    newGamesCount<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+    updatedGamesCount<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+    errorCount<span class="token operator">:</span> <span class="token builtin">number</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><h3 id="database-schema-chromestoragelocal">Database Schema (chrome.storage.local) </h3>
+<p>Chrome拡張機能のローカルストレージ構造：</p>
+<pre data-role="codeBlock" data-info="javascript" class="language-javascript javascript"><code><span class="token comment">// chrome.storage.local のキー構造</span>
+<span class="token punctuation">{</span>
+  <span class="token comment">// メインデータ（年度別）</span>
+  <span class="token string-property property">"wodicon_games_2025"</span><span class="token operator">:</span> <span class="token maybe-class-name">YearData</span><span class="token punctuation">,</span>
+  <span class="token string-property property">"wodicon_games_2026"</span><span class="token operator">:</span> <span class="token maybe-class-name">YearData</span><span class="token punctuation">,</span>
+  
+  <span class="token comment">// 設定・状態管理</span>
+  <span class="token string-property property">"current_year"</span><span class="token operator">:</span> <span class="token string">"2025"</span><span class="token punctuation">,</span>
+  <span class="token string-property property">"available_years"</span><span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">"2025"</span><span class="token punctuation">,</span> <span class="token string">"2026"</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token string-property property">"monitoring_state"</span><span class="token operator">:</span> <span class="token maybe-class-name">MonitoringState</span><span class="token punctuation">,</span>
+  <span class="token string-property property">"user_preferences"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token literal-property property">autoSaveEnabled</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">notificationEnabled</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    <span class="token literal-property property">defaultView</span><span class="token operator">:</span> <span class="token string">"all"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  
+  <span class="token comment">// エラー・ログ管理</span>
+  <span class="token string-property property">"error_history"</span><span class="token operator">:</span> <span class="token maybe-class-name">ErrorLog</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token string-property property">"execution_history"</span><span class="token operator">:</span> <span class="token maybe-class-name">ExecutionLog</span><span class="token punctuation">[</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+</code></pre><h2 id="error-handling">Error Handling </h2>
+<h3 id="統一エラーハンドリングシステム">統一エラーハンドリングシステム </h3>
+<p>ErrorHandler クラスによる分類・通知・履歴管理：</p>
+<pre data-role="codeBlock" data-info="javascript" class="language-javascript javascript"><code><span class="token comment">// エラー分類と処理</span>
+<span class="token keyword keyword-class">class</span> <span class="token class-name">ErrorHandler</span> <span class="token punctuation">{</span>
+  <span class="token function">handleError</span><span class="token punctuation">(</span><span class="token parameter">error<span class="token punctuation">,</span> context</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword keyword-const">const</span> errorType <span class="token operator">=</span> <span class="token keyword keyword-this">this</span><span class="token punctuation">.</span><span class="token method function property-access">classifyError</span><span class="token punctuation">(</span>error<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token keyword keyword-const">const</span> errorEntry <span class="token operator">=</span> <span class="token punctuation">{</span>
+      <span class="token literal-property property">type</span><span class="token operator">:</span> errorType<span class="token punctuation">,</span>           <span class="token comment">// 'network', 'storage', 'parse', 'timeout', 'permission'</span>
+      <span class="token literal-property property">message</span><span class="token operator">:</span> error<span class="token punctuation">.</span><span class="token property-access">message</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">context</span><span class="token operator">:</span> context<span class="token punctuation">,</span>
+      <span class="token literal-property property">timestamp</span><span class="token operator">:</span> <span class="token keyword keyword-new">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token literal-property property">stackTrace</span><span class="token operator">:</span> error<span class="token punctuation">.</span><span class="token property-access">stack</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+    
+    <span class="token comment">// 通知作成</span>
+    <span class="token keyword keyword-this">this</span><span class="token punctuation">.</span><span class="token method function property-access">createErrorNotification</span><span class="token punctuation">(</span>errorEntry<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    <span class="token comment">// 履歴保存</span>
+    <span class="token keyword keyword-this">this</span><span class="token punctuation">.</span><span class="token method function property-access">saveErrorHistory</span><span class="token punctuation">(</span>errorEntry<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+  
+  <span class="token function">classifyError</span><span class="token punctuation">(</span><span class="token parameter">error</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword control-flow keyword-if">if</span> <span class="token punctuation">(</span>error<span class="token punctuation">.</span><span class="token property-access">name</span> <span class="token operator">===</span> <span class="token string">'NetworkError'</span><span class="token punctuation">)</span> <span class="token keyword control-flow keyword-return">return</span> <span class="token string">'network'</span><span class="token punctuation">;</span>
+    <span class="token keyword control-flow keyword-if">if</span> <span class="token punctuation">(</span>error<span class="token punctuation">.</span><span class="token property-access">name</span> <span class="token operator">===</span> <span class="token string">'QuotaExceededError'</span><span class="token punctuation">)</span> <span class="token keyword control-flow keyword-return">return</span> <span class="token string">'storage'</span><span class="token punctuation">;</span>
+    <span class="token keyword control-flow keyword-if">if</span> <span class="token punctuation">(</span>error<span class="token punctuation">.</span><span class="token property-access">message</span><span class="token punctuation">.</span><span class="token method function property-access">includes</span><span class="token punctuation">(</span><span class="token string">'parse'</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword control-flow keyword-return">return</span> <span class="token string">'parse'</span><span class="token punctuation">;</span>
+    <span class="token keyword control-flow keyword-if">if</span> <span class="token punctuation">(</span>error<span class="token punctuation">.</span><span class="token property-access">name</span> <span class="token operator">===</span> <span class="token string">'TimeoutError'</span><span class="token punctuation">)</span> <span class="token keyword control-flow keyword-return">return</span> <span class="token string">'timeout'</span><span class="token punctuation">;</span>
+    <span class="token keyword control-flow keyword-return">return</span> <span class="token string">'unknown'</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><h3 id="エラー処理フロー">エラー処理フロー </h3>
+<div class="mermaid">sequenceDiagram
+    participant Component
+    participant ErrorHandler
+    participant Storage
+    participant Notification
+    
+    Component-&gt;&gt;ErrorHandler: handleError(error, context)
+    ErrorHandler-&gt;&gt;ErrorHandler: classifyError(error)
+    ErrorHandler-&gt;&gt;ErrorHandler: createErrorEntry()
+    ErrorHandler-&gt;&gt;Notification: createErrorNotification()
+    ErrorHandler-&gt;&gt;Storage: saveErrorHistory()
+    ErrorHandler--&gt;&gt;Component: エラー処理完了
+</div><h2 id="security-considerations">Security Considerations </h2>
+<h3 id="chrome-extension-security">Chrome Extension Security </h3>
+<p>Chrome Manifest V3 セキュリティ制約への対応：</p>
+<ul>
+<li><strong>Host Permissions</strong>: <code>https://silversecond.com/*</code> のみ許可</li>
+<li><strong>Content Security Policy</strong>: デフォルトCSPに準拠</li>
+<li><strong>External Resources</strong>: 一切の外部API・CDN使用禁止</li>
+<li><strong>Data Isolation</strong>: chrome.storage.local による完全ローカル動作</li>
+</ul>
+<h3 id="data-protection">Data Protection </h3>
+<ul>
+<li><strong>Local Data Encryption</strong>: chrome.storage.local の暗号化はChrome側で自動処理</li>
+<li><strong>Input Validation</strong>: ユーザー入力の HTML エスケープ処理</li>
+<li><strong>XSS Prevention</strong>: innerHTML 使用禁止、textContent使用徹底</li>
+</ul>
+<h3 id="security-best-practices">Security Best Practices </h3>
+<ul>
+<li><strong>CORS無効化</strong>: Cross-Origin通信なし（完全ローカル動作）</li>
+<li><strong>CSP準拠</strong>: インラインスクリプト・eval()使用禁止</li>
+<li><strong>Permission最小化</strong>: 必要最小限のpermissions設定</li>
+</ul>
+<h2 id="performance--scalability">Performance &amp; Scalability </h2>
+<h3 id="performance-targets">Performance Targets </h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>実測値</th>
+<th>Measurement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Popup起動時間</td>
+<td>&lt; 100ms</td>
+<td>~50ms</td>
+<td>初期化からUI表示完了まで</td>
+</tr>
+<tr>
+<td>Web監視実行時間</td>
+<td>&lt; 5秒</td>
+<td>~2-3秒</td>
+<td>fetch開始から結果処理完了まで</td>
+</tr>
+<tr>
+<td>データ読み込み時間</td>
+<td>&lt; 50ms</td>
+<td>~20ms</td>
+<td>chrome.storage.local読み込み</td>
+</tr>
+<tr>
+<td>UI応答時間</td>
+<td>&lt; 16ms</td>
+<td>~10ms</td>
+<td>イベント処理からDOM更新まで</td>
+</tr>
+<tr>
+<td>メモリ使用量</td>
+<td>&lt; 10MB</td>
+<td>~5MB</td>
+<td>拡張機能全体のメモリ消費</td>
+</tr>
+</tbody>
+</table>
+<h3 id="caching-strategy">Caching Strategy </h3>
+<ul>
+<li><strong>In-Memory Cache</strong>: GameListManager でのゲームリスト保持</li>
+<li><strong>Storage Cache</strong>: chrome.storage.local での永続化</li>
+<li><strong>DOM Cache</strong>: 詳細画面要素の再利用</li>
+<li><strong>Computation Cache</strong>: 平均値計算結果のキャッシュ</li>
+</ul>
+<h3 id="scalability-approach">Scalability Approach </h3>
+<ul>
+<li><strong>データ分割</strong>: 年度別データ管理による5MB制限対応</li>
+<li><strong>非同期処理</strong>: async/await による UI ブロッキング防止</li>
+<li><strong>Lazy Loading</strong>: 詳細画面の遅延ロード</li>
+<li><strong>Batch Processing</strong>: Web監視での一括データ処理</li>
+</ul>
+<h2 id="testing-strategy">Testing Strategy </h2>
+<h3 id="test-coverage-requirements">Test Coverage Requirements </h3>
+<p>実装済みテスト対象：</p>
+<ul>
+<li><strong>Manual Testing</strong>: 全機能の手動テスト</li>
+<li><strong>Browser Testing</strong>: Chrome最新版での動作確認</li>
+<li><strong>Integration Testing</strong>: chrome.storage.local との結合テスト</li>
+<li><strong>User Acceptance Testing</strong>: 実際のウディコンサイトでの動作検証</li>
+</ul>
+<h3 id="testing-approach">Testing Approach </h3>
+<ol>
+<li>
+<p><strong>Unit Testing</strong> (未実装)</p>
+<ul>
+<li>各クラスのメソッド単体テスト</li>
+<li>モック化による依存関係分離</li>
+</ul>
+</li>
+<li>
+<p><strong>Integration Testing</strong> (部分実装)</p>
+<ul>
+<li>chrome.storage.local 連携テスト</li>
+<li>Web監視システム結合テスト</li>
+</ul>
+</li>
+<li>
+<p><strong>End-to-End Testing</strong> (手動実装)</p>
+<ul>
+<li>評価入力フロー</li>
+<li>Web監視・通知フロー</li>
+<li>データエクスポート/インポートフロー</li>
+</ul>
+</li>
+<li>
+<p><strong>Performance Testing</strong> (手動実装)</p>
+<ul>
+<li>メモリリーク検証</li>
+<li>大量データでの性能測定</li>
+</ul>
+</li>
+</ol>
+<h3 id="cicd-pipeline-未実装">CI/CD Pipeline (未実装) </h3>
+<div class="mermaid">graph LR
+    A[Code Push] --&gt; B[Lint Check]
+    B --&gt; C[Unit Tests]
+    C --&gt; D[Build Extension]
+    D --&gt; E[Manual Testing]
+    E --&gt; F[Create Release Package]
+    F --&gt; G[Deploy to Website]
+</div><h2 id="documentation-generation-strategy">Documentation Generation Strategy </h2>
+<h3 id="シーケンス図生成アプローチ">シーケンス図生成アプローチ </h3>
+<p>要件定義に基づく5つの主要シーケンス図：</p>
+<ol>
+<li><strong>Web監視システムフロー</strong> - content.js → background.js → webMonitor.js → pageParser.js → updateManager.js</li>
+<li><strong>ポップアップ初期化フロー</strong> - popup.html → GameListManager → DataManager → YearManager → chrome.storage.local</li>
+<li><strong>作品詳細画面遷移フロー</strong> - GameListManager → Navigation → DataManager → UI更新</li>
+<li><strong>年度切り替えフロー</strong> - options.html → YearManager → データ移行 → UI更新</li>
+<li><strong>データエクスポート/インポートフロー</strong> - UI操作 → DataManager → ファイル処理 → chrome.storage.local</li>
+</ol>
+<h3 id="mermaid記法による可視化">Mermaid記法による可視化 </h3>
+<p>全シーケンス図をMermaid記法で記述し、GitHub/GitLab等での自動レンダリングに対応</p>
+<h3 id="ドキュメント構成">ドキュメント構成 </h3>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>アーキテクチャドキュメント/
+├── 01_概要.md              # システム概要・3層構成
+├── 02_データフロー.md       # chrome.storage.local中心フロー  
+├── 03_Web監視システム.md    # 自動監視シーケンス図
+├── 04_UI操作フロー.md       # ポップアップ・画面遷移
+├── 05_コンポーネント通信.md  # Service Worker通信・依存関係
+└── README.md               # 全体インデックス
+</code></pre>
+      </div>
+      
+      
+    
+    
+    <script type="module">
+// TODO: If ZenUML gets integrated into mermaid in the future,
+//      we can remove the following lines.
+
+
+var MERMAID_CONFIG = ({"startOnLoad":false});
+if (typeof MERMAID_CONFIG !== 'undefined') {
+  MERMAID_CONFIG.startOnLoad = false
+  MERMAID_CONFIG.cloneCssStyles = false
+  MERMAID_CONFIG.theme = "default"
+}
+
+mermaid.initialize(MERMAID_CONFIG || {})
+if (typeof(window['Reveal']) !== 'undefined') {
+  function mermaidRevealHelper(event) {
+    var currentSlide = event.currentSlide
+    var diagrams = currentSlide.querySelectorAll('.mermaid')
+    for (var i = 0; i < diagrams.length; i++) {
+      var diagram = diagrams[i]
+      if (!diagram.hasAttribute('data-processed')) {
+        mermaid.init(null, diagram, ()=> {
+          Reveal.slide(event.indexh, event.indexv)
+        })
+      }
+    }
+  }
+  Reveal.addEventListener('slidetransitionend', mermaidRevealHelper)
+  Reveal.addEventListener('ready', mermaidRevealHelper)
+  await mermaid.run({
+    nodes: document.querySelectorAll('.mermaid')
+  })
+} else {
+  await mermaid.run({
+    nodes: document.querySelectorAll('.mermaid')
+  })
+}
+</script>
+    
+    
+    
+  
+    </body></html>

@@ -71,10 +71,55 @@
     button.danger { background: #dc3545; }
     
     .file-input { margin: 10px 0; }
-    .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
-    .status.success { background: #d4edda; color: #155724; }
-    .status.error { background: #f8d7da; color: #721c24; }
-    .status.info { background: #d1ecf1; color: #0c5460; }
+    .status { padding: 10px; border-radius: 4px; margin: 10px 0; min-height: 20px; }
+    .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .status.error { 
+      background: #f8d7da; 
+      color: #721c24; 
+      border: 1px solid #f5c6cb; 
+      font-family: monospace; 
+      font-size: 12px; 
+      line-height: 1.4;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+    
+    .error-close-btn {
+      margin-left: 10px;
+      padding: 4px 8px;
+      background: #fff;
+      border: 1px solid #999;
+      cursor: pointer;
+      border-radius: 3px;
+      color: #000;
+      font-weight: bold;
+      font-size: 14px;
+      min-width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .error-close-btn:hover {
+      background: #f0f0f0;
+    }
+    
+    .external-link {
+      color: #667eea;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    
+    .external-link:hover {
+      background-color: #f0f4ff;
+      text-decoration: underline;
+    }
     
     .performance-section { margin-bottom: 15px; }
     .performance-section h4 { margin: 0 0 8px 0; color: #667eea; }
@@ -282,12 +327,21 @@
   <div class="section">
     <h2>ℹ️ 情報</h2>
     <p><strong>バージョン:</strong> <span id="version">読み込み中...</span></p>
+    
+    <div class="setting-item">
+      <h4>🔗 外部リンク</h4>
+      <div style="margin-top: 10px;">
+        <p><a href="https://silversecond.com/WolfRPGEditor/Contest/" target="_blank" class="external-link">🏆 ウディコン公式</a></p>
+        <p><a href="https://wudi-consuke.vercel.app/website/release/index.html" target="_blank" class="external-link">📖 『ウディこん助』紹介ページ</a></p>
+      </div>
+    </div>
   </div>
 
   <script src="js/constants.js"></script>
   <script src="js/errorHandler.js"></script>
   <script src="js/yearManager.js"></script>
   <script src="js/dataManager.js"></script>
+  <script src="js/fileValidator.js"></script>
   <script src="js/options.js"></script>
 </body>
 </html>

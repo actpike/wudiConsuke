@@ -593,16 +593,42 @@ async function saveSettings() {
   }
 }
 
-function showStatus(type, message, duration = 3000) {
+function showStatus(type, message, duration = null) {
   const statusDiv = document.getElementById('import-export-status');
   statusDiv.className = `status ${type}`;
-  statusDiv.textContent = message;
   
-  setTimeout(() => {
-    statusDiv.textContent = '';
-    statusDiv.className = 'status';
-  }, duration);
+  // エラーメッセージの場合は閉じるボタンを追加
+  if (type === 'error') {
+    statusDiv.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div style="flex: 1; white-space: pre-line;">${message}</div>
+        <button id="error-close-btn" class="error-close-btn">×</button>
+      </div>
+    `;
+    
+    // addEventListener方式でイベントを追加（CSP対応）
+    const closeBtn = document.getElementById('error-close-btn');
+    closeBtn.addEventListener('click', window.clearStatus);
+    
+    // エラーの場合はデフォルトで自動消去しない
+    if (duration !== null) {
+      setTimeout(() => window.clearStatus(), duration);
+    }
+  } else {
+    statusDiv.textContent = message;
+    // 成功・情報メッセージはデフォルト3秒で消去
+    const defaultDuration = duration !== null ? duration : 3000;
+    setTimeout(() => window.clearStatus(), defaultDuration);
+  }
 }
+
+// ステータスメッセージをクリアする関数（グローバルスコープ）
+window.clearStatus = function() {
+  const statusDiv = document.getElementById('import-export-status');
+  statusDiv.textContent = '';
+  statusDiv.innerHTML = '';
+  statusDiv.className = 'status';
+};
 
 // Web監視関連機能
 async function performManualMonitoring() {
@@ -794,22 +820,25 @@ async function clearAutoMonitorTime() {
   }
 }
 
-// JSONエクスポート関数
+// JSONエクスポート関数（新フォーマット対応）
 async function exportAsJSON() {
-  const result = await chrome.storage.local.get();
-  const exportData = {
-    ...result,
-    export_timestamp: new Date().toISOString(),
-    version: "1.0.3"
-  };
-
-  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `wodicon_data_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  try {
+    // dataManager.exportData()を使用して新フォーマットでエクスポート
+    const exportData = await window.gameDataManager.exportData();
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wodicon_data_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    console.log('📄 JSONエクスポート完了（新フォーマット）');
+  } catch (error) {
+    console.error('❌ JSONエクスポートエラー:', error);
+    showStatus('error', '❌ エクスポートに失敗しました: ' + error.message);
+  }
 }
 
 // 評価値のCSV出力用変換関数
@@ -894,38 +923,67 @@ async function exportAsCSV() {
   }
 }
 
-// JSONインポート関数
+// JSONインポート関数（検証機能強化版）
 async function importFromJSON(jsonString) {
-  const data = JSON.parse(jsonString);
-  await chrome.storage.local.set(data);
-  console.log('📄 JSON インポート完了');
+  try {
+    // ファイル検証実行
+    const validationResult = window.fileValidator.validateJsonFile(jsonString);
+    
+    if (!validationResult.valid) {
+      // 検証失敗時は詳細エラーメッセージを表示
+      const errorMessage = validationResult.errors.join('\n');
+      const summary = window.fileValidator.generateValidationSummary(validationResult, 'json');
+      
+      // エラーログ記録
+      window.errorHandler?.handleError(
+        new Error(`JSON validation failed: ${validationResult.errors[0]}`),
+        'json-import-validation'
+      );
+      
+      throw new Error(`${summary}\n\n詳細:\n${errorMessage}`);
+    }
+    
+    // 検証通過後、dataManagerのimportDataを使用
+    await window.gameDataManager.importData(validationResult.data);
+    
+    const summary = window.fileValidator.generateValidationSummary(validationResult, 'json');
+    console.log(`📄 ${summary}`);
+    
+  } catch (error) {
+    console.error('❌ JSONインポートエラー:', error);
+    throw error; // 上位でキャッチされてshowStatusに表示される
+  }
 }
 
-// CSVインポート関数
+// CSVインポート関数（検証機能強化版）
 async function importFromCSV(csvString) {
   try {
-    const lines = csvString.split('\n').map(line => line.trim()).filter(line => line && !line.startsWith('#'));
+    // ファイル検証実行
+    const validationResult = window.fileValidator.validateCsvFile(csvString);
     
-    if (lines.length < 2) {
-      throw new Error('CSVファイルの形式が正しくありません');
+    if (!validationResult.valid) {
+      // 検証失敗時は詳細エラーメッセージを表示
+      const errorMessage = validationResult.errors.join('\n');
+      const summary = window.fileValidator.generateValidationSummary(validationResult, 'csv');
+      
+      // エラーログ記録
+      window.errorHandler?.handleError(
+        new Error(`CSV validation failed: ${validationResult.errors[0]}`),
+        'csv-import-validation'
+      );
+      
+      throw new Error(`${summary}\n\n詳細:\n${errorMessage}`);
     }
-
-    // ヘッダー行をスキップ（1行目がヘッダー）
+    
+    // 検証通過後、CSVデータをゲームオブジェクトに変換
+    const lines = validationResult.data;
+    const headers = window.fileValidator.parseCsvLine(lines[0]);
     const dataLines = lines.slice(1);
     const games = [];
 
     for (let i = 0; i < dataLines.length; i++) {
-      const line = dataLines[i];
-      if (!line) continue;
-
-      // CSVパース（簡易版）
-      const fields = parseCSVLine(line);
+      const fields = window.fileValidator.parseCsvLine(dataLines[i]);
       
-      if (fields.length < 9) {
-        console.warn(`CSVの${i + 2}行目: フィールド数が不足しています`);
-        continue;
-      }
-
       const game = {
         id: `csv_import_temp_${Date.now()}_${i}`, // 仮ID（後で年度付きIDに変更）
         no: fields[0] || '',
@@ -934,7 +992,7 @@ async function importFromCSV(csvString) {
           熱中度: parseCSVRating(fields[2]),
           斬新さ: parseCSVRating(fields[3]),
           物語性: parseCSVRating(fields[4]),
-          画像音声: parseCSVRating(fields[5]), // 修正: 画像音響 → 画像音声
+          画像音声: parseCSVRating(fields[5]),
           遊びやすさ: parseCSVRating(fields[6]),
           その他: parseCSVRating(fields[7])
         },
@@ -980,11 +1038,13 @@ async function importFromCSV(csvString) {
 
     // 新しいCSVデータをインポート
     await window.gameDataManager.saveGames(gamesWithUpdatedIds);
-    console.log(`📄 CSV インポート完了: ${gamesWithUpdatedIds.length}件の作品データを【${currentYear}年】に上書き保存（ID再生成済み）`);
+    
+    const summary = window.fileValidator.generateValidationSummary(validationResult, 'csv');
+    console.log(`📄 ${summary} - 【${currentYear}年】に上書き保存（ID再生成済み）`);
     
   } catch (error) {
-    console.error('CSV インポートエラー:', error);
-    throw error;
+    console.error('❌ CSVインポートエラー:', error);
+    throw error; // 上位でキャッチされてshowStatusに表示される
   }
 }
 

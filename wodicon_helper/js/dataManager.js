@@ -322,82 +322,180 @@ class GameDataManager {
 
   // データエクスポート
   async exportData() {
-    const games = await this.getGames();
-    const settings = await this.getSettings();
-    const metadata = await this.getMetadata();
+    if (!window.yearManager) {
+      // レガシーモード: 従来の単一年度形式
+      const games = await this.getGames();
+      const settings = await this.getSettings();
+      const metadata = await this.getMetadata();
+      
+      return {
+        games,
+        settings,
+        metadata,
+        export_timestamp: new Date().toISOString(),
+        version: window.constants.VERSION_INFO.CURRENT
+      };
+    }
+
+    // 複数年度対応: 全年度データをエクスポート
+    const availableYears = await window.yearManager.getAvailableYears();
+    const years = {};
     
-    return {
-      games,
-      settings,
-      metadata,
+    console.log(`📤 複数年度エクスポート開始: ${availableYears.length}年分`);
+    
+    for (const year of availableYears) {
+      const yearData = await window.yearManager.getYearData(year);
+      if (yearData) {
+        years[year] = {
+          games: yearData.games || [],
+          settings: yearData.settings || {},
+          metadata: yearData.metadata || {}
+        };
+        console.log(`✅ ${year}年データ取得完了: ${yearData.games?.length || 0}件`);
+      } else {
+        console.warn(`⚠️ ${year}年のデータが取得できませんでした`);
+      }
+    }
+    
+    const exportData = {
+      format_version: "multi_year", // 新フォーマット識別子
+      years,
       export_timestamp: new Date().toISOString(),
-      version: window.constants.VERSION_INFO.CURRENT
+      version: window.constants.VERSION_INFO.CURRENT,
+      exported_years: availableYears,
+      total_years: availableYears.length
     };
+    
+    console.log(`📄 複数年度エクスポート完了: ${availableYears.length}年分`);
+    return exportData;
   }
 
-  // データインポート
+  // データインポート（複数年度対応）
   async importData(jsonData) {
     try {
       const data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
       
-      // 古いフォーマット（wodicon_games）を新フォーマット（games）に変換
-      let games = null;
-      if (data.games && Array.isArray(data.games)) {
-        // 新フォーマット
-        games = data.games;
-      } else if (data.wodicon_games && Array.isArray(data.wodicon_games)) {
-        // 古いフォーマット（互換性対応）
-        console.log('🔄 古いJSONフォーマットを検出、2025年データとして変換中...');
-        games = data.wodicon_games;
-        
-        // 古いフォーマットのメタデータも変換
-        if (data.wodicon_settings) data.settings = data.wodicon_settings;
-        if (data.wodicon_metadata) data.metadata = data.wodicon_metadata;
-        
-        // 古いフォーマットインポート時は削除済み年度リストをクリア
-        if (window.yearManager) {
-          await window.yearManager.clearDeletedYears();
-        }
-      } else {
-        throw new Error('Invalid data format: games array not found');
+      // 古いフォーマット検出と拒否（フォーマット構造による判定）
+      if (data.wodicon_games || data.wodicon_settings || data.wodicon_metadata) {
+        const error = new Error('古いフォーマットのファイルはサポートされていません。新しいフォーマットでエクスポートしたファイルを使用してください。');
+        window.errorHandler?.handleError(error, 'legacy-format-rejection');
+        throw error;
       }
       
-      // gamesを新しいdataオブジェクトに設定
-      data.games = games;
-
-      // 年度別対応インポート
-      if (window.yearManager) {
-        const yearData = await window.yearManager.getYearData();
-        if (yearData) {
-          yearData.games = data.games;
-          if (data.settings) yearData.settings = data.settings;
-          if (data.metadata) yearData.metadata = data.metadata;
-          await window.yearManager.setYearData(yearData);
-        } else {
-          // 年度データが存在しない場合は新規初期化
-          const currentYear = await window.yearManager.getCurrentYear();
-          await window.yearManager.initializeYear(currentYear);
-          const newYearData = await window.yearManager.getYearData();
-          newYearData.games = data.games;
-          if (data.settings) newYearData.settings = data.settings;
-          if (data.metadata) newYearData.metadata = data.metadata;
-          await window.yearManager.setYearData(newYearData);
-        }
-      } else {
-        // フォールバック: レガシー形式でインポート
-        await chrome.storage.local.set({
-          [this.LEGACY_STORAGE_KEY]: data.games,
-          [this.LEGACY_SETTINGS_KEY]: data.settings || {},
-          [this.LEGACY_METADATA_KEY]: data.metadata || {}
-        });
+      // 複数年度フォーマットの判定と処理
+      if (data.format_version === "multi_year" && data.years) {
+        return await this.importMultiYearData(data);
       }
-
-      await this.updateMetadata();
-      return true;
+      
+      // 単一年度フォーマット（後方互換性）
+      if (data.games && Array.isArray(data.games)) {
+        return await this.importSingleYearData(data);
+      }
+      
+      // 無効なフォーマット
+      const error = new Error('無効なデータ形式: 正しいファイルを使用してください。');
+      window.errorHandler?.handleError(error, 'invalid-data-format');
+      throw error;
+      
     } catch (error) {
       console.error('Failed to import data:', error);
-      return false;
+      throw error;
     }
+  }
+
+  // 複数年度データのインポート
+  async importMultiYearData(data) {
+    if (!window.yearManager) {
+      throw new Error('複数年度データのインポートには年度管理機能が必要です。');
+    }
+    
+    const years = data.years;
+    const yearKeys = Object.keys(years);
+    
+    console.log(`📥 複数年度インポート開始: ${yearKeys.length}年分`);
+    
+    let successCount = 0;
+    let errorCount = 0;
+    
+    for (const yearStr of yearKeys) {
+      const year = parseInt(yearStr);
+      const yearData = years[yearStr];
+      
+      try {
+        // 年度が存在しない場合は初期化
+        const availableYears = await window.yearManager.getAvailableYears();
+        if (!availableYears.includes(year)) {
+          console.log(`🆕 新年度初期化: ${year}`);
+          await window.yearManager.initializeYear(year);
+        }
+        
+        // 年度データの更新
+        const currentYearData = await window.yearManager.getYearData(year) || {};
+        currentYearData.games = yearData.games || [];
+        currentYearData.settings = yearData.settings || {};
+        currentYearData.metadata = yearData.metadata || {};
+        
+        await window.yearManager.setYearData(currentYearData, year);
+        
+        console.log(`✅ ${year}年データインポート完了: ${yearData.games?.length || 0}件`);
+        successCount++;
+        
+      } catch (error) {
+        console.error(`❌ ${year}年データインポートエラー:`, error);
+        errorCount++;
+      }
+    }
+    
+    await this.updateMetadata();
+    
+    console.log(`📄 複数年度インポート完了: 成功${successCount}年、失敗${errorCount}年`);
+    
+    if (errorCount > 0 && successCount === 0) {
+      throw new Error(`全ての年度データのインポートに失敗しました（${errorCount}年分）`);
+    }
+    
+    return true;
+  }
+
+  // 単一年度データのインポート（後方互換性）
+  async importSingleYearData(data) {
+    console.log('📥 単一年度データインポート（後方互換性モード）');
+    
+    const games = data.games;
+
+    // 年度別対応インポート
+    if (window.yearManager) {
+      const yearData = await window.yearManager.getYearData();
+      if (yearData) {
+        yearData.games = data.games;
+        if (data.settings) yearData.settings = data.settings;
+        if (data.metadata) yearData.metadata = data.metadata;
+        await window.yearManager.setYearData(yearData);
+      } else {
+        // 年度データが存在しない場合は新規初期化
+        const currentYear = await window.yearManager.getCurrentYear();
+        await window.yearManager.initializeYear(currentYear);
+        const newYearData = await window.yearManager.getYearData();
+        newYearData.games = data.games;
+        if (data.settings) newYearData.settings = data.settings;
+        if (data.metadata) newYearData.metadata = data.metadata;
+        await window.yearManager.setYearData(newYearData);
+      }
+    } else {
+      // フォールバック: レガシー形式でインポート
+      await chrome.storage.local.set({
+        [this.LEGACY_STORAGE_KEY]: data.games,
+        [this.LEGACY_SETTINGS_KEY]: data.settings || {},
+        [this.LEGACY_METADATA_KEY]: data.metadata || {}
+      });
+    }
+
+    await this.updateMetadata();
+    
+    const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : '現在';
+    console.log(`✅ ${currentYear}年データインポート完了: ${games.length}件`);
+    
+    return true;
   }
 
   // 評価完了チェック（定数使用）

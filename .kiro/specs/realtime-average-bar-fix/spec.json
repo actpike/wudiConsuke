@@ -1,0 +1,23 @@
+{
+  "feature_name": "realtime-average-bar-fix",
+  "project_description": "個別詳細画面の平均バーにて、リアルタイム反映が適用されていない。この修正を行いたい",
+  "created_at": "2025-01-27T16:35:00.000Z",
+  "updated_at": "2025-01-27T16:40:00.000Z",
+  "language": "japanese",
+  "phase": "tasks-generated",
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "design": {
+      "generated": true,
+      "approved": true
+    },
+    "tasks": {
+      "generated": true,
+      "approved": true
+    }
+  },
+  "ready_for_implementation": true
+}

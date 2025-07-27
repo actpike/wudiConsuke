@@ -94,6 +94,54 @@ zipファイル名: WudiConsuke_release_v[version].zip
 - **上書きインストールの利便性**: ユーザーが常に同じフォルダ名「WudiConsuke」に解凍することで、データ保持しながらアップグレード可能
 - **バージョン管理**: zipファイル名にバージョンを含めることで、開発者側でのバージョン追跡が容易
 
+## Claude Code Spec-Driven Development
+
+**仕様駆動開発**: claude-code-specのKiroパッケージを活用した体系的開発プロセス
+
+### 導入済みコンポーネント
+- **Kiroパッケージ**: `.claude/commands/kiro/` - 仕様駆動開発のSlash Commands
+- **プロジェクト舵取り**: `.kiro/steering/` - プロジェクト知識の体系化
+- **仕様管理**: `.kiro/specs/` - 機能仕様の段階的管理
+- **インタラクティブ承認**: 各フェーズでのユーザー確認プロセス
+
+### 開発ワークフロー
+
+#### Phase 0: プロジェクト舵取り（推奨）
+```bash
+/kiro:steering          # 舵取りドキュメント自動生成・更新
+/kiro:steering-custom   # 専門コンテキスト用カスタム舵取り
+```
+**目的**: プロジェクト知識の体系化（product.md, tech.md, structure.md）
+
+#### Phase 1: 仕様作成（段階的承認プロセス）
+```bash
+/kiro:spec-init [project-description]    # 詳細なプロジェクト説明から仕様構造初期化
+/kiro:spec-requirements [feature-name]   # EARS形式要件定義生成
+/kiro:spec-design [feature-name]         # 技術設計生成（インタラクティブ承認）
+/kiro:spec-tasks [feature-name]          # 実装タスク生成（インタラクティブ承認）
+```
+**特徴**: 
+- **EARS形式**: "WHEN/IF/WHILE/WHERE... THEN system SHALL..." 構文
+- **インタラクティブ承認**: 手動spec.json編集不要、確認プロンプトで自動進行
+- **日本語対応**: spec.jsonのlanguage設定に基づく多言語対応
+
+#### Phase 2: 進捗追跡
+```bash
+/kiro:spec-status [feature-name]         # 現在の進捗とフェーズ確認
+```
+
+### 重要原則
+- **段階的承認**: 各フェーズで人間による確認・承認が必要
+- **インタラクティブ承認**: "requirements.mdをレビューしましたか？ [y/N]" 形式
+- **品質重視**: 仕様の完成度を高めてから実装に進む
+- **文書化**: `.kiro/specs/` および `.kiro/steering/` で管理
+- **セキュリティ**: 機密情報を舵取りドキュメントに含めない原則
+
+### アクティブな仕様
+- **wodicon-architecture-documentation**: ウディこん助Chrome拡張機能のアーキテクチャドキュメント作成（シーケンス図、データフロー可視化）
+- **wudiConsuke-documentation**: ウディこん助Chrome拡張機能のアーキテクチャドキュメント作成（主要コンポーネント間相互作用、Web監視システム、UI操作フロー）
+- **realtime-average-bar-fix**: 個別詳細画面の平均バーリアルタイム反映機能の修正（navigation.js バグ修正）
+
 ## SOW作成ガイドライン
 
 **役割:** 経験豊富なプロジェクトマネージャーとして、明確で包括的なSOWを作成
