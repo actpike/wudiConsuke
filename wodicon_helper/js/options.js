@@ -86,7 +86,6 @@ async function loadBasicSettings() {
     // 通知設定（新しい初期値）
     setElementValue('notify-new-works', updateSettings.showNewWorks !== false);           // チェックする
     setElementValue('notify-updated-works', updateSettings.showUpdatedWorks !== false);  // チェックする
-    setElementValue('max-notifications', updateSettings.maxNotifications || 5, 'value');
 
     // 最終監視時刻の表示
     updateLastMonitorTime(webMonitorSettings.lastCheckTime);
@@ -267,7 +266,6 @@ function setupEventListeners() {
             enabled: true,
             showNewWorks: true,
             showUpdatedWorks: true,
-            maxNotifications: 5,
             soundEnabled: false
           }
         };
@@ -318,7 +316,7 @@ function setupEventListeners() {
   
 
     // 設定変更時の自動保存（Web自動監視設定を除外）
-    ['enable-notifications', 'notify-new-works', 'notify-updated-works', 'max-notifications',
+    ['enable-notifications', 'notify-new-works', 'notify-updated-works',
      'enable-auto-monitoring', 'enable-content-auto-monitoring'].forEach(id => {
       const element = document.getElementById(id);
       if (element) {
@@ -555,7 +553,6 @@ async function saveSettings() {
       enabled: document.getElementById('enable-notifications').checked,
       showNewWorks: document.getElementById('notify-new-works').checked,
       showUpdatedWorks: document.getElementById('notify-updated-works').checked,
-      maxNotifications: parseInt(document.getElementById('max-notifications').value),
       soundEnabled: false
     };
 

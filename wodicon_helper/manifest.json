@@ -7,8 +7,7 @@
   "permissions": [
     "storage",
     "notifications",
-    "activeTab",
-    "downloads"
+    "activeTab"
   ],
   
   "host_permissions": [

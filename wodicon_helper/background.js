@@ -84,8 +84,7 @@ async function initializeDefaultSettings() {
       enabled: true,
       showNewWorks: true,
       showUpdatedWorks: true,
-      soundEnabled: false,
-      maxNotifications: 5
+      soundEnabled: false
     };
     
     // 既存設定をチェックして、未設定の場合のみ初期化

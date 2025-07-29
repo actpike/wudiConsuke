@@ -7,8 +7,7 @@ class UpdateManager {
       enabled: true,
       showNewWorks: true,
       showUpdatedWorks: true,
-      soundEnabled: false,
-      maxNotifications: 5
+      soundEnabled: false
     };
     
     this.updateMarkers = new Map(); // 更新マーカー管理
@@ -261,28 +260,16 @@ class UpdateManager {
         }
       }
 
-      let notificationCount = 0;
-      const maxNotifications = this.notificationSettings.maxNotifications;
-
       // 新規作品通知
       if (this.notificationSettings.showNewWorks && changes.newWorks.length > 0) {
-        const newWorksCount = Math.min(changes.newWorks.length, maxNotifications - notificationCount);
-        
-        if (newWorksCount > 0) {
-          await this.sendNewWorksNotification(changes.newWorks.slice(0, newWorksCount));
-          notificationCount += newWorksCount;
-          result.sent += newWorksCount;
-        }
+        await this.sendNewWorksNotification(changes.newWorks, changes.newWorks.length);
+        result.sent += 1; // 通知件数としては1件
       }
 
       // 更新作品通知
-      if (this.notificationSettings.showUpdatedWorks && changes.updatedWorks.length > 0 && notificationCount < maxNotifications) {
-        const updatedWorksCount = Math.min(changes.updatedWorks.length, maxNotifications - notificationCount);
-        
-        if (updatedWorksCount > 0) {
-          await this.sendUpdatedWorksNotification(changes.updatedWorks.slice(0, updatedWorksCount));
-          result.sent += updatedWorksCount;
-        }
+      if (this.notificationSettings.showUpdatedWorks && changes.updatedWorks.length > 0) {
+        await this.sendUpdatedWorksNotification(changes.updatedWorks, changes.updatedWorks.length);
+        result.sent += 1; // 通知件数としては1件
       }
 
       this.lastNotificationTime = new Date().toISOString();
@@ -296,16 +283,16 @@ class UpdateManager {
   }
 
   // 新規作品通知
-  async sendNewWorksNotification(newWorks) {
+  async sendNewWorksNotification(newWorks, actualCount) {
     try {
-      const title = newWorks.length === 1 
+      const title = actualCount === 1 
         ? `🎮 新作品発見: ${newWorks[0].title}`
-        : `🎮 新作品 ${newWorks.length}件を発見`;
+        : `🎮 新作品 ${actualCount}件を発見`;
 
-      const message = newWorks.length === 1
+      const message = actualCount === 1
         ? `作者: ${newWorks[0].author || '不明'}`
         : newWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n') +
-          (newWorks.length > 3 ? `\n...他${newWorks.length - 3}件` : '');
+          (actualCount > 3 ? `\n...他${actualCount - 3}件` : '');
 
       await chrome.notifications.create(`new_works_${Date.now()}`, {
         type: 'basic',
@@ -315,7 +302,7 @@ class UpdateManager {
         priority: 1
       });
 
-      console.log(`🔔 新規作品通知送信: ${newWorks.length}件`);
+      console.log(`🔔 新規作品通知送信: ${actualCount}件`);
 
     } catch (error) {
       console.error('❌ 新規作品通知エラー:', error);
@@ -324,16 +311,16 @@ class UpdateManager {
   }
 
   // 更新作品通知
-  async sendUpdatedWorksNotification(updatedWorks) {
+  async sendUpdatedWorksNotification(updatedWorks, actualCount) {
     try {
-      const title = updatedWorks.length === 1
+      const title = actualCount === 1
         ? `🔄 作品更新: ${updatedWorks[0].title}`
-        : `🔄 作品更新 ${updatedWorks.length}件を検出`;
+        : `🔄 作品更新 ${actualCount}件を検出`;
 
-      const message = updatedWorks.length === 1
+      const message = actualCount === 1
         ? `変更内容: ${this.formatChangeType(updatedWorks[0].changeType)}`
         : updatedWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n') +
-          (updatedWorks.length > 3 ? `\n...他${updatedWorks.length - 3}件` : '');
+          (actualCount > 3 ? `\n...他${actualCount - 3}件` : '');
 
       await chrome.notifications.create(`updated_works_${Date.now()}`, {
         type: 'basic',
@@ -343,7 +330,7 @@ class UpdateManager {
         priority: 1
       });
 
-      console.log(`🔔 更新作品通知送信: ${updatedWorks.length}件`);
+      console.log(`🔔 更新作品通知送信: ${actualCount}件`);
 
     } catch (error) {
       console.error('❌ 更新作品通知エラー:', error);
@@ -544,14 +531,6 @@ class UpdateManager {
     return true;
   }
 
-  async setMaxNotifications(max) {
-    if (max >= 1 && max <= 10) {
-      this.notificationSettings.maxNotifications = max;
-      await this.saveSettings();
-      return true;
-    }
-    return false;
-  }
 
   // ステータス取得
   getStatus() {

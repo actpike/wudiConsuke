@@ -36,7 +36,6 @@
 - **storage**: 作品の評価・感想・プレイ状況をローカル保存
 - **notifications**: 新規・更新作品のデスクトップ通知
 - **activeTab**: アクティブタブの情報取得、手動監視時のページ解析
-- **downloads**: 作品データのエクスポート/インポート機能
 - **host_permissions**: ウディコン公式サイト(silversecond.com)からの情報取得
 
 **監視機能**: サイト訪問時・ポップアップ開時・手動実行で新作品チェック
@@ -69,7 +68,7 @@
 ### 使用技術
 - **フロントエンド**: Vanilla JavaScript, CSS3, HTML5
 - **ストレージ**: chrome.storage.local（5MB制限）
-- **権限**: storage, notifications, activeTab, downloads, host_permissions
+- **権限**: storage, notifications, activeTab, host_permissions
 
 ## 📝 ライセンス
 
@@ -112,6 +111,7 @@
 - CSV対応データエクスポート・インポート機能の追加
 - 個別作品画面にて、平均バーのリアルタイム更新
 - 『その他』>0かつ『感想』未記入時、それを薄橙色にて明示化
+- 新規・更新通知に関する不具合修正（実際よりも少なく表示されるケースがある）
 - その他、細かな修正（オプションにリンク追加、UI調整等）
 
 ### v1.0.1 (2025/7/23)
