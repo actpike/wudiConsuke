@@ -262,7 +262,6 @@ class UpdateManager {
 
       // 新規作品通知
       if (this.notificationSettings.showNewWorks && changes.newWorks.length > 0) {
-        console.log(`🔍 デバッグ: 新規作品通知 - 実際の件数=${changes.newWorks.length}, 配列長=${changes.newWorks.length}`);
         await this.sendNewWorksNotification(changes.newWorks, changes.newWorks.length);
         result.sent += 1; // 通知件数としては1件
       }
@@ -286,8 +285,6 @@ class UpdateManager {
   // 新規作品通知
   async sendNewWorksNotification(newWorks, actualCount) {
     try {
-      console.log(`🔍 デバッグ: sendNewWorksNotification呼び出し - newWorks.length=${newWorks.length}, actualCount=${actualCount}`);
-      
       const title = actualCount === 1 
         ? `🎮 新作品発見: ${newWorks[0].title}`
         : `🎮 新作品 ${actualCount}件を発見`;
@@ -296,8 +293,6 @@ class UpdateManager {
         ? `作者: ${newWorks[0].author || '不明'}`
         : newWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n') +
           (actualCount > 3 ? `\n...他${actualCount - 3}件` : '');
-
-      console.log(`🔍 デバッグ: 通知タイトル="${title}", メッセージ="${message}"`);
 
       await chrome.notifications.create(`new_works_${Date.now()}`, {
         type: 'basic',
