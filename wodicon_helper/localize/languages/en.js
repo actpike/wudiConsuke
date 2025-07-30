@@ -159,6 +159,16 @@ const enResources = {
       saveStatus: '💾 Save Status'
     },
 
+    // Rating Category Translation Map
+    categoryMap: {
+      '熱中度': 'Engagement',
+      '斬新さ': 'Novelty',
+      '物語性': 'Story',
+      '画像音声': 'Graphics/Audio',
+      '遊びやすさ': 'Usability',
+      'その他': 'Other'
+    },
+
     // Tooltips
     tooltips: {
       settings: 'Settings',
