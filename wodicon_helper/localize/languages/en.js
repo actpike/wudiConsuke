@@ -24,7 +24,7 @@ const enResources = {
       help: 'Help',
       close: 'Close',
       confirm: 'Confirm',
-      back: 'Back',
+      back: '👈Back',
       next: 'Next',
       retry: 'Retry',
       refresh: 'Refresh',
@@ -32,7 +32,8 @@ const enResources = {
       monitorStatus: 'Monitor Status',
       backgroundUpdate: 'Background Update',
       fillAllForms: 'Fill Voting Forms with Rated Games',
-      clearUpdates: 'Clear Updates'
+      clearUpdates: 'Clear Updates',
+      voteForm: 'Fill Vote Form'
     },
 
     // Labels & Items
@@ -141,6 +142,14 @@ const enResources = {
       author: 'Enter author name',
       ratingIndicator: 'Rating indicators will be displayed here',
       totalRatingIndicator: 'Overall rating indicator will be displayed here'
+    },
+
+    // Dynamic String Templates
+    templates: {
+      totalRating: '{score}/{maxScore} pts',
+      characterCount: '{count}/{maxCount} chars',
+      saveReady: '💾 Ready',
+      saveStatus: '💾 Save Status'
     },
 
     // Tooltips

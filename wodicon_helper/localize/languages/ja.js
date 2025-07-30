@@ -24,7 +24,7 @@ const jaResources = {
       help: 'ヘルプ',
       close: '閉じる',
       confirm: '確認',
-      back: '戻る',
+      back: '👈戻る',
       next: '次へ',
       retry: '再試行',
       refresh: '更新',
@@ -32,7 +32,8 @@ const jaResources = {
       monitorStatus: '監視状態確認',
       backgroundUpdate: 'バックグラウンド更新',
       fillAllForms: '評価済み作品を投票フォームに一括入力',
-      clearUpdates: '更新クリア'
+      clearUpdates: '更新クリア',
+      voteForm: '投票フォームに入力'
     },
 
     // ラベル・項目名
@@ -141,6 +142,14 @@ const jaResources = {
       author: '作者名を入力',
       ratingIndicator: 'ここに評価指標が表示されます',
       totalRatingIndicator: '総合評価指標がここに表示されます'
+    },
+
+    // 動的文字列テンプレート
+    templates: {
+      totalRating: '{score}/{maxScore}点',
+      characterCount: '{count}/{maxCount}字',
+      saveReady: '💾 準備完了',
+      saveStatus: '💾 保存状態'
     },
 
     // ツールチップ

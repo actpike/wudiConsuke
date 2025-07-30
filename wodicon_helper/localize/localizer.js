@@ -215,6 +215,11 @@ class Localizer {
           // 通常のテキスト要素
           element.textContent = text;
         }
+        
+        // title属性の更新（ツールチップ・ホバー表現）
+        if (element.hasAttribute('title')) {
+          element.title = text;
+        }
       });
 
       console.log(`DOM updated with ${elements.length} elements`);
@@ -222,6 +227,16 @@ class Localizer {
     } catch (error) {
       console.error('DOM update failed:', error);
     }
+  }
+
+  /**
+   * 動的文字列生成（テンプレート対応）
+   * @param {string} key - テンプレートキー（例: 'templates.totalRating'）
+   * @param {Object} params - 置換パラメータ
+   * @returns {string} 置換済み文字列
+   */
+  getTemplate(key, params = {}) {
+    return this.getText(key, params);
   }
 
   /**
