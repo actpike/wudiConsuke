@@ -319,8 +319,15 @@ class NavigationController {
 
       // タイトルと基本情報
       document.getElementById('detail-title').textContent = `No.${game.no} ${game.title}`;
-      document.getElementById('detail-author').textContent = `作者: ${game.author}`;
-      document.getElementById('detail-genre').textContent = `ジャンル: ${game.genre}`;
+      
+      // 安全にローカライザーを使用して作者・ジャンル表示
+      const authorLabel = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.labels.author') : '作者';
+      const genreLabel = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.labels.genre') : 'ジャンル';
+      
+      document.getElementById('detail-author').textContent = `${authorLabel}: ${game.author}`;
+      document.getElementById('detail-genre').textContent = `${genreLabel}: ${game.genre}`;
       
       // 更新日情報
       const versionElement = document.getElementById('detail-version');
@@ -342,12 +349,18 @@ class NavigationController {
           try {
             const updateDate = new Date(lastUpdateValue);
             if (!isNaN(updateDate.getTime())) {
-              updateText = `更新日: ${updateDate.toLocaleDateString('ja-JP')}`;
+              const updateLabel = (window.localizer && window.localizer.getText) ? 
+                window.localizer.getText('ui.labels.updateDate') : '更新日';
+              updateText = `${updateLabel}: ${updateDate.toLocaleDateString('ja-JP')}`;
             } else {
-              updateText = `更新日: ${lastUpdateValue}`;
+              const updateLabel = (window.localizer && window.localizer.getText) ? 
+                window.localizer.getText('ui.labels.updateDate') : '更新日';
+              updateText = `${updateLabel}: ${lastUpdateValue}`;
             }
           } catch (error) {
-            updateText = `更新日: ${lastUpdateValue}`;
+            const updateLabel = (window.localizer && window.localizer.getText) ? 
+              window.localizer.getText('ui.labels.updateDate') : '更新日';
+            updateText = `${updateLabel}: ${lastUpdateValue}`;
           }
         } else {
           // ウディコン形式やその他の文字列は「→」以降を除去して表示
@@ -355,7 +368,9 @@ class NavigationController {
           if (typeof lastUpdateValue === 'string' && lastUpdateValue.includes('→')) {
             cleanUpdateValue = lastUpdateValue.split('→')[0].trim();
           }
-          updateText = `更新日: ${cleanUpdateValue}`;
+          const updateLabel = (window.localizer && window.localizer.getText) ? 
+            window.localizer.getText('ui.labels.updateDate') : '更新日';
+          updateText = `${updateLabel}: ${cleanUpdateValue}`;
         }
         
         console.log(`📅 詳細画面表示: ${updateText}`);
@@ -407,8 +422,18 @@ class NavigationController {
       
       // 基本情報を設定（取得できた場合は使用、そうでなければ不明）
       const title = gameInfo ? `No.${gameInfo.no} ${gameInfo.title}` : '作品詳細 - 読み込み失敗';
-      const author = gameInfo ? `作者: ${gameInfo.author}` : '作者: 不明';
-      const genre = gameInfo ? `ジャンル: ${gameInfo.genre}` : 'ジャンル: 不明';
+      
+      // 安全にローカライザーを使用してラベル取得
+      const authorLabel = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.labels.author') : '作者';
+      const genreLabel = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.labels.genre') : 'ジャンル';
+      
+      const unknownLabel = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.labels.unknown') : '不明';
+      
+      const author = gameInfo ? `${authorLabel}: ${gameInfo.author}` : `${authorLabel}: ${unknownLabel}`;
+      const genre = gameInfo ? `${genreLabel}: ${gameInfo.genre}` : `${genreLabel}: ${unknownLabel}`;
       
       document.getElementById('detail-title').textContent = title;
       document.getElementById('detail-author').textContent = author;
@@ -422,12 +447,18 @@ class NavigationController {
           try {
             const updateDate = new Date(gameInfo.lastUpdate);
             if (!isNaN(updateDate.getTime())) {
-              versionElement.textContent = `更新日: ${updateDate.toLocaleDateString('ja-JP')}`;
+              const updateLabel = (window.localizer && window.localizer.getText) ? 
+                window.localizer.getText('ui.labels.updateDate') : '更新日';
+              versionElement.textContent = `${updateLabel}: ${updateDate.toLocaleDateString('ja-JP')}`;
             } else {
-              versionElement.textContent = `更新日: ${gameInfo.lastUpdate}`;
+              const updateLabel = (window.localizer && window.localizer.getText) ? 
+                window.localizer.getText('ui.labels.updateDate') : '更新日';
+              versionElement.textContent = `${updateLabel}: ${gameInfo.lastUpdate}`;
             }
           } catch (error) {
-            versionElement.textContent = `更新日: ${gameInfo.lastUpdate}`;
+            const updateLabel = (window.localizer && window.localizer.getText) ? 
+              window.localizer.getText('ui.labels.updateDate') : '更新日';
+            versionElement.textContent = `${updateLabel}: ${gameInfo.lastUpdate}`;
           }
         } else {
           // ウディコン形式やその他の文字列は「→」以降を除去して表示
@@ -435,7 +466,9 @@ class NavigationController {
           if (typeof gameInfo.lastUpdate === 'string' && gameInfo.lastUpdate.includes('→')) {
             cleanUpdateValue = gameInfo.lastUpdate.split('→')[0].trim();
           }
-          versionElement.textContent = `更新日: ${cleanUpdateValue}`;
+          const updateLabel = (window.localizer && window.localizer.getText) ? 
+            window.localizer.getText('ui.labels.updateDate') : '更新日';
+          versionElement.textContent = `${updateLabel}: ${cleanUpdateValue}`;
         }
       } else {
         versionElement.textContent = '';

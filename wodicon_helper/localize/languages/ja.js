@@ -51,6 +51,12 @@ const jaResources = {
       ratingHeatShort: '熱',
       ratingNoveltyShort: '斬',
       ratingStoryShort: '物',
+      
+      // 詳細画面項目
+      author: '作者',
+      genre: 'ジャンル', 
+      updateDate: '更新日',
+      unknown: '不明',
       ratingGraphicsAudioShort: '画',
       ratingUsabilityShort: '遊',
       ratingOtherShort: '他',

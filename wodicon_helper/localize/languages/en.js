@@ -51,6 +51,12 @@ const enResources = {
       ratingHeatShort: 'Eng',
       ratingNoveltyShort: 'Nov',
       ratingStoryShort: 'Sto',
+      
+      // Detail page items
+      author: 'Author',
+      genre: 'Genre',
+      updateDate: 'Updated',
+      unknown: 'Unknown',
       ratingGraphicsAudioShort: 'G/A',
       ratingUsabilityShort: 'Use',
       ratingOtherShort: 'Oth',
