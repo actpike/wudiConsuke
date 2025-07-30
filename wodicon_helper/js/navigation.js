@@ -12,6 +12,9 @@ class NavigationController {
       searchQuery: '',
       scrollPosition: 0
     };
+    
+    // ツールチップ機能用プロパティ
+    this.currentTooltip = null;
   }
 
   // 初期化
@@ -113,6 +116,58 @@ class NavigationController {
 
     // フォルダ関連ボタンは削除済みのためコメントアウト
     // フォルダ関連イベントリスナーは削除済み（未使用コードクリーンアップ）
+    
+    // 評価ラベルホバー機能のイベントリスナー設定
+    this.setupRatingLabelListeners();
+  }
+
+  // 評価ラベルホバー機能のイベントリスナー設定
+  setupRatingLabelListeners() {
+    // ラベルホバー時のツールチップ表示
+    document.addEventListener('mouseenter', (e) => {
+      if (e.target.classList.contains('rating-label')) {
+        this.showTooltip(e.target, e.target.dataset.category);
+      }
+    }, true);
+
+    document.addEventListener('mouseleave', (e) => {
+      if (e.target.classList.contains('rating-label')) {
+        this.hideTooltip();
+      }
+    }, true);
+  }
+
+  // ツールチップ表示
+  showTooltip(labelElement, category) {
+    this.hideTooltip();
+    
+    const tooltipText = window.constants.RATING_HELPERS.getTooltipText(category);
+    const tooltip = document.createElement('div');
+    tooltip.className = 'rating-tooltip';
+    tooltip.textContent = tooltipText;
+    
+    document.body.appendChild(tooltip);
+    
+    const labelRect = labelElement.getBoundingClientRect();
+    const left = labelRect.right + 10;
+    const top = labelRect.top - 10;
+    
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+    
+    requestAnimationFrame(() => {
+      tooltip.classList.add('show');
+    });
+    
+    this.currentTooltip = tooltip;
+  }
+
+  // ツールチップ非表示
+  hideTooltip() {
+    if (this.currentTooltip) {
+      this.currentTooltip.remove();
+      this.currentTooltip = null;
+    }
   }
 
   // メイン画面表示
