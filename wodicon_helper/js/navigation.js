@@ -965,13 +965,6 @@ class NavigationController {
     
     document.getElementById('total-rating').textContent = total;
     
-    // 星表示（評価済み項目のみで計算）
-    if (ratedCount > 0) {
-      const stars = Math.round(total / (ratedCount * 2)); // 評価済み項目の平均を5段階に変換
-      document.getElementById('rating-stars').textContent = '⭐'.repeat(Math.min(stars, 5));
-    } else {
-      document.getElementById('rating-stars').textContent = '';
-    }
   }
 
   // 文字数カウント更新
