@@ -144,7 +144,33 @@ class NavigationController {
   showTooltip(labelElement, category) {
     this.hideTooltip();
     
-    const tooltipText = window.constants.RATING_HELPERS.getTooltipText(category);
+    // 安全にローカライザーからツールチップテキストを取得
+    let tooltipText = `${category}の評価指標`;
+    try {
+      if (window.localizer && window.localizer.resources) {
+        const resources = window.localizer.resources;
+        
+        // カテゴリ名をローカライズ
+        const categoryMap = resources.categoryMap || {};
+        const displayCategory = categoryMap[category] || category;
+        
+        // ツールチップ用の説明文を取得
+        const tooltipResources = resources.tooltips || {};
+        const categoryTooltip = tooltipResources[category] || tooltipResources[displayCategory];
+        
+        if (categoryTooltip) {
+          tooltipText = categoryTooltip;
+        } else {
+          // フォールバック：カテゴリ名 + 説明
+          const currentLang = window.localizer.getCurrentLanguage();
+          const suffix = currentLang === 'en' ? ' evaluation criteria' : 'の評価指標';
+          tooltipText = `${displayCategory}${suffix}`;
+        }
+      }
+    } catch (error) {
+      console.warn('Localizer error in showTooltip, using fallback:', error);
+    }
+    
     const tooltip = document.createElement('div');
     tooltip.className = 'rating-tooltip';
     tooltip.textContent = tooltipText;
@@ -178,14 +204,41 @@ class NavigationController {
     const displayElement = document.getElementById('rating-indicator-display');
     if (!displayElement) return;
 
-    const lang = window.constants.RATING_HELPERS.getCurrentLanguage();
-    const indicators = window.constants.RATING_INDICATORS[lang];
-    
-    if (indicators && indicators[category] && indicators[category][value]) {
-      displayElement.textContent = `${category}：${indicators[category][value]}`;
-      displayElement.classList.add('show');
-    } else {
-      displayElement.textContent = 'ここに評価指標が表示されます';
+    // 安全にローカライザーから評価指標を取得
+    try {
+      if (!window.localizer || !window.localizer.resources) {
+        displayElement.textContent = `${category}：評価指標を表示`;
+        displayElement.classList.remove('show');
+        return;
+      }
+      
+      const resources = window.localizer.resources;
+      
+      // カテゴリ名をローカライズ（categoryMapを使用）
+      const categoryMap = resources.categoryMap || {};
+      const displayCategory = categoryMap[category] || category;
+      
+      // 評価指標を取得
+      const ratingResources = resources.ratings;
+      if (ratingResources && ratingResources.indicators && 
+          ratingResources.indicators[displayCategory] && 
+          ratingResources.indicators[displayCategory][value]) {
+        
+        // テンプレートフォーマット（ローカライゼーション対応）
+        const currentLang = window.localizer.getCurrentLanguage();
+        const separator = currentLang === 'en' ? ': ' : '：';
+        
+        displayElement.textContent = `${displayCategory}${separator}${ratingResources.indicators[displayCategory][value]}`;
+        displayElement.classList.add('show');
+      } else {
+        const placeholder = window.localizer.getText('ui.placeholders.ratingIndicator');
+        displayElement.textContent = placeholder;
+        displayElement.classList.remove('show');
+      }
+      
+    } catch (error) {
+      console.warn('Localizer error in updateRatingIndicatorDisplay, using fallback:', error);
+      displayElement.textContent = `${category}：評価指標を表示`;
       displayElement.classList.remove('show');
     }
   }
@@ -320,14 +373,11 @@ class NavigationController {
       // タイトルと基本情報
       document.getElementById('detail-title').textContent = `No.${game.no} ${game.title}`;
       
-      // 安全にローカライザーを使用して作者・ジャンル表示
+      // 安全にローカライザーを使用して作者表示
       const authorLabel = (window.localizer && window.localizer.getText) ? 
         window.localizer.getText('ui.labels.author') : '作者';
-      const genreLabel = (window.localizer && window.localizer.getText) ? 
-        window.localizer.getText('ui.labels.genre') : 'ジャンル';
       
       document.getElementById('detail-author').textContent = `${authorLabel}: ${game.author}`;
-      document.getElementById('detail-genre').textContent = `${genreLabel}: ${game.genre}`;
       
       // 更新日情報
       const versionElement = document.getElementById('detail-version');
@@ -426,18 +476,14 @@ class NavigationController {
       // 安全にローカライザーを使用してラベル取得
       const authorLabel = (window.localizer && window.localizer.getText) ? 
         window.localizer.getText('ui.labels.author') : '作者';
-      const genreLabel = (window.localizer && window.localizer.getText) ? 
-        window.localizer.getText('ui.labels.genre') : 'ジャンル';
       
       const unknownLabel = (window.localizer && window.localizer.getText) ? 
         window.localizer.getText('ui.labels.unknown') : '不明';
       
       const author = gameInfo ? `${authorLabel}: ${gameInfo.author}` : `${authorLabel}: ${unknownLabel}`;
-      const genre = gameInfo ? `${genreLabel}: ${gameInfo.genre}` : `${genreLabel}: ${unknownLabel}`;
       
       document.getElementById('detail-title').textContent = title;
       document.getElementById('detail-author').textContent = author;
-      document.getElementById('detail-genre').textContent = genre;
       
       // 更新日情報
       const versionElement = document.getElementById('detail-version');
