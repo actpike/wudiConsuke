@@ -4,6 +4,16 @@
  */
 
 const jaResources = {
+  // 評価カテゴリ翻訳マップ (トップレベルでアクセス容易)
+  categoryMap: {
+    '熱中度': '熱中度',
+    '斬新さ': '斬新さ',
+    '物語性': '物語性',
+    '画像音声': '画像音声',
+    '遊びやすさ': '遊びやすさ',
+    'その他': 'その他'
+  },
+
   // UI要素
   ui: {
     // ヘッダー
@@ -65,7 +75,7 @@ const jaResources = {
       gameTitle: '作品名',
       author: '作者',
       genre: 'ジャンル',
-      lastUpdate: '最終更新',
+      lastUpdate: '更新',
       playStatus: 'プレイ状況',
       totalRating: '合計',
       
@@ -87,7 +97,8 @@ const jaResources = {
       characterCount: '文字数',
       maxCharacters: '2000字',
       language: '言語',
-      options: 'オプション'
+      options: 'オプション',
+      average: '平均'
     },
 
     // セクションタイトル
@@ -159,15 +170,23 @@ const jaResources = {
       saveStatus: '💾 保存状態'
     },
 
-    // 評価カテゴリ翻訳マップ
-    categoryMap: {
-      '熱中度': '熱中度',
-      '斬新さ': '斬新さ',
-      '物語性': '物語性',
-      '画像音声': '画像音声',
-      '遊びやすさ': '遊びやすさ',
-      'その他': 'その他'
+    // ステータスメッセージ
+    status: {
+      loadComplete: '💾 読み込み完了',
+      loadError: '❌ 読み込み失敗・新規作成',
+      saving: '💾 保存中...',
+      saveComplete: '✅ 保存完了',
+      saveError: '❌ 保存失敗',
+      hasChanges: '💾 変更は自動的に保存されます',
+      ready: '💾 準備完了',
+      confirmReset: '未保存の変更があります。リセットしますか？',
+      confirmDeleteGame: '「{title}」の評価・感想データを削除しますか？\n\nこの操作は取り消せません。',
+      appReady: 'ウディこん助 準備完了',
+      confirmOpenVotePage: '投票ページを開きます。その後、再度このボタンを押してください。',
+      votePageRequired: '投票ページで実行してください。',
+      confirmBulkInput: '{count}件の評価済み作品のデータをフォームに一括入力しますか？'
     },
+
 
     // ツールチップ
     tooltips: {

@@ -128,13 +128,13 @@ class NavigationController {
   setupRatingLabelListeners() {
     // ラベルホバー時のツールチップ表示
     document.addEventListener('mouseenter', (e) => {
-      if (e.target.classList.contains('rating-label')) {
+      if (e.target && e.target.classList && e.target.classList.contains('rating-label')) {
         this.showTooltip(e.target, e.target.dataset.ratingCategory);
       }
     }, true);
 
     document.addEventListener('mouseleave', (e) => {
-      if (e.target.classList.contains('rating-label')) {
+      if (e.target && e.target.classList && e.target.classList.contains('rating-label')) {
         this.hideTooltip();
       }
     }, true);
@@ -147,26 +147,17 @@ class NavigationController {
     // 安全にローカライザーから全評価指標のツールチップテキストを取得
     let tooltipText = `${category}の評価指標`;
     try {
-      console.log(`🐛 showTooltip: category=${category}`);
-      
       if (window.localizer && window.localizer.resources) {
         const resources = window.localizer.resources;
-        const currentLang = window.localizer.getCurrentLanguage();
-        console.log(`🐛 Current language: ${currentLang}`);
-        console.log(`🐛 Resources available:`, Object.keys(resources));
         
         // カテゴリ名をローカライズ
         const categoryMap = resources.categoryMap || {};
-        console.log(`🐛 CategoryMap:`, categoryMap);
         const displayCategory = categoryMap[category] || category;
-        console.log(`🐛 ${category} → ${displayCategory}`);
         
         // 評価指標リソースから全評価値の説明を取得
         const ratingResources = resources.ratings;
-        console.log(`🐛 Rating resources available:`, ratingResources ? Object.keys(ratingResources) : 'none');
         
         if (ratingResources && ratingResources.indicators && ratingResources.indicators[displayCategory]) {
-          console.log(`🐛 Found indicators for ${displayCategory}`);
           const categoryData = ratingResources.indicators[displayCategory];
           const lines = [];
           
@@ -180,15 +171,8 @@ class NavigationController {
           
           if (lines.length > 0) {
             tooltipText = lines.join('\n');
-            console.log(`🐛 Generated tooltip with ${lines.length} lines`);
-          } else {
-            console.log(`🐛 No lines found for ${displayCategory}`);
           }
-        } else {
-          console.log(`🐛 No indicators found for ${displayCategory}`);
         }
-      } else {
-        console.log(`🐛 Localizer not available`);
       }
     } catch (error) {
       console.warn('Localizer error in showTooltip, using fallback:', error);
@@ -229,10 +213,7 @@ class NavigationController {
 
     // 安全にローカライザーから評価指標を取得
     try {
-      console.log(`🐛 updateRatingIndicatorDisplay: category=${category}, value=${value}`);
-      
       if (!window.localizer || !window.localizer.resources) {
-        console.log(`🐛 Localizer not available`);
         displayElement.textContent = `${category}：評価指標を表示`;
         displayElement.classList.remove('show');
         return;
@@ -240,34 +221,25 @@ class NavigationController {
       
       const resources = window.localizer.resources;
       const currentLang = window.localizer.getCurrentLanguage();
-      console.log(`🐛 Current language: ${currentLang}`);
-      console.log(`🐛 Resources available:`, Object.keys(resources));
       
       // カテゴリ名をローカライズ（categoryMapを使用）
       const categoryMap = resources.categoryMap || {};
-      console.log(`🐛 CategoryMap:`, categoryMap);
       const displayCategory = categoryMap[category] || category;
-      console.log(`🐛 ${category} → ${displayCategory}`);
       
       // 評価指標を取得
       const ratingResources = resources.ratings;
-      console.log(`🐛 Rating resources:`, ratingResources ? Object.keys(ratingResources) : 'none');
       
       if (ratingResources && ratingResources.indicators && 
           ratingResources.indicators[displayCategory] && 
           ratingResources.indicators[displayCategory][value]) {
         
-        console.log(`🐛 Found indicator: ${ratingResources.indicators[displayCategory][value]}`);
-        
         // テンプレートフォーマット（ローカライゼーション対応）
         const separator = currentLang === 'en' ? ': ' : '：';
         const finalText = `${displayCategory}${separator}${ratingResources.indicators[displayCategory][value]}`;
-        console.log(`🐛 Final display text: ${finalText}`);
         
         displayElement.textContent = finalText;
         displayElement.classList.add('show');
       } else {
-        console.log(`🐛 No indicator found for ${displayCategory}[${value}]`);
         const placeholder = window.localizer.getText('ui.placeholders.ratingIndicator');
         displayElement.textContent = placeholder;
         displayElement.classList.remove('show');
@@ -484,14 +456,18 @@ class NavigationController {
       await this.displayAverageRating();
 
       this.hasUnsavedChanges = false;
-      this.updateSaveStatus('💾 読み込み完了');
+      const loadCompleteMsg = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.loadComplete') : '💾 読み込み完了';
+      this.updateSaveStatus(loadCompleteMsg);
 
       // 感想入力促進ハイライト判定
       this.updateReviewTextareaHighlight();
 
     } catch (error) {
       console.error('Failed to load game data:', error);
-      this.updateSaveStatus('❌ 読み込み失敗・新規作成', 'error');
+      const loadErrorMsg = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.loadError') : '❌ 読み込み失敗・新規作成';
+      this.updateSaveStatus(loadErrorMsg, 'error');
       
       // 読み込み失敗時の初期化処理
       await this.initializeDetailView();
@@ -754,7 +730,12 @@ class NavigationController {
         if (average > 0) {
           const averageLine = document.createElement('div');
           averageLine.className = 'average-line';
-          averageLine.title = `平均: ${average.toFixed(1)}点`;
+          
+          // 多言語対応の平均ラベルとタイトル
+          const averageLabel = (window.localizer && window.localizer.getText) ? 
+            window.localizer.getText('ui.labels.average') : '平均';
+          averageLine.setAttribute('data-average-label', averageLabel);
+          averageLine.title = `${averageLabel}: ${average.toFixed(1)}点`;
           
           // スライダーの親要素（.rating-input）に追加
           const ratingInput = slider.closest('.rating-input');
@@ -789,16 +770,23 @@ class NavigationController {
     if (!this.editingGameId) return false;
 
     try {
-      this.updateSaveStatus('💾 保存中...', 'saving');
+      const savingMsg = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.saving') : '💾 保存中...';
+      this.updateSaveStatus(savingMsg, 'saving');
 
       const updates = this.collectFormData();
       const success = await window.gameDataManager.updateGame(this.editingGameId, updates);
 
       if (success) {
         this.hasUnsavedChanges = false;
-        this.updateSaveStatus('✅ 保存完了', 'saved');
+        const saveCompleteMsg = (window.localizer && window.localizer.getText) ? 
+          window.localizer.getText('ui.status.saveComplete') : '✅ 保存完了';
+        const readyMsg = (window.localizer && window.localizer.getText) ? 
+          window.localizer.getText('ui.status.ready') : '💾 準備完了';
+        
+        this.updateSaveStatus(saveCompleteMsg, 'saved');
         setTimeout(() => {
-          this.updateSaveStatus('💾 準備完了');
+          this.updateSaveStatus(readyMsg);
         }, 2000);
         return true;
       } else {
@@ -806,7 +794,9 @@ class NavigationController {
       }
     } catch (error) {
       console.error('Failed to save:', error);
-      this.updateSaveStatus('❌ 保存失敗', 'error');
+      const saveErrorMsg = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.saveError') : '❌ 保存失敗';
+      this.updateSaveStatus(saveErrorMsg, 'error');
       return false;
     }
   }
@@ -874,7 +864,9 @@ class NavigationController {
     if (!this.editingGameId) return;
 
     if (this.hasUnsavedChanges) {
-      const confirmed = confirm('未保存の変更があります。リセットしますか？');
+      const confirmMsg = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.confirmReset') : '未保存の変更があります。リセットしますか？';
+      const confirmed = confirm(confirmMsg);
       if (!confirmed) return;
     }
 
@@ -911,11 +903,8 @@ class NavigationController {
         charCount.textContent = '0';
       }
 
-      // 合計評価をリセット
-      const totalRating = document.getElementById('total-rating');
-      if (totalRating) {
-        totalRating.textContent = '6';
-      }
+      // 合計評価をリセット - テンプレート使用
+      this.updateTotalRatingDisplay(6);
 
       // 変更フラグをリセット
       this.hasUnsavedChanges = false;
@@ -963,7 +952,11 @@ class NavigationController {
     const game = await window.gameDataManager.getGame(this.editingGameId);
     if (!game) return;
 
-    const confirmed = confirm(`「${game.title}」の評価・感想データを削除しますか？\n\nこの操作は取り消せません。`);
+    const confirmTemplate = (window.localizer && window.localizer.getText) ? 
+      window.localizer.getText('ui.status.confirmDeleteGame') : 
+      '「{title}」の評価・感想データを削除しますか？\n\nこの操作は取り消せません。';
+    const confirmMsg = confirmTemplate.replace('{title}', game.title);
+    const confirmed = confirm(confirmMsg);
     if (!confirmed) return;
 
     try {
@@ -1044,7 +1037,9 @@ class NavigationController {
   // 変更フラグ設定
   markAsChanged() {
     this.hasUnsavedChanges = true;
-    this.updateSaveStatus('💾 未保存の変更があります');
+    const hasChangesMsg = (window.localizer && window.localizer.getText) ? 
+      window.localizer.getText('ui.status.hasChanges') : '💾 未保存の変更があります';
+    this.updateSaveStatus(hasChangesMsg);
   }
 
   // 保存状態更新
@@ -1079,8 +1074,28 @@ class NavigationController {
       }
     });
     
-    document.getElementById('total-rating').textContent = total;
+    this.updateTotalRatingDisplay(total);
     
+  }
+
+  // 合計評価表示の更新（テンプレート使用）
+  updateTotalRatingDisplay(total) {
+    const displayElement = document.getElementById('total-rating-display');
+    if (!displayElement) return;
+
+    try {
+      if (window.localizer && window.localizer.getText) {
+        const template = window.localizer.getText('ui.templates.totalRating');
+        const displayText = template.replace('{score}', total).replace('{maxScore}', '60');
+        displayElement.textContent = displayText;
+      } else {
+        // フォールバック
+        displayElement.textContent = `${total}/60点`;
+      }
+    } catch (error) {
+      console.warn('Localizer error in updateTotalRatingDisplay, using fallback:', error);
+      displayElement.textContent = `${total}/60点`;
+    }
   }
 
   // 文字数カウント更新

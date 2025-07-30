@@ -4,11 +4,21 @@
  */
 
 const enResources = {
+  // Rating Category Translation Map (Top-level for easy access)
+  categoryMap: {
+    '熱中度': 'Engagement',
+    '斬新さ': 'Novelty',
+    '物語性': 'Story',
+    '画像音声': 'Graphics/Audio',
+    '遊びやすさ': 'Usability',
+    'その他': 'Other'
+  },
+
   // UI Elements
   ui: {
     // Header
     header: {
-      title: 'WodiConsuke',
+      title: 'WudiConsuke',
       subtitle: 'WOLF RPG Editor Contest Game Management Tool'
     },
 
@@ -65,7 +75,7 @@ const enResources = {
       gameTitle: 'Game Title',
       author: 'Author',
       genre: 'Genre',
-      lastUpdate: 'Last Update',
+      lastUpdate: 'Update',
       playStatus: 'Play Status',
       totalRating: 'Total',
       
@@ -87,7 +97,8 @@ const enResources = {
       characterCount: 'Characters',
       maxCharacters: '2000 chars',
       language: 'Language',
-      options: 'Options'
+      options: 'Options',
+      average: 'Ave'
     },
 
     // Section Titles
@@ -159,15 +170,23 @@ const enResources = {
       saveStatus: '💾 Save Status'
     },
 
-    // Rating Category Translation Map
-    categoryMap: {
-      '熱中度': 'Engagement',
-      '斬新さ': 'Novelty',
-      '物語性': 'Story',
-      '画像音声': 'Graphics/Audio',
-      '遊びやすさ': 'Usability',
-      'その他': 'Other'
+    // Status Messages
+    status: {
+      loadComplete: '💾 Load Complete',
+      loadError: '❌ Load Failed - New Entry',
+      saving: '💾 Saving...',
+      saveComplete: '✅ Save Complete',
+      saveError: '❌ Save Failed',
+      hasChanges: '💾 Changes Auto-Saved',
+      ready: '💾 Ready',
+      confirmReset: 'You have unsaved changes. Reset anyway?',
+      confirmDeleteGame: 'Delete rating and review data for "{title}"?\n\nThis action cannot be undone.',
+      appReady: 'WudiConsuke Ready',
+      confirmOpenVotePage: 'Opening vote page. Please press this button again after the page loads.',
+      votePageRequired: 'Please run this on the vote page.',
+      confirmBulkInput: 'Input data for {count} rated games into the form?'
     },
+
 
     // Tooltips
     tooltips: {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ウディこん助</title>
+  <title data-i18n="ui.header.title">ウディこん助</title>
   <link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
     <div id="main-view" class="view active">
       <!-- ヘッダー -->
       <header class="header">
-        <h1 class="app-title"><img src="icons/icon16.png" alt="ウディこん助" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;">ウディこん助 <span class="version-badge">ver1.0.2</span> <span id="year-badge" class="version-badge">第17回(2025)</span></h1>
+        <h1 class="app-title"><img src="icons/icon16.png" alt="ウディこん助" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"><span data-i18n="ui.header.title">ウディこん助</span> <span class="version-badge">ver1.0.2</span> <span id="year-badge" class="version-badge">第17回(2025)</span></h1>
         <div class="header-buttons">
           <button id="fill-all-forms-btn" class="icon-btn" data-i18n-title="ui.tooltips.fillAllForms" title="評価済み作品を投票フォームに一括入力">🗳️</button>
           <button id="background-update-btn" class="icon-btn" data-i18n-title="ui.tooltips.backgroundUpdate" title="バックグラウンド更新">🔄</button>
@@ -134,7 +134,7 @@
             </div>
           </div>
           <div class="total-rating">
-            <span data-i18n="ui.labels.totalRating">合計</span>: <span id="total-rating">6</span>/60点 
+            <span data-i18n="ui.labels.totalRating">合計</span>: <span id="total-rating-display"></span> 
             <span id="rating-indicator-display" data-i18n="ui.placeholders.ratingIndicator">ここに評価指標が表示されます</span>
           </div>
         </div>

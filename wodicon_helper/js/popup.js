@@ -146,7 +146,8 @@ class GameListManager {
   // デフォルトステータステキスト設定
   setDefaultStatusText() {
     const statusText = document.getElementById('status-text');
-    const defaultText = 'ウディこん助 準備完了';
+    const defaultText = (window.localizer && window.localizer.getText) ? 
+      window.localizer.getText('ui.status.appReady') : 'ウディこん助 準備完了';
     
     statusText.textContent = defaultText;
     statusText.style.color = '#666';
@@ -252,7 +253,9 @@ class GameListManager {
       const currentTab = tabs[0];
 
       if (!currentTab || !currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') || !currentTab.url.includes('contestVote.cgi')) {
-        this.showError('投票ページで実行してください。');
+        const errorMsg = (window.localizer && window.localizer.getText) ? 
+          window.localizer.getText('ui.status.votePageRequired') : '投票ページで実行してください。';
+        this.showError(errorMsg);
         return;
       }
 
@@ -289,7 +292,9 @@ class GameListManager {
       const isVotePage = currentTab && currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') && currentTab.url.includes('contestVote.cgi');
 
       if (!isVotePage) {
-        if (confirm('投票ページを開きます。その後、再度このボタンを押してください。')) {
+        const confirmMsg = (window.localizer && window.localizer.getText) ? 
+          window.localizer.getText('ui.status.confirmOpenVotePage') : '投票ページを開きます。その後、再度このボタンを押してください。';
+        if (confirm(confirmMsg)) {
           // 年度別投票URL取得
           const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
           const votePageUrl = (window.constants?.URLS?.getVoteUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi') + '?action=load';
@@ -313,7 +318,11 @@ class GameListManager {
         return;
       }
 
-      if (!confirm(`${playedGames.length}件の評価済み作品のデータをフォームに一括入力しますか？`)) {
+      const confirmTemplate = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.confirmBulkInput') : 
+        '{count}件の評価済み作品のデータをフォームに一括入力しますか？';
+      const confirmMsg = confirmTemplate.replace('{count}', playedGames.length);
+      if (!confirm(confirmMsg)) {
         return;
       }
 
@@ -683,13 +692,16 @@ class GameListManager {
 🌊 ウディこん助 使い方
 
 【基本操作】
-• 作品行をクリック → 詳細画面へ
+• 作品行をクリック → 詳細画面へ移動
 • 👈戻るボタン → メイン画面に戻る
 • フィルタボタンで表示切替（全表示/評価済み/未評価/新着）
+• ⚙️設定ボタン → 詳細設定画面を開く
+• 🔄バックグラウンド更新ボタン → 手動監視実行
 
-【自動監視機能】
+【Web監視機能】
 • ウディコンサイト訪問時に自動で新規作品・更新をチェック
-• ポップアップ開時にも自動監視実行
+• 拡張機能ポップアップ開時にも自動監視実行
+• 手動監視ボタン（🔍）で即座に監視実行
 • 新規作品や更新が見つかるとデスクトップ通知
 
 【評価システム】
@@ -703,9 +715,13 @@ class GameListManager {
 • 文字数カウント機能付き
 • コメント投稿時の参考にも最適
 
-【自動保存】
-• 3秒間隔で自動保存
-• 画面遷移時も自動保存
+【投票支援機能】
+• 投票フォームへの個別データ入力（詳細画面から）
+• 評価済み作品の一括入力（🗳️ボタンから）
+• 投票ページ自動オープン機能
+
+【データ保存】
+• 変更は自動的に保存されます
 
 【データ管理】
 ⚠️ 重要：データ保護について
@@ -713,11 +729,11 @@ class GameListManager {
 保存された評価・感想データが消失する可能性があります。
 定期的なデータエクスポートを強く推奨します。
 
-• 📤ボタンでデータエクスポート
-• 設定画面でインポート可能
+• 設定画面からデータエクスポート・インポート可能
+• JSON/CSV形式でのデータ管理に対応
 
 【詳細情報】
-公式紹介ページ: https://wudi-consuke.vercel.app/
+公式紹介ページ: https://wudi-consuke.vercel.app/website/release/index.html
     `;
     
     alert(helpText);
@@ -943,7 +959,9 @@ class GameListManager {
     
     // デフォルトテキストが設定されていない場合は適切なデフォルトを設定
     if (!statusText.dataset.originalText) {
-      const defaultText = statusText.textContent === '読み込み中...' ? 'ウディこん助 準備完了' : statusText.textContent;
+      const appReadyText = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.appReady') : 'ウディこん助 準備完了';
+      const defaultText = statusText.textContent === '読み込み中...' ? appReadyText : statusText.textContent;
       statusText.dataset.originalText = defaultText;
     }
     
