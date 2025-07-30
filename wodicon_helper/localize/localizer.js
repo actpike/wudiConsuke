@@ -196,10 +196,10 @@ class Localizer {
    */
   updateDOM() {
     try {
-      // data-i18n属性を持つ要素を取得
-      const elements = document.querySelectorAll('[data-i18n]');
+      // data-i18n属性を持つ要素を取得（テキスト更新）
+      const textElements = document.querySelectorAll('[data-i18n]');
       
-      elements.forEach(element => {
+      textElements.forEach(element => {
         const key = element.getAttribute('data-i18n');
         const text = this.getText(key);
         
@@ -216,13 +216,24 @@ class Localizer {
           element.textContent = text;
         }
         
-        // title属性の更新（ツールチップ・ホバー表現）
+        // title属性も同時に更新（従来の互換性）
         if (element.hasAttribute('title')) {
           element.title = text;
         }
       });
 
-      console.log(`DOM updated with ${elements.length} elements`);
+      // data-i18n-title属性を持つ要素を取得（title属性のみ更新）
+      const titleElements = document.querySelectorAll('[data-i18n-title]');
+      
+      titleElements.forEach(element => {
+        const key = element.getAttribute('data-i18n-title');
+        const text = this.getText(key);
+        
+        // title属性のみ更新（テキスト内容は変更しない）
+        element.title = text;
+      });
+
+      console.log(`DOM updated: ${textElements.length} text elements, ${titleElements.length} title-only elements`);
 
     } catch (error) {
       console.error('DOM update failed:', error);
