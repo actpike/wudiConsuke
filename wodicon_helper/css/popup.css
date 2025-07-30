@@ -439,7 +439,7 @@ body {
 }
 
 .detail-section {
-  margin-bottom: 8px;
+  margin-bottom: 0px;
   padding-bottom: 12px;
   border-bottom: 1px solid #eee;
 }
@@ -509,21 +509,26 @@ body {
 }
 
 /* 評価システム */
-.rating-section-header {
+.rating-header-container {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.rating-section-header h3 {
+.rating-header-container h3 {
   margin: 1em 0;
+  flex-shrink: 0;
+}
+
+.rating-indicator-spacer {
+  width: 34px; /* label width (80px) + gap (8px) でrating-inputと左揃え */
   flex-shrink: 0;
 }
 
 .rating-indicator-display {
   flex: 1;
-  margin-left: 15px;
-  padding: 8px 12px;
+  padding: 2px 12px;
   background: rgba(102, 126, 234, 0.1);
   border: 1px solid rgba(102, 126, 234, 0.3);
   border-radius: 6px;
@@ -577,7 +582,8 @@ body {
   border-radius: 6px;
   font-size: 10px;
   line-height: 1.3;
-  max-width: 300px;
+  max-width: 350px;
+  min-width: 280px;
   white-space: pre-line;
   z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);

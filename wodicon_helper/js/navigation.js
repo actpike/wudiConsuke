@@ -86,6 +86,9 @@ class NavigationController {
           valueSpan.textContent = e.target.value;
           this.updateTotalRating();
           
+          // 説明エリアの更新
+          this.updateRatingIndicatorDisplay(e.target.dataset.category, e.target.value);
+          
           // 🔄 NEW: リアルタイム平均バー更新
           this.updateAverageBarRealtime();
           
@@ -167,6 +170,23 @@ class NavigationController {
     if (this.currentTooltip) {
       this.currentTooltip.remove();
       this.currentTooltip = null;
+    }
+  }
+
+  // 評価指標表示エリアの更新
+  updateRatingIndicatorDisplay(category, value) {
+    const displayElement = document.getElementById('rating-indicator-display');
+    if (!displayElement) return;
+
+    const lang = window.constants.RATING_HELPERS.getCurrentLanguage();
+    const indicators = window.constants.RATING_INDICATORS[lang];
+    
+    if (indicators && indicators[category] && indicators[category][value]) {
+      displayElement.textContent = `${category}：${indicators[category][value]}`;
+      displayElement.classList.add('show');
+    } else {
+      displayElement.textContent = 'ここに評価指標が表示されます';
+      displayElement.classList.remove('show');
     }
   }
 
