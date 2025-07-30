@@ -11,6 +11,9 @@ class GameListManager {
 
   // 初期化
   async initialize() {
+    // ローカライザーを初期化
+    await this.initializeLocalizer();
+
     // バージョン情報を表示
     const manifest = chrome.runtime.getManifest();
     const versionBadge = document.querySelector('.version-badge');
@@ -32,6 +35,37 @@ class GameListManager {
     
     // 初期化完了後にステータスバーのデフォルトテキストを設定
     this.setDefaultStatusText();
+  }
+
+  // ローカライザー初期化
+  async initializeLocalizer() {
+    try {
+      // ローカライザーが利用可能になるまで待機
+      if (!window.localizer) {
+        console.warn('Localizer not available, waiting...');
+        await new Promise(resolve => {
+          const check = () => {
+            if (window.localizer) {
+              resolve();
+            } else {
+              setTimeout(check, 100);
+            }
+          };
+          check();
+        });
+      }
+
+      // ローカライザーを初期化
+      await window.localizer.initialize();
+      
+      // DOM要素を更新
+      window.localizer.updateDOM();
+
+      console.log(`Localizer initialized: ${window.localizer.getCurrentLanguage()}`);
+
+    } catch (error) {
+      console.error('Localizer initialization failed:', error);
+    }
   }
 
   // ポップアップ開時の自動監視実行

@@ -14,24 +14,24 @@
       <header class="header">
         <h1 class="app-title"><img src="icons/icon16.png" alt="ウディこん助" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;">ウディこん助 <span class="version-badge">ver1.0.2</span> <span id="year-badge" class="version-badge">第17回(2025)</span></h1>
         <div class="header-buttons">
-          <button id="fill-all-forms-btn" class="icon-btn" title="評価済み作品を投票フォームに一括入力">🗳️</button>
-          <button id="background-update-btn" class="icon-btn" title="バックグラウンド更新">🔄</button>
-          <button id="settings-btn" class="icon-btn" title="設定">⚙️</button>
-          <button id="help-btn" class="icon-btn" title="ヘルプ">❓</button>
+          <button id="fill-all-forms-btn" class="icon-btn" data-i18n="ui.tooltips.fillAllForms" title="評価済み作品を投票フォームに一括入力">🗳️</button>
+          <button id="background-update-btn" class="icon-btn" data-i18n="ui.tooltips.backgroundUpdate" title="バックグラウンド更新">🔄</button>
+          <button id="settings-btn" class="icon-btn" data-i18n="ui.tooltips.settings" title="設定">⚙️</button>
+          <button id="help-btn" class="icon-btn" data-i18n="ui.tooltips.help" title="ヘルプ">❓</button>
         </div>
       </header>
 
       <!-- フィルタバー -->
       <div class="filter-bar">
         <div class="filter-buttons">
-          <button class="filter-btn active" data-filter="all">全表示</button>
-          <button class="filter-btn" data-filter="played">評価済み</button>
-          <button class="filter-btn" data-filter="unplayed">未評価</button>
-          <button class="filter-btn" data-filter="new">新着</button>
-          <button id="clear-updates-btn" class="filter-btn hidden" title="すべての新着・更新マークをクリアします">更新クリア</button>
+          <button class="filter-btn active" data-filter="all" data-i18n="ui.labels.filterAll">全表示</button>
+          <button class="filter-btn" data-filter="played" data-i18n="ui.labels.filterPlayed">評価済み</button>
+          <button class="filter-btn" data-filter="unplayed" data-i18n="ui.labels.filterUnplayed">未評価</button>
+          <button class="filter-btn" data-filter="new" data-i18n="ui.labels.filterNew">新着</button>
+          <button id="clear-updates-btn" class="filter-btn hidden" data-i18n="ui.tooltips.clearUpdates" title="すべての新着・更新マークをクリアします">更新クリア</button>
         </div>
         <div class="search-area">
-          <input type="text" id="search-input" placeholder="検索..." maxlength="20">
+          <input type="text" id="search-input" data-i18n="ui.placeholders.search" placeholder="検索..." maxlength="20">
           <button id="search-btn" class="icon-btn">🔍</button>
         </div>
       </div>
@@ -42,15 +42,15 @@
           <thead>
             <tr>
               <th class="col-check clickable" id="monitor-select-all" title="全選択/全選択解除">📡</th>
-              <th class="col-no sortable" data-sort="no">No <span class="sort-icon">↕</span></th>
-              <th class="col-title sortable" data-sort="title">作品名 <span class="sort-icon">↕</span></th>
-              <th class="col-ver">更新</th>
-              <th class="col-rating sortable" data-sort="熱中度">熱 <span class="sort-icon">↕</span></th>
-              <th class="col-rating sortable" data-sort="斬新さ">斬 <span class="sort-icon">↕</span></th>
-              <th class="col-rating sortable" data-sort="物語性">物 <span class="sort-icon">↕</span></th>
-              <th class="col-rating sortable" data-sort="画像音声">画 <span class="sort-icon">↕</span></th>
-              <th class="col-rating sortable" data-sort="遊びやすさ">遊 <span class="sort-icon">↕</span></th>
-              <th class="col-rating sortable" data-sort="その他">他 <span class="sort-icon">↕</span></th>
+              <th class="col-no sortable" data-sort="no" data-i18n="ui.labels.sortByNo">No <span class="sort-icon">↕</span></th>
+              <th class="col-title sortable" data-sort="title" data-i18n="ui.labels.gameTitle">作品名 <span class="sort-icon">↕</span></th>
+              <th class="col-ver" data-i18n="ui.labels.lastUpdate">更新</th>
+              <th class="col-rating sortable" data-sort="熱中度" data-i18n="ui.labels.ratingHeatShort">熱 <span class="sort-icon">↕</span></th>
+              <th class="col-rating sortable" data-sort="斬新さ" data-i18n="ui.labels.ratingNoveltyShort">斬 <span class="sort-icon">↕</span></th>
+              <th class="col-rating sortable" data-sort="物語性" data-i18n="ui.labels.ratingStoryShort">物 <span class="sort-icon">↕</span></th>
+              <th class="col-rating sortable" data-sort="画像音声" data-i18n="ui.labels.ratingGraphicsAudioShort">画 <span class="sort-icon">↕</span></th>
+              <th class="col-rating sortable" data-sort="遊びやすさ" data-i18n="ui.labels.ratingUsabilityShort">遊 <span class="sort-icon">↕</span></th>
+              <th class="col-rating sortable" data-sort="その他" data-i18n="ui.labels.ratingOtherShort">他 <span class="sort-icon">↕</span></th>
             </tr>
           </thead>
           <tbody id="game-list-body">
@@ -89,45 +89,45 @@
 
         <!-- 評価システム -->
         <div class="detail-section">
-          <h3>■ 評価</h3>
+          <h3 data-i18n="ui.sections.rating">■ 評価</h3>
           <div class="rating-grid">
             <div class="rating-item">
-              <label class="rating-label" data-rating-category="熱中度">熱中度:</label>
+              <label class="rating-label" data-rating-category="熱中度" data-i18n="ui.labels.ratingHeat">熱中度:</label>
               <div class="rating-input">
                 <input type="range" class="rating-slider" data-category="熱中度" min="1" max="10" value="1">
                 <span class="rating-value">1</span>/10
               </div>
             </div>
             <div class="rating-item">
-              <label class="rating-label" data-rating-category="斬新さ">斬新さ:</label>
+              <label class="rating-label" data-rating-category="斬新さ" data-i18n="ui.labels.ratingNovelty">斬新さ:</label>
               <div class="rating-input">
                 <input type="range" class="rating-slider" data-category="斬新さ" min="1" max="10" value="1">
                 <span class="rating-value">1</span>/10
               </div>
             </div>
             <div class="rating-item">
-              <label class="rating-label" data-rating-category="物語性">物語性:</label>
+              <label class="rating-label" data-rating-category="物語性" data-i18n="ui.labels.ratingStory">物語性:</label>
               <div class="rating-input">
                 <input type="range" class="rating-slider" data-category="物語性" min="1" max="10" value="1">
                 <span class="rating-value">1</span>/10
               </div>
             </div>
             <div class="rating-item">
-              <label class="rating-label" data-rating-category="画像音声">画像音声:</label>
+              <label class="rating-label" data-rating-category="画像音声" data-i18n="ui.labels.ratingGraphicsAudio">画像音声:</label>
               <div class="rating-input">
                 <input type="range" class="rating-slider" data-category="画像音声" min="1" max="10" value="1">
                 <span class="rating-value">1</span>/10
               </div>
             </div>
             <div class="rating-item">
-              <label class="rating-label" data-rating-category="遊びやすさ">遊びやすさ:</label>
+              <label class="rating-label" data-rating-category="遊びやすさ" data-i18n="ui.labels.ratingUsability">遊びやすさ:</label>
               <div class="rating-input">
                 <input type="range" class="rating-slider" data-category="遊びやすさ" min="1" max="10" value="1">
                 <span class="rating-value">1</span>/10
               </div>
             </div>
             <div class="rating-item">
-              <label class="rating-label" data-rating-category="その他">その他:</label>
+              <label class="rating-label" data-rating-category="その他" data-i18n="ui.labels.ratingOther">その他:</label>
               <div class="rating-input">
                 <input type="range" class="rating-slider" data-category="その他" min="0" max="10" value="1">
                 <span class="rating-value">1</span>/10
@@ -135,22 +135,23 @@
             </div>
           </div>
           <div class="total-rating">
-            合計: <span id="total-rating">6</span>/60点 
-            <span id="rating-indicator-display">ここに評価指標が表示されます</span>
+            <span data-i18n="ui.labels.totalRating">合計</span>: <span id="total-rating">6</span>/60点 
+            <span id="rating-indicator-display" data-i18n="ui.placeholders.ratingIndicator">ここに評価指標が表示されます</span>
           </div>
         </div>
 
         <!-- 感想入力 -->
         <div class="detail-section">
-          <h3>■ コメント欄 (2000字以内)</h3>
+          <h3 data-i18n="ui.sections.review">■ コメント欄 (2000字以内)</h3>
           <div class="review-container">
             <textarea id="review-textarea" 
+                      data-i18n="ui.placeholders.review"
                       placeholder="感想を入力してください..." 
                       maxlength="2000"
                       rows="4"
                       cols="40"></textarea>
             <div class="character-count">
-              文字数: <span id="character-count">0</span>/2000字
+              <span data-i18n="ui.labels.characterCount">文字数</span>: <span id="character-count">0</span>/2000字
             </div>
           </div>
         </div>
@@ -159,7 +160,7 @@
         <div class="save-status">
           <span id="save-status-text">💾 準備完了</span>
           <div class="save-buttons">
-            <button id="delete-btn" class="btn-danger">削除</button>
+            <button id="delete-btn" class="btn-danger" data-i18n="ui.buttons.delete">削除</button>
             <button id="vote-form-btn" class="btn-primary">投票フォームに入力</button>
           </div>
         </div>
@@ -169,7 +170,7 @@
     <!-- ローディング画面 -->
     <div id="loading" class="loading-overlay hidden">
       <div class="loading-spinner"></div>
-      <p>読み込み中...</p>
+      <p data-i18n="ui.messages.loading">読み込み中...</p>
     </div>
   </div>
 
@@ -191,6 +192,7 @@
   <script src="js/pageParser.js"></script>
   <script src="js/webMonitor.js"></script>
   <script src="js/updateManager.js"></script>
+  <script type="module" src="localize/localizer.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/popup.js"></script>
 </body>

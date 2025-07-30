@@ -26,6 +26,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadBasicSettings();
     console.log('✅ Basic settings loaded');
     
+    // 5. 言語設定初期化
+    await initializeLanguageSettings();
+    console.log('✅ Language settings initialized');
+    
     // 4. 軽い処理のみ非同期で実行
     setTimeout(async () => {
       try {
@@ -340,6 +344,15 @@ function setupEventListeners() {
     }
     addButtonListener('add-new-year-btn', handleAddNewYear, 'Add new year');
     addButtonListener('delete-year-data-btn', handleDeleteYearData, 'Delete year data');
+    
+    // 言語選択
+    const languageSelector = document.getElementById('language-selector');
+    if (languageSelector) {
+      languageSelector.addEventListener('change', handleLanguageChange);
+      console.log('✅ Language selector change listener added');
+    } else {
+      console.error('❌ Language selector not found');
+    }
     
     console.log('✅ All event listeners setup completed');
     
@@ -1079,5 +1092,89 @@ function setVersionInfo() {
     document.getElementById('version').textContent = chrome.runtime.getManifest().version;
   } catch (error) {
     console.error('バージョン情報設定エラー:', error);
+  }
+}
+
+// 言語設定の初期化
+async function initializeLanguageSettings() {
+  try {
+    // ローカライザーが利用可能になるまで待機
+    if (!window.localizer) {
+      console.warn('Localizer not available, waiting...');
+      await new Promise(resolve => {
+        const check = () => {
+          if (window.localizer) {
+            resolve();
+          } else {
+            setTimeout(check, 100);
+          }
+        };
+        check();
+      });
+    }
+
+    // ローカライザーを初期化
+    await window.localizer.initialize();
+    
+    // 現在の言語設定をUIに反映
+    const currentLanguage = window.localizer.getCurrentLanguage();
+    const languageSelector = document.getElementById('language-selector');
+    if (languageSelector) {
+      languageSelector.value = currentLanguage;
+    }
+
+    console.log(`Language settings initialized: ${currentLanguage}`);
+
+  } catch (error) {
+    console.error('Language settings initialization failed:', error);
+  }
+}
+
+// 言語変更ハンドラー
+async function handleLanguageChange(event) {
+  try {
+    const selectedLanguage = event.target.value;
+    console.log(`Language change requested: ${selectedLanguage}`);
+
+    if (!window.localizer) {
+      console.error('Localizer not available');
+      return;
+    }
+
+    // 言語を変更（手動設定）
+    await window.localizer.setLanguage(selectedLanguage, true);
+
+    // ステータスメッセージを表示
+    const statusDiv = document.getElementById('language-status');
+    const statusText = document.getElementById('language-status-text');
+    
+    if (statusDiv && statusText) {
+      const message = selectedLanguage === 'ja' 
+        ? '言語設定を日本語に変更しました' 
+        : 'Language changed to English';
+      
+      statusText.textContent = message;
+      statusDiv.style.display = 'block';
+      
+      // 3秒後に自動で非表示
+      setTimeout(() => {
+        statusDiv.style.display = 'none';
+      }, 3000);
+    }
+
+    console.log(`Language changed successfully: ${selectedLanguage}`);
+
+  } catch (error) {
+    console.error('Language change failed:', error);
+    
+    // エラーメッセージを表示
+    const statusDiv = document.getElementById('language-status');
+    const statusText = document.getElementById('language-status-text');
+    
+    if (statusDiv && statusText) {
+      statusDiv.className = 'status error';
+      statusText.textContent = 'Failed to change language: ' + error.message;
+      statusDiv.style.display = 'block';
+    }
   }
 }
