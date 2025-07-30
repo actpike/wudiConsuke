@@ -144,7 +144,7 @@ class NavigationController {
   showTooltip(labelElement, category) {
     this.hideTooltip();
     
-    // 安全にローカライザーからツールチップテキストを取得
+    // 安全にローカライザーから全評価指標のツールチップテキストを取得
     let tooltipText = `${category}の評価指標`;
     try {
       if (window.localizer && window.localizer.resources) {
@@ -154,17 +154,23 @@ class NavigationController {
         const categoryMap = resources.categoryMap || {};
         const displayCategory = categoryMap[category] || category;
         
-        // ツールチップ用の説明文を取得
-        const tooltipResources = resources.tooltips || {};
-        const categoryTooltip = tooltipResources[category] || tooltipResources[displayCategory];
-        
-        if (categoryTooltip) {
-          tooltipText = categoryTooltip;
-        } else {
-          // フォールバック：カテゴリ名 + 説明
-          const currentLang = window.localizer.getCurrentLanguage();
-          const suffix = currentLang === 'en' ? ' evaluation criteria' : 'の評価指標';
-          tooltipText = `${displayCategory}${suffix}`;
+        // 評価指標リソースから全評価値の説明を取得
+        const ratingResources = resources.ratings;
+        if (ratingResources && ratingResources.indicators && ratingResources.indicators[displayCategory]) {
+          const categoryData = ratingResources.indicators[displayCategory];
+          const lines = [];
+          
+          // その他は0-10、他は1-10
+          const start = category === 'その他' ? 0 : 1;
+          for (let i = start; i <= 10; i++) {
+            if (categoryData[i]) {
+              lines.push(categoryData[i]);
+            }
+          }
+          
+          if (lines.length > 0) {
+            tooltipText = lines.join('\n');
+          }
         }
       }
     } catch (error) {

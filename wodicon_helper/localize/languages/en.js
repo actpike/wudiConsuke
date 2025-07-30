@@ -85,6 +85,7 @@ const enResources = {
       review: 'Review',
       comment: 'Comments',
       characterCount: 'Characters',
+      maxCharacters: '2000 chars',
       language: 'Language',
       options: 'Options'
     },

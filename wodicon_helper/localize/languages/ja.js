@@ -85,6 +85,7 @@ const jaResources = {
       review: '感想',
       comment: 'コメント欄',
       characterCount: '文字数',
+      maxCharacters: '2000字',
       language: '言語',
       options: 'オプション'
     },
