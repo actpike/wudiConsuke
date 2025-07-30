@@ -147,16 +147,26 @@ class NavigationController {
     // 安全にローカライザーから全評価指標のツールチップテキストを取得
     let tooltipText = `${category}の評価指標`;
     try {
+      console.log(`🐛 showTooltip: category=${category}`);
+      
       if (window.localizer && window.localizer.resources) {
         const resources = window.localizer.resources;
+        const currentLang = window.localizer.getCurrentLanguage();
+        console.log(`🐛 Current language: ${currentLang}`);
+        console.log(`🐛 Resources available:`, Object.keys(resources));
         
         // カテゴリ名をローカライズ
         const categoryMap = resources.categoryMap || {};
+        console.log(`🐛 CategoryMap:`, categoryMap);
         const displayCategory = categoryMap[category] || category;
+        console.log(`🐛 ${category} → ${displayCategory}`);
         
         // 評価指標リソースから全評価値の説明を取得
         const ratingResources = resources.ratings;
+        console.log(`🐛 Rating resources available:`, ratingResources ? Object.keys(ratingResources) : 'none');
+        
         if (ratingResources && ratingResources.indicators && ratingResources.indicators[displayCategory]) {
+          console.log(`🐛 Found indicators for ${displayCategory}`);
           const categoryData = ratingResources.indicators[displayCategory];
           const lines = [];
           
@@ -170,8 +180,15 @@ class NavigationController {
           
           if (lines.length > 0) {
             tooltipText = lines.join('\n');
+            console.log(`🐛 Generated tooltip with ${lines.length} lines`);
+          } else {
+            console.log(`🐛 No lines found for ${displayCategory}`);
           }
+        } else {
+          console.log(`🐛 No indicators found for ${displayCategory}`);
         }
+      } else {
+        console.log(`🐛 Localizer not available`);
       }
     } catch (error) {
       console.warn('Localizer error in showTooltip, using fallback:', error);
@@ -212,31 +229,45 @@ class NavigationController {
 
     // 安全にローカライザーから評価指標を取得
     try {
+      console.log(`🐛 updateRatingIndicatorDisplay: category=${category}, value=${value}`);
+      
       if (!window.localizer || !window.localizer.resources) {
+        console.log(`🐛 Localizer not available`);
         displayElement.textContent = `${category}：評価指標を表示`;
         displayElement.classList.remove('show');
         return;
       }
       
       const resources = window.localizer.resources;
+      const currentLang = window.localizer.getCurrentLanguage();
+      console.log(`🐛 Current language: ${currentLang}`);
+      console.log(`🐛 Resources available:`, Object.keys(resources));
       
       // カテゴリ名をローカライズ（categoryMapを使用）
       const categoryMap = resources.categoryMap || {};
+      console.log(`🐛 CategoryMap:`, categoryMap);
       const displayCategory = categoryMap[category] || category;
+      console.log(`🐛 ${category} → ${displayCategory}`);
       
       // 評価指標を取得
       const ratingResources = resources.ratings;
+      console.log(`🐛 Rating resources:`, ratingResources ? Object.keys(ratingResources) : 'none');
+      
       if (ratingResources && ratingResources.indicators && 
           ratingResources.indicators[displayCategory] && 
           ratingResources.indicators[displayCategory][value]) {
         
-        // テンプレートフォーマット（ローカライゼーション対応）
-        const currentLang = window.localizer.getCurrentLanguage();
-        const separator = currentLang === 'en' ? ': ' : '：';
+        console.log(`🐛 Found indicator: ${ratingResources.indicators[displayCategory][value]}`);
         
-        displayElement.textContent = `${displayCategory}${separator}${ratingResources.indicators[displayCategory][value]}`;
+        // テンプレートフォーマット（ローカライゼーション対応）
+        const separator = currentLang === 'en' ? ': ' : '：';
+        const finalText = `${displayCategory}${separator}${ratingResources.indicators[displayCategory][value]}`;
+        console.log(`🐛 Final display text: ${finalText}`);
+        
+        displayElement.textContent = finalText;
         displayElement.classList.add('show');
       } else {
+        console.log(`🐛 No indicator found for ${displayCategory}[${value}]`);
         const placeholder = window.localizer.getText('ui.placeholders.ratingIndicator');
         displayElement.textContent = placeholder;
         displayElement.classList.remove('show');
