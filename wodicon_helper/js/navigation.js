@@ -126,7 +126,7 @@ class NavigationController {
     // ラベルホバー時のツールチップ表示
     document.addEventListener('mouseenter', (e) => {
       if (e.target.classList.contains('rating-label')) {
-        this.showTooltip(e.target, e.target.dataset.category);
+        this.showTooltip(e.target, e.target.dataset.ratingCategory);
       }
     }, true);
 
