@@ -688,6 +688,58 @@ class GameListManager {
 
   // ヘルプ表示
   showHelp() {
+    try {
+      if (!window.localizer || !window.localizer.resources || !window.localizer.resources.help) {
+        // フォールバック - 日本語固定版
+        this.showHelpFallback();
+        return;
+      }
+
+      const help = window.localizer.resources.help;
+      
+      // ヘルプテキストを動的に構築
+      const sections = [
+        help.title,
+        '',
+        help.basicOperations.title,
+        ...help.basicOperations.items,
+        '',
+        help.webMonitoring.title,
+        ...help.webMonitoring.items,
+        '',
+        help.ratingSystem.title,
+        ...help.ratingSystem.items,
+        '',
+        help.reviewMemo.title,
+        ...help.reviewMemo.items,
+        '',
+        help.votingSupport.title,
+        ...help.votingSupport.items,
+        '',
+        help.dataSaving.title,
+        ...help.dataSaving.items,
+        '',
+        help.dataManagement.title,
+        help.dataManagement.warning,
+        help.dataManagement.description,
+        '',
+        ...help.dataManagement.items,
+        '',
+        help.detailInfo.title,
+        help.detailInfo.officialPage
+      ];
+
+      const helpText = sections.join('\n');
+      alert(helpText);
+      
+    } catch (error) {
+      console.warn('Help localization error, using fallback:', error);
+      this.showHelpFallback();
+    }
+  }
+
+  // ヘルプ表示フォールバック（日本語固定）
+  showHelpFallback() {
     const helpText = `
 🌊 ウディこん助 使い方
 

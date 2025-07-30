@@ -353,6 +353,72 @@ const enResources = {
     hoursAgo: '{hours} hours ago',
     minutesAgo: '{minutes} minutes ago',
     justNow: 'Just now'
+  },
+
+  // Help Content
+  help: {
+    title: '🌊 WudiConsuke User Guide',
+    basicOperations: {
+      title: '【Basic Operations】',
+      items: [
+        '• Click game row → Go to detail screen',
+        '• 👈Back button → Return to main screen',
+        '• Filter buttons to switch display (All/Rated/Unrated/New)',
+        '• ⚙️Settings button → Open detailed settings screen',
+        '• 🔄Background update button → Execute manual monitoring'
+      ]
+    },
+    webMonitoring: {
+      title: '【Web Monitoring Function】',
+      items: [
+        '• Automatically check for new games and updates when visiting Wodicon site',
+        '• Auto-monitoring also executes when opening extension popup',
+        '• Manual monitoring button (🔍) for immediate monitoring execution',
+        '• Desktop notifications when new games or updates are found'
+      ]
+    },
+    ratingSystem: {
+      title: '【Rating System】',
+      items: [
+        '• 6 categories × 10-point system (Official Wodicon compliant)',
+        '• Engagement, Novelty, Story, Graphics/Audio, Usability, Other',
+        '• Automatically sets played flag ON when rating is completed',
+        '• Average value bar display to understand your rating tendencies'
+      ]
+    },
+    reviewMemo: {
+      title: '【Review Memo Function】',
+      items: [
+        '• Detailed review records within 2000 characters',
+        '• Character count function included'
+      ]
+    },
+    votingSupport: {
+      title: '【Voting Support Function】',
+      items: [
+        '• Individual data input to voting forms (from detail screen)',
+        '• Bulk input of rated games (from 🗳️ button)'
+      ]
+    },
+    dataSaving: {
+      title: '【Data Saving】',
+      items: [
+        '• Changes are automatically saved'
+      ]
+    },
+    dataManagement: {
+      title: '【Data Management】',
+      warning: '⚠️ Important: About Data Protection',
+      description: 'Saved rating and review data may be lost when clearing browser cache or reinstalling the extension.\n(Data will NOT be lost by simply turning the extension ON/OFF)',
+      items: [
+        '• Data export/import available from settings screen',
+        '• Supports JSON/CSV format data management'
+      ]
+    },
+    detailInfo: {
+      title: '【Detailed Information】',
+      officialPage: 'Official page: https://wudi-consuke.vercel.app/website/release/index.html'
+    }
   }
 };
 
