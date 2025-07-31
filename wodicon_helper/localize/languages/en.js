@@ -521,6 +521,87 @@ const enResources = {
     jsonImportConfirm: 'Importing JSON file.\n\n⚠️ All existing data will be overwritten.\nAll current data will be completely replaced. Continue?',
     csvImportConfirm: 'Data for 【{year}】 will be updated.\nExisting data for this year will be overwritten and cannot be restored.\n\nContinue?',
     confirmDeleteYearData: 'Are you sure you want to completely delete data for {yearDisplay}?\n\nThis operation cannot be undone.'
+  },
+
+  // Options Page Status Messages
+  optionsStatus: {
+    // Success Messages
+    urlSaved: 'Wodicon page URL saved successfully',
+    exportComplete: '✅ Export completed',
+    importComplete: '✅ Import completed',
+    allDataDeleted: '✅ All data deleted successfully',
+    settingsReset: '✅ Settings reset successfully',
+    settingsSaved: '✅ Settings saved successfully',
+    monitorComplete: '✅ Monitoring completed: {message}',
+    testNotificationSent: '✅ Test notification sent successfully',
+    historyCleared: '✅ Auto-monitoring history cleared successfully',
+    
+    // Error Messages
+    noFileSelected: '❌ No file selected',
+    unsupportedFormat: '❌ Unsupported file format (JSON and CSV only)',
+    exportFailed: '❌ Export failed: {error}',
+    importFailed: '❌ Import failed: {error}',
+    deleteFailed: '❌ Deletion failed: {error}',
+    resetFailed: '❌ Settings reset failed: {error}',
+    monitorFailed: '❌ Monitoring failed: {error}',
+    notificationFailed: '❌ Notification sending failed: {error}',
+    historyClearFailed: '❌ Failed to clear history',
+    exportError: '❌ Export failed: {error}',
+    urlSaveError: 'URL save error: {error}',
+    
+    // Year Management Messages
+    yearInitFailed: 'Year management initialization failed: {error}',
+    yearChangeInProgress: 'Changing year to {yearDisplay}...',
+    yearChangeComplete: 'Year changed to {yearDisplay} successfully',
+    yearChangeFailed: 'Year change failed: {error}',
+    yearInitInProgress: 'Initializing data for {yearDisplay}...',
+    yearInitComplete: '{yearDisplay} added successfully',
+    yearAddFailed: 'Failed to add new year: {error}',
+    yearDeleteInProgress: 'Deleting data for {yearDisplay}...',
+    yearDeleteComplete: 'Data for {yearDisplay} deleted and switched to {newYearDisplay}',
+    yearDeleteFailed: 'Year data deletion failed: {error}',
+    lastYearCannotDelete: 'Cannot delete the last year data',
+    
+    // Others
+    validYearRange: 'Please enter a valid year (2009-2050)',
+    yearPrompt: 'Enter the year to add (e.g., 2026)',
+    monitorSystemCheck: 'Monitor system check: Basic functions are working properly',
+    checkComplete: 'Check completed successfully',
+    unknownError: 'Unknown error',
+    monitoringInProgress: 'Monitoring...',
+    manualMonitorButton: 'Monitor Now'
+  },
+
+  // Test Notification
+  testNotification: {
+    title: '🔔 Test Notification',
+    message: 'Web monitoring notification settings are working properly.\nNew: 1 item, Updated: 1 item (No.02_Mystery Café Casebook, etc.)\nTime: {time}'
+  },
+
+  // File Validation Errors
+  fileValidation: {
+    // JSON related errors
+    jsonSyntaxError: '❌ JSON syntax error: {error}',
+    jsonSyntaxSuggestion: '💡 Fix suggestion: Please check the JSON file syntax. We recommend using an online JSON validator.',
+    invalidDataType: '❌ Invalid data type: Must be an object',
+    oldFormatDetected: '❌ Old format file: This file is in an old version format',
+    oldFormatSuggestion: '💡 Fix suggestion: Please use a file exported in the new format',
+    newFormatInfo: '🔄 The new format uses "games" key and does not use "wodicon_games"',
+    invalidDataFormat: '❌ Invalid data format: "games" array or "years" object is required',
+    invalidDataFormatSuggestion: '💡 Fix suggestion: Please use a JSON file properly exported from WodiConsuke',
+    
+    // CSV related errors
+    csvMinimumLines: '❌ CSV file requires header row and data rows',
+    csvMinimumLinesSuggestion: '💡 Fix suggestion: Please create a CSV file with header row and at least one data row',
+    missingHeaders: '❌ Missing required headers: {headers}',
+    missingHeadersSuggestion: '💡 Fix suggestion: Please include the following headers exactly in the first row of the CSV file:',
+    
+    // Validation result messages
+    validationSuccess: '✅ File validation successful: {count} valid data entries',
+    validationFailure: '❌ File validation failed: {count} errors found',
+    
+    // Details section
+    detailsHeader: 'Details:'
   }
 };
 

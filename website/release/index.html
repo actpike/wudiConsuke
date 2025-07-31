@@ -73,17 +73,28 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./images/icon16.png">
     
     <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/localization.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">
-                    <img src="./images/WudiConsuke_top.png" alt="ウディこん助" class="logo-img">
-                    <h1>ウディこん助 <span class="sub-title">(WodiConsuke)</span> <span class="version-badge">ver1.0.2</span></h1>
+                <div class="header-main">
+                    <div class="logo">
+                        <img src="./images/WudiConsuke_top.png" alt="ウディこん助" class="logo-img">
+                        <h1 data-i18n="header.title">ウディこん助</h1> <span class="sub-title" data-i18n="header.subtitle">(WodiConsuke)</span> <span class="version-badge">ver1.0.2</span>
+                    </div>
+                    <p class="tagline" data-i18n="header.description">ウディコン作品プレイ体験をより快適・便利に</p>
                 </div>
-                <p class="tagline">ウディコン作品プレイ体験をより快適・便利に</p>
+                <div class="header-language">
+                    <div class="language-selector-container">
+                        <select id="language-selector" class="language-selector" aria-label="言語選択">
+                            <option value="ja">日本語</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -95,8 +106,8 @@
             <div class="container">
                 <div class="hero-content">
                     <div class="hero-text">
-                        <h2 class="hero-title">ウディコンライフを<br>もっと便利に</h2>
-                        <p class="hero-description">
+                        <h2 class="hero-title" data-i18n="main.heroTitle">ウディコンライフを<br>もっと便利に</h2>
+                        <p class="hero-description" data-i18n="main.heroDescription">
                             『ウディこん助』は、WOLF RPGエディターコンテスト（通称：ウディコン）のファンが作成した非公式のChrome拡張機能です。<br>
                             作品管理を目的とし、プレイ済み作品のチェック・感想管理、新作や更新の検出までバッチリ対応。
                             あなたのウディコン体験をもっと快適に。
@@ -104,12 +115,12 @@
                         <div class="hero-buttons">
                             <a href="#download" class="btn btn-primary">
                                 <span class="btn-icon">🔗</span>
-                                Chrome Web Store
+                                <span data-i18n="main.downloadButton">Chrome Web Store</span>
                                 <!--<span class="coming-soon">Coming Soon...</span>-->
                             </a>
                             <a href="#features" class="btn btn-secondary">
                                 <span class="btn-icon">✨</span>
-                                機能を見る
+                                <span data-i18n="navigation.features">機能を見る</span>
                             </a>
                         </div>
                     </div>
@@ -453,5 +464,45 @@
     </footer>
 
     <script src="./js/main.js"></script>
+    
+    <!-- Localization Scripts -->
+    <script src="./localize/languages/ja.js"></script>
+    <script src="./localize/languages/en.js"></script>
+    <script src="./localize/localizer.js"></script>
+    <script>
+        // グローバルローカライザーインスタンス作成
+        window.websiteLocalizer = new WebsiteLocalizer();
+        
+        // 初期化とイベントリスナー設定
+        async function initializeLocalization() {
+            try {
+                await window.websiteLocalizer.initialize();
+                
+                // 言語選択器のイベントリスナー
+                const languageSelector = document.getElementById('language-selector');
+                if (languageSelector) {
+                    // 現在の言語をUIに反映
+                    languageSelector.value = window.websiteLocalizer.getCurrentLanguage();
+                    
+                    // 言語変更イベント
+                    languageSelector.addEventListener('change', async (event) => {
+                        const selectedLanguage = event.target.value;
+                        await window.websiteLocalizer.setLanguage(selectedLanguage, true);
+                    });
+                }
+                
+                console.log('Website localization initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize website localization:', error);
+            }
+        }
+        
+        // DOM読み込み完了後に初期化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeLocalization);
+        } else {
+            initializeLocalization();
+        }
+    </script>
 </body>
 </html>

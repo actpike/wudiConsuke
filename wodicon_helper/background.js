@@ -242,6 +242,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch(error => sendResponse({ success: false, error: error.message }));
     return true;
   }
+  
+  // content script からの自動監視検出通知処理
+  if (message.action === 'auto_monitor_detected') {
+    handleAutoMonitorDetected(message.data, sender)
+      .then(result => sendResponse({ success: true, result }))
+      .catch(error => sendResponse({ success: false, error: error.message }));
+    return true;
+  }
 });
 
 // Web監視開始処理（アラーム機能削除済み）
@@ -517,6 +525,106 @@ async function getGameStatistics() {
       lastUpdated: new Date().toISOString(),
       error: error.message
     };
+  }
+}
+
+// content scriptからの自動監視検出通知処理
+async function handleAutoMonitorDetected(data, sender) {
+  try {
+    console.log('🔍 自動監視検出通知を受信:', data);
+    
+    if (!data.works || !Array.isArray(data.works)) {
+      throw new Error('無効な作品データ');
+    }
+    
+    // 既存データを取得
+    const result = await chrome.storage.local.get();
+    const currentYear = result.current_year || new Date().getFullYear();
+    const existingWorks = result[`games_${currentYear}`] || [];
+    
+    // 簡易差分検出
+    const changes = await detectChangesSimple(data.works, existingWorks);
+    
+    // 新規・更新が検出された場合のみcontent scriptに通知
+    if (changes.newWorks.length > 0 || changes.updatedWorks.length > 0) {
+      console.log(`📊 差分検出結果: 新規${changes.newWorks.length}件, 更新${changes.updatedWorks.length}件`);
+      
+      // content scriptに正しい件数を送信
+      const changeCount = changes.newWorks.length + changes.updatedWorks.length;
+      
+      try {
+        await chrome.tabs.sendMessage(sender.tab.id, {
+          action: 'show_monitor_notice',
+          data: {
+            newCount: changes.newWorks.length,
+            updatedCount: changes.updatedWorks.length,
+            totalChangeCount: changeCount
+          }
+        });
+      } catch (error) {
+        console.warn('⚠️ content scriptへの通知送信失敗:', error);
+      }
+      
+      return {
+        detected: true,
+        newCount: changes.newWorks.length,
+        updatedCount: changes.updatedWorks.length,
+        totalCount: data.works.length
+      };
+    } else {
+      console.log('📊 差分検出結果: 変更なし');
+      return {
+        detected: false,
+        message: '変更なし',
+        totalCount: data.works.length
+      };
+    }
+    
+  } catch (error) {
+    console.error('❌ 自動監視検出処理エラー:', error);
+    throw error;
+  }
+}
+
+// 簡易差分検出関数（Service Worker用）
+async function detectChangesSimple(newWorks, existingWorks) {
+  const changes = {
+    newWorks: [],
+    updatedWorks: []
+  };
+  
+  try {
+    // 既存作品のマップを作成
+    const existingMap = new Map();
+    existingWorks.forEach(work => {
+      if (work.no) {
+        existingMap.set(work.no.toString(), work);
+      }
+    });
+    
+    // 新しい作品データをチェック
+    newWorks.forEach(newWork => {
+      if (!newWork.no) return;
+      
+      const existing = existingMap.get(newWork.no.toString());
+      
+      if (!existing) {
+        // 新規作品
+        changes.newWorks.push(newWork);
+      } else {
+        // 更新チェック（簡易版）
+        if (newWork.lastUpdate && existing.lastUpdate && 
+            newWork.lastUpdate !== existing.lastUpdate) {
+          changes.updatedWorks.push(newWork);
+        }
+      }
+    });
+    
+    return changes;
+    
+  } catch (error) {
+    console.error('❌ 簡易差分検出エラー:', error);
+    return changes;
   }
 }
 

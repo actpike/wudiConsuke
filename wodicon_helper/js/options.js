@@ -157,11 +157,11 @@ function setupEventListeners() {
         });
         
         console.log('✅ Contest URL updated:', contestUrlInput.value);
-        showStatus('ウディコンページURLを保存しました', 'success');
+        showStatus(getLocalizedText('optionsStatus.urlSaved', 'ウディコンページURLを保存しました'), 'success');
         
       } catch (error) {
         console.error('❌ Contest URL save error:', error);
-        showStatus('URL保存エラー: ' + error.message, 'error');
+        showStatus(getLocalizedText('optionsStatus.urlSaveError', 'URL保存エラー: {error}', { error: error.message }), 'error');
       }
     });
   }
@@ -178,10 +178,10 @@ function setupEventListeners() {
         await exportAsCSV();
       }
 
-      showStatus('success', '✅ エクスポート完了');
+      showStatus('success', getLocalizedText('optionsStatus.exportComplete', '✅ エクスポート完了'));
     } catch (error) {
       console.error('Export error:', error);
-      showStatus('error', '❌ エクスポート失敗: ' + error.message);
+      showStatus('error', getLocalizedText('optionsStatus.exportFailed', '❌ エクスポート失敗: {error}', { error: error.message }));
     }
   });
 
@@ -189,7 +189,7 @@ function setupEventListeners() {
   document.getElementById('import-btn').addEventListener('click', async () => {
     const file = document.getElementById('import-file').files[0];
     if (!file) {
-      showStatus('error', '❌ ファイルが選択されていません');
+      showStatus('error', getLocalizedText('optionsStatus.noFileSelected', '❌ ファイルが選択されていません'));
       return;
     }
 
@@ -207,7 +207,7 @@ function setupEventListeners() {
         window.localizer.getText('alerts.csvImportConfirm').replace('{year}', currentYear) : 
         `【${currentYear}年】のデータが更新されます。\n該当年の既存のデータは上書きされ、復元できません。\n\n続行しますか？`;
     } else {
-      showStatus('error', '❌ サポートされていないファイル形式です（JSON、CSVのみ対応）');
+      showStatus('error', getLocalizedText('optionsStatus.unsupportedFormat', '❌ サポートされていないファイル形式です（JSON、CSVのみ対応）'));
       return;
     }
 
@@ -224,10 +224,10 @@ function setupEventListeners() {
           await importFromCSV(e.target.result);
         }
         
-        showStatus('success', '✅ インポート完了');
+        showStatus('success', getLocalizedText('optionsStatus.importComplete', '✅ インポート完了'));
         setTimeout(() => location.reload(), 1000);
       } catch (error) {
-        showStatus('error', '❌ インポート失敗: ' + error.message);
+        showStatus('error', getLocalizedText('optionsStatus.importFailed', '❌ インポート失敗: {error}', { error: error.message }));
       }
     };
     reader.readAsText(file);
@@ -241,10 +241,10 @@ function setupEventListeners() {
     if (confirm(confirmMessage)) {
       try {
         await chrome.storage.local.clear();
-        showStatus('success', '✅ 全データを削除しました');
+        showStatus('success', getLocalizedText('optionsStatus.allDataDeleted', '✅ 全データを削除しました'));
         setTimeout(() => location.reload(), 1000);
       } catch (error) {
-        showStatus('error', '❌ 削除失敗: ' + error.message);
+        showStatus('error', getLocalizedText('optionsStatus.deleteFailed', '❌ 削除失敗: {error}', { error: error.message }));
       }
     }
   });
@@ -299,12 +299,12 @@ function setupEventListeners() {
           console.log('Background Script通知スキップ:', bgError.message);
         }
         
-        showStatus('success', '✅ 設定をリセットしました');
+        showStatus('success', getLocalizedText('optionsStatus.settingsReset', '✅ 設定をリセットしました'));
         setTimeout(() => location.reload(), 1000);
         
       } catch (error) {
         console.error('設定リセットエラー:', error);
-        showStatus('error', '❌ 設定リセット失敗: ' + error.message);
+        showStatus('error', getLocalizedText('optionsStatus.resetFailed', '❌ 設定リセット失敗: {error}', { error: error.message }));
       }
     }
   });
@@ -346,6 +346,7 @@ function setupEventListeners() {
 
     // 自動監視履歴クリアボタン
     addButtonListener('clear-auto-monitor-time', clearAutoMonitorTime, 'Clear auto monitor time');
+    
     
     // 年度管理関連
     // 年度選択セレクターのイベントリスナー（専用処理）
@@ -393,7 +394,7 @@ async function initializeYearManager() {
     console.log('✅ 年度管理初期化完了');
   } catch (error) {
     console.error('❌ 年度管理初期化エラー:', error);
-    showStatus('error', '年度管理の初期化に失敗しました: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.yearInitFailed', '年度管理の初期化に失敗しました: {error}', { error: error.message }));
   }
 }
 
@@ -465,12 +466,13 @@ async function handleYearChange(event) {
     if (!newYear) return;
     
     console.log(`🔄 年度変更: ${newYear}`);
-    showStatus('info', `年度を${window.yearManager.formatYearDisplay(newYear)}に変更中...`);
+    const yearDisplay = window.yearManager.formatYearDisplay(newYear);
+    showStatus('info', getLocalizedText('optionsStatus.yearChangeInProgress', '年度を{yearDisplay}に変更中...', { yearDisplay }));
     
     await window.yearManager.setCurrentYear(newYear);
     await updateYearInfo();
     
-    showStatus('success', `年度を${window.yearManager.formatYearDisplay(newYear)}に変更しました`);
+    showStatus('success', getLocalizedText('optionsStatus.yearChangeComplete', '年度を{yearDisplay}に変更しました', { yearDisplay }));
     
     // 他の設定も再読み込み
     setTimeout(() => {
@@ -479,7 +481,7 @@ async function handleYearChange(event) {
     
   } catch (error) {
     console.error('年度変更エラー:', error);
-    showStatus('error', '年度変更に失敗しました: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.yearChangeFailed', '年度変更に失敗しました: {error}', { error: error.message }));
     await updateYearSelector(); // プルダウンを元に戻す
   }
 }
@@ -487,26 +489,28 @@ async function handleYearChange(event) {
 // 新年度追加ハンドラー
 async function handleAddNewYear() {
   try {
-    const newYear = prompt('追加する年度を入力してください (例: 2026)');
+    const promptText = getLocalizedText('optionsStatus.yearPrompt', '追加する年度を入力してください (例: 2026)');
+    const newYear = prompt(promptText);
     if (!newYear) return;
     
     const year = parseInt(newYear);
     if (isNaN(year) || year < 2009 || year > 2050) {
-      throw new Error('有効な年度を入力してください (2009-2050)');
+      throw new Error(getLocalizedText('optionsStatus.validYearRange', '有効な年度を入力してください (2009-2050)'));
     }
     
     console.log(`🆕 新年度追加: ${year}`);
-    showStatus('info', `${window.yearManager.formatYearDisplay(year)}のデータを初期化中...`);
+    const yearDisplay = window.yearManager.formatYearDisplay(year);
+    showStatus('info', getLocalizedText('optionsStatus.yearInitInProgress', '{yearDisplay}のデータを初期化中...', { yearDisplay }));
     
     await window.yearManager.initializeYear(year);
     await updateYearSelector();
     await updateYearInfo();
     
-    showStatus('success', `${window.yearManager.formatYearDisplay(year)}を追加しました`);
+    showStatus('success', getLocalizedText('optionsStatus.yearInitComplete', '{yearDisplay}を追加しました', { yearDisplay }));
     
   } catch (error) {
     console.error('新年度追加エラー:', error);
-    showStatus('error', '新年度追加に失敗しました: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.yearAddFailed', '新年度追加に失敗しました: {error}', { error: error.message }));
   }
 }
 
@@ -518,7 +522,7 @@ async function handleDeleteYearData() {
     
     // 最後の年度の場合は削除不可
     if (availableYears.length <= 1) {
-      showStatus('error', '最後の年度データは削除できません');
+      showStatus('error', getLocalizedText('optionsStatus.lastYearCannotDelete', '最後の年度データは削除できません'));
       return;
     }
     
@@ -533,7 +537,7 @@ async function handleDeleteYearData() {
     }
     
     console.log(`🗑️ 年度データ削除開始: ${currentYear}`);
-    showStatus('info', `${yearDisplay}のデータを削除中...`);
+    showStatus('info', getLocalizedText('optionsStatus.yearDeleteInProgress', '{yearDisplay}のデータを削除中...', { yearDisplay }));
     
     // 先に他の年度に切り替え
     const remainingYears = availableYears.filter(year => year !== currentYear);
@@ -547,7 +551,8 @@ async function handleDeleteYearData() {
     await updateYearSelector();
     await updateYearInfo();
     
-    showStatus('success', `${yearDisplay}のデータを削除し、${window.yearManager.formatYearDisplay(newCurrentYear)}に切り替えました`);
+    const newYearDisplay = window.yearManager.formatYearDisplay(newCurrentYear);
+    showStatus('success', getLocalizedText('optionsStatus.yearDeleteComplete', '{yearDisplay}のデータを削除し、{newYearDisplay}に切り替えました', { yearDisplay, newYearDisplay }));
     
     // 設定画面をリロード
     setTimeout(() => {
@@ -556,7 +561,7 @@ async function handleDeleteYearData() {
     
   } catch (error) {
     console.error('年度データ削除エラー:', error);
-    showStatus('error', '年度データ削除に失敗しました: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.yearDeleteFailed', '年度データ削除に失敗しました: {error}', { error: error.message }));
   }
 }
 
@@ -613,9 +618,9 @@ async function saveSettings() {
       console.log('Background Script通知スキップ:', bgError.message);
     }
 
-    showStatus('success', '✅ 設定を保存しました', 2000);
+    showStatus('success', getLocalizedText('optionsStatus.settingsSaved', '✅ 設定を保存しました'), 2000);
   } catch (error) {
-    showStatus('error', '❌ 設定保存失敗: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.resetFailed', '❌ 設定保存失敗: {error}', { error: error.message }));
   }
 }
 
@@ -656,6 +661,19 @@ window.clearStatus = function() {
   statusDiv.className = 'status';
 };
 
+// ローカライズされたテキスト取得のヘルパー関数
+function getLocalizedText(key, fallback, params = {}) {
+  if (!window.localizer) return fallback;
+  let text = window.localizer.getText(key);
+  
+  // テンプレート置換
+  Object.keys(params).forEach(paramKey => {
+    text = text.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), params[paramKey]);
+  });
+  
+  return text;
+}
+
 // Web監視関連機能
 async function performManualMonitoring() {
   console.log('🔍 performManualMonitoring called');
@@ -669,7 +687,7 @@ async function performManualMonitoring() {
   try {
     console.log('🔧 Disabling button and starting monitoring...');
     button.disabled = true;
-    button.textContent = '監視実行中...';
+    button.textContent = getLocalizedText('optionsStatus.monitoringInProgress', '監視実行中...');
     
     // Background Script経由で監視実行（権限問題を回避）
     try {
@@ -680,10 +698,12 @@ async function performManualMonitoring() {
       
       if (response && response.success) {
         const result = response.result;
-        showStatus('success', '✅ 監視完了: ' + (result.message || 'チェック正常完了'));
+        const message = result.message || getLocalizedText('optionsStatus.checkComplete', 'チェック正常完了');
+        showStatus('success', getLocalizedText('optionsStatus.monitorComplete', '✅ 監視完了: {message}', { message }));
         console.log('監視結果:', result);
       } else {
-        showStatus('error', '❌ 監視失敗: ' + (response?.error || '不明なエラー'));
+        const error = response?.error || getLocalizedText('optionsStatus.unknownError', '不明なエラー');
+        showStatus('error', getLocalizedText('optionsStatus.monitorFailed', '❌ 監視失敗: {error}', { error }));
       }
       
       updateLastMonitorTime(new Date().toISOString());
@@ -692,15 +712,15 @@ async function performManualMonitoring() {
     } catch (bgError) {
       console.log('Background Script通信エラー (フォールバック):', bgError.message);
       // フォールバック: 簡易監視確認
-      showStatus('success', '✅ 監視システム確認: 基本機能は正常に動作しています');
+      showStatus('success', getLocalizedText('optionsStatus.monitorSystemCheck', '監視システム確認: 基本機能は正常に動作しています'));
       updateLastMonitorTime(new Date().toISOString());
     }
     
   } catch (error) {
-    showStatus('error', '❌ 監視エラー: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.monitorFailed', '❌ 監視エラー: {error}', { error: error.message }));
   } finally {
     button.disabled = false;
-    button.textContent = '今すぐ監視実行';
+    button.textContent = getLocalizedText('optionsStatus.manualMonitorButton', '今すぐ監視実行');
   }
 }
 
@@ -708,20 +728,27 @@ async function sendTestNotification() {
   console.log('🔔 sendTestNotification called');
   try {
     console.log('🔔 Creating test notification...');
+    
+    // 多言語対応の通知テキスト取得
+    const notificationTitle = getLocalizedText('testNotification.title', '🔔 テスト通知');
+    const notificationMessage = getLocalizedText('testNotification.message', 'Web監視の通知設定が正常に動作しています。\n新規：1件、更新：1件（No.02_謎解きカフェ事件簿 他）\n時刻: {time}', {
+      time: new Date().toLocaleTimeString()
+    });
+    
     // ユニークIDで毎回新しい通知を作成
     const uniqueId = `test_notification_${Date.now()}`;
     await chrome.notifications.create(uniqueId, {
       type: 'basic',
       iconUrl: 'icons/icon48.png',
-      title: '🔔 テスト通知',
-      message: `Web監視の通知設定が正常に動作しています。\n新規：1件、更新：1件（No.02_謎解きカフェ事件簿 他）\n時刻: ${new Date().toLocaleTimeString()}`,
+      title: notificationTitle,
+      message: notificationMessage,
       priority: 1
     });
     console.log('✅ Test notification created successfully with ID:', uniqueId);
-    showStatus('success', '✅ テスト通知を送信しました');
+    showStatus('success', getLocalizedText('optionsStatus.testNotificationSent', '✅ テスト通知を送信しました'));
   } catch (error) {
     console.error('❌ Test notification error:', error);
-    showStatus('error', '❌ 通知送信失敗: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.notificationFailed', '❌ 通知送信失敗: {error}', { error: error.message }));
   }
 }
 
@@ -761,9 +788,12 @@ async function loadMonitoringData() {
       };
       
       const getLocalizedTemplate = (key, params, fallback) => {
-        if (!window.localizer) return fallback;
+        if (!window.localizer) {
+          // フォールバック時もパラメータ置換を実行
+          return fallback.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] !== undefined ? params[paramName] : match);
+        }
         const template = window.localizer.getText(key);
-        return template.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] || match);
+        return template.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] !== undefined ? params[paramName] : match);
       };
       
       const statisticsTitle = getLocalizedText('settings.autoMonitoring.history.statisticsTitle', '監視統計');
@@ -838,9 +868,12 @@ function updateAutoMonitorStatus(settings, lastTime) {
   };
   
   const getLocalizedTemplate = (key, params, fallback) => {
-    if (!window.localizer) return fallback;
+    if (!window.localizer) {
+      // フォールバック時もパラメータ置換を実行
+      return fallback.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] !== undefined ? params[paramName] : match);
+    }
     const template = window.localizer.getText(key);
-    return template.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] || match);
+    return template.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] !== undefined ? params[paramName] : match);
   };
 
   let statusText = '';
@@ -888,11 +921,11 @@ async function clearAutoMonitorTime() {
     const autoMonitorSettings = result.auto_monitor_settings || {};
     updateAutoMonitorStatus(autoMonitorSettings, null);
     
-    showStatus('success', '✅ 自動監視履歴をクリアしました');
+    showStatus('success', getLocalizedText('optionsStatus.historyCleared', '✅ 自動監視履歴をクリアしました'));
     
   } catch (error) {
     console.error('自動監視履歴クリアエラー:', error);
-    showStatus('error', '❌ 履歴クリアに失敗しました');
+    showStatus('error', getLocalizedText('optionsStatus.historyClearFailed', '❌ 履歴クリアに失敗しました'));
   }
 }
 
@@ -913,7 +946,7 @@ async function exportAsJSON() {
     console.log('📄 JSONエクスポート完了（新フォーマット）');
   } catch (error) {
     console.error('❌ JSONエクスポートエラー:', error);
-    showStatus('error', '❌ エクスポートに失敗しました: ' + error.message);
+    showStatus('error', getLocalizedText('optionsStatus.exportFailed', '❌ エクスポート失敗: {error}', { error: error.message }));
   }
 }
 
@@ -1016,7 +1049,8 @@ async function importFromJSON(jsonString) {
         'json-import-validation'
       );
       
-      throw new Error(`${summary}\n\n詳細:\n${errorMessage}`);
+      const detailsHeader = getLocalizedText('fileValidation.detailsHeader', '詳細:');
+      throw new Error(`${summary}\n\n${detailsHeader}\n${errorMessage}`);
     }
     
     // 検証通過後、dataManagerのimportDataを使用
@@ -1048,7 +1082,8 @@ async function importFromCSV(csvString) {
         'csv-import-validation'
       );
       
-      throw new Error(`${summary}\n\n詳細:\n${errorMessage}`);
+      const detailsHeader = getLocalizedText('fileValidation.detailsHeader', '詳細:');
+      throw new Error(`${summary}\n\n${detailsHeader}\n${errorMessage}`);
     }
     
     // 検証通過後、CSVデータをゲームオブジェクトに変換
@@ -1250,3 +1285,4 @@ async function handleLanguageChange(event) {
     }
   }
 }
+

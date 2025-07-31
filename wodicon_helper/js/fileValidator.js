@@ -11,6 +11,23 @@ class FileValidator {
   }
 
   /**
+   * ローカライゼーション対応のテキスト取得ヘルパー
+   */
+  getLocalizedText(key, fallback, params = {}) {
+    if (window.localizer && window.localizer.getText) {
+      const text = window.localizer.getText(key);
+      // パラメータ置換
+      return text.replace(/\{(\w+)\}/g, (match, paramName) => {
+        return params[paramName] !== undefined ? params[paramName] : match;
+      });
+    }
+    // フォールバック: パラメータ置換した fallback を返す
+    return fallback.replace(/\{(\w+)\}/g, (match, paramName) => {
+      return params[paramName] !== undefined ? params[paramName] : match;
+    });
+  }
+
+  /**
    * JSONファイルの検証
    * @param {string} jsonString - JSONファイルの内容
    * @returns {Object} 検証結果 {valid: boolean, data: object|null, errors: string[]}
@@ -28,22 +45,22 @@ class FileValidator {
       try {
         data = JSON.parse(jsonString);
       } catch (parseError) {
-        result.errors.push(`❌ JSON構文エラー: ${parseError.message}`);
-        result.errors.push('💡 修正提案: JSONファイルの構文を確認してください。オンラインJSONバリデーターでの確認をお勧めします。');
+        result.errors.push(this.getLocalizedText('fileValidation.jsonSyntaxError', '❌ JSON構文エラー: {error}', { error: parseError.message }));
+        result.errors.push(this.getLocalizedText('fileValidation.jsonSyntaxSuggestion', '💡 修正提案: JSONファイルの構文を確認してください。オンラインJSONバリデーターでの確認をお勧めします。'));
         return result;
       }
 
       // 2. 基本型チェック
       if (typeof data !== 'object' || data === null || Array.isArray(data)) {
-        result.errors.push('❌ ファイル形式エラー: JSONのルートはオブジェクトである必要があります');
+        result.errors.push(this.getLocalizedText('fileValidation.invalidDataType', '❌ 無効なデータ型: オブジェクトである必要があります'));
         return result;
       }
 
       // 3. 古いフォーマット検出と拒否（フォーマット構造による判定）
       if (data.wodicon_games || data.wodicon_settings || data.wodicon_metadata) {
-        result.errors.push('❌ 古いフォーマットファイル: このファイルは古いバージョンのフォーマットです');
-        result.errors.push('💡 修正提案: 新しいフォーマットでエクスポートしたファイルを使用してください');
-        result.errors.push('🔄 新フォーマットでは "games" キーを使用し、"wodicon_games" は使用しません');
+        result.errors.push(this.getLocalizedText('fileValidation.oldFormatDetected', '❌ 古いフォーマットファイル: このファイルは古いバージョンのフォーマットです'));
+        result.errors.push(this.getLocalizedText('fileValidation.oldFormatSuggestion', '💡 修正提案: 新しいフォーマットでエクスポートしたファイルを使用してください'));
+        result.errors.push(this.getLocalizedText('fileValidation.newFormatInfo', '🔄 新フォーマットでは "games" キーを使用し、"wodicon_games" は使用しません'));
         return result;
       }
 
@@ -63,8 +80,8 @@ class FileValidator {
           return result;
         }
       } else {
-        result.errors.push('❌ 無効なデータ形式: "games"配列または"years"オブジェクトが必要です');
-        result.errors.push('💡 修正提案: ウディこん助から正常にエクスポートされたJSONファイルを使用してください');
+        result.errors.push(this.getLocalizedText('fileValidation.invalidDataFormat', '❌ 無効なデータ形式: "games"配列または"years"オブジェクトが必要です'));
+        result.errors.push(this.getLocalizedText('fileValidation.invalidDataFormatSuggestion', '💡 修正提案: ウディこん助から正常にエクスポートされたJSONファイルを使用してください'));
         return result;
       }
 
@@ -275,8 +292,8 @@ class FileValidator {
         .filter(line => line && !line.startsWith('#'));
 
       if (lines.length < 2) {
-        result.errors.push('❌ CSVファイルにはヘッダー行とデータ行が必要です');
-        result.errors.push('💡 修正提案: ヘッダー行と最低1行のデータを含むCSVファイルを作成してください');
+        result.errors.push(this.getLocalizedText('fileValidation.csvMinimumLines', '❌ CSVファイルにはヘッダー行とデータ行が必要です'));
+        result.errors.push(this.getLocalizedText('fileValidation.csvMinimumLinesSuggestion', '💡 修正提案: ヘッダー行と最低1行のデータを含むCSVファイルを作成してください'));
         return result;
       }
 
@@ -322,8 +339,8 @@ class FileValidator {
     );
 
     if (missingHeaders.length > 0) {
-      errors.push(`❌ 必須ヘッダー不足: ${missingHeaders.join(', ')}`);
-      errors.push('💡 修正提案: CSVファイルの1行目に以下のヘッダーを正確に含めてください:');
+      errors.push(this.getLocalizedText('fileValidation.missingHeaders', '❌ 必須ヘッダー不足: {headers}', { headers: missingHeaders.join(', ') }));
+      errors.push(this.getLocalizedText('fileValidation.missingHeadersSuggestion', '💡 修正提案: CSVファイルの1行目に以下のヘッダーを正確に含めてください:'));
       errors.push(`   ${this.requiredCsvHeaders.join(', ')}`);
     }
 
@@ -428,20 +445,20 @@ class FileValidator {
           const totalGames = yearKeys.reduce((total, year) => {
             return total + (data.years[year].games?.length || 0);
           }, 0);
-          return `✅ ファイル検証成功: ${yearKeys.length}年分、${totalGames}件のデータが有効です`;
+          return this.getLocalizedText('fileValidation.validationSuccess', '✅ ファイル検証成功: {count}件のデータが有効です', { count: `${yearKeys.length}年分、${totalGames}` });
         }
         
         // 単一年度フォーマットの場合
         const gameCount = data.games?.length || 0;
-        return `✅ ファイル検証成功: ${gameCount}件のデータが有効です`;
+        return this.getLocalizedText('fileValidation.validationSuccess', '✅ ファイル検証成功: {count}件のデータが有効です', { count: gameCount });
       } else {
         // CSVの場合
         const dataCount = validationResult.data?.length - 1 || 0; // ヘッダー行を除く
-        return `✅ ファイル検証成功: ${dataCount}件のデータが有効です`;
+        return this.getLocalizedText('fileValidation.validationSuccess', '✅ ファイル検証成功: {count}件のデータが有効です', { count: dataCount });
       }
     } else {
       const errorCount = validationResult.errors.length;
-      return `❌ ファイル検証失敗: ${errorCount}個のエラーが見つかりました`;
+      return this.getLocalizedText('fileValidation.validationFailure', '❌ ファイル検証失敗: {count}個のエラーが見つかりました', { count: errorCount });
     }
   }
 }

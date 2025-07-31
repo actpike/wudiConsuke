@@ -2,9 +2,12 @@
 
 console.log('🌊 ウディこん助 content script loaded on:', window.location.href);
 
-// バックグラウンドスクリプトからのメッセージ受信
-// 初期化処理よりも先にリスナーを登録することで、初期化中のエラーで受信できなくなる事態を防ぐ
+
+// 統合メッセージリスナー（全てのメッセージを処理）
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  console.log('📨 メッセージ受信:', request.action, request);
+  console.log('📡 送信者情報:', sender);
+  
   switch (request.action) {
     case 'extractPageData':
       const data = analyzeWodiconPage();
@@ -77,8 +80,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: false, error: error.message });
       }
       break;
+
+    case 'debug_status':
+      try {
+        console.log('🔍 debug_status メッセージ処理中');
+        sendResponse({
+          success: true,
+          status: 'active',
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+          isWodiconPage: isWodiconPage(),
+          contentScriptVersion: 'loaded'
+        });
+      } catch (error) {
+        sendResponse({ success: false, error: error.message });
+      }
+      break;
+
       
     default:
+      console.warn('⚠️ 未知のアクション:', request.action);
       sendResponse({ success: false, error: 'Unknown action' });
   }
 
@@ -95,11 +116,21 @@ function isWodiconPage() {
          (url.includes('Contest') || title.includes('コンテスト') || title.includes('ウディタ'));
 }
 
-// ページ読み込み完了後の処理
+// ページ読み込み完了後の処理（エラーセーフ）
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initContentScript);
+  document.addEventListener('DOMContentLoaded', () => {
+    try {
+      initContentScript();
+    } catch (error) {
+      console.error('❌ DOM読み込み後の初期化エラー:', error);
+    }
+  });
 } else {
-  initContentScript();
+  try {
+    initContentScript();
+  } catch (error) {
+    console.error('❌ 即座初期化エラー:', error);
+  }
 }
 
 function initContentScript() {
@@ -131,6 +162,7 @@ function initContentScript() {
 // 自動監視実行
 async function performAutoMonitoring() {
   try {
+    
     console.log('🔍 コンテンツスクリプトから自動監視実行開始');
     
     // 自動監視設定確認
@@ -180,10 +212,9 @@ async function performAutoMonitoring() {
           }
         }).catch(error => {
           console.log('Background script通信エラー:', error);
+          // Background script通信失敗時は従来通りの表示
+          showAutoMonitorFeedback(works.length);
         });
-        
-        // 視覚的フィードバック（控えめな通知）
-        showAutoMonitorFeedback(works.length);
         
       } else {
         console.log('ℹ️ 作品情報を検出できませんでした');
@@ -198,6 +229,9 @@ async function performAutoMonitoring() {
 // 自動監視のフィードバック表示
 function showAutoMonitorFeedback(workCount) {
   try {
+    console.warn('⚠️ 古いshowAutoMonitorFeedback関数が呼ばれました！workCount=', workCount);
+    console.trace('📍 呼び出し元のスタックトレース:');
+    
     // 既存の通知があれば削除
     const existingNotice = document.getElementById('wodicon-auto-monitor-notice');
     if (existingNotice) {
@@ -744,7 +778,114 @@ window.addEventListener('beforeunload', () => {
   console.log('🌊 ウディこん助 content script unloading');
 });
 
+// 重複するメッセージリスナーを削除済み（上の統合リスナーで処理）
+
+// 新規・更新件数付きの自動監視通知表示
+function showAutoMonitorNoticeWithChanges(newCount, updatedCount) {
+  try {
+    console.log(`🎨 showAutoMonitorNoticeWithChanges 実行開始: newCount=${newCount}, updatedCount=${updatedCount}`);
+    
+    // 既存の通知があれば削除
+    const existingNotice = document.getElementById('wodicon-auto-monitor-notice');
+    if (existingNotice) {
+      existingNotice.remove();
+      console.log('🗑️ 既存通知削除完了');
+    }
+    
+    // 変更内容のメッセージを作成
+    let changeMessage = '';
+    if (newCount > 0 && updatedCount > 0) {
+      changeMessage = `新規${newCount}件、更新${updatedCount}件`;
+    } else if (newCount > 0) {
+      changeMessage = `新規${newCount}件`;
+    } else if (updatedCount > 0) {
+      changeMessage = `更新${updatedCount}件`;
+    }
+    
+    console.log(`📝 作成予定メッセージ: "${changeMessage}"`);
+    
+    if (!changeMessage) {
+      console.warn('⚠️ changeMessage が空です！newCount/updatedCount を確認してください');
+      return;
+    }
+    
+    // 通知バーを作成
+    const notice = document.createElement('div');
+    notice.id = 'wodicon-auto-monitor-notice';
+    notice.style.cssText = `
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 10000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: slideInFade 0.4s ease-out;
+      max-width: 320px;
+      border: 1px solid rgba(255,255,255,0.2);
+    `;
+    
+    const finalMessage = `🌊 ウディこん助: ${changeMessage}を検出しました`;
+    notice.innerHTML = finalMessage;
+    
+    console.log(`🎯 最終表示メッセージ: "${finalMessage}"`);
+    
+    // アニメーション用CSS追加
+    if (!document.getElementById('wodicon-auto-monitor-styles')) {
+      const styles = document.createElement('style');
+      styles.id = 'wodicon-auto-monitor-styles';
+      styles.textContent = `
+        @keyframes slideInFade {
+          from {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        @keyframes slideOutFade {
+          from {
+            opacity: 1;
+            transform: translateX(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+        }
+      `;
+      document.head.appendChild(styles);
+    }
+    
+    document.body.appendChild(notice);
+    
+    // 5秒後に自動削除
+    setTimeout(() => {
+      if (notice && notice.parentNode) {
+        notice.style.animation = 'slideOutFade 0.3s ease-in';
+        setTimeout(() => {
+          if (notice.parentNode) {
+            notice.remove();
+          }
+        }, 300);
+      }
+    }, 5000);
+    
+    console.log(`✅ 自動監視通知表示: ${changeMessage}`);
+    
+  } catch (error) {
+    console.error('❌ 自動監視通知表示エラー:', error);
+  }
+}
+
 // 初期化完了ログ
 setTimeout(() => {
   console.log('🌊 ウディこん助 content script initialization completed');
+  console.log('🔧 メッセージリスナー登録状況:', chrome.runtime.onMessage.hasListeners());
 }, 1000);

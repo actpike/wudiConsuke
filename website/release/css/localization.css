@@ -1,0 +1,159 @@
+/**
+ * 言語切り替えUI用スタイル
+ * Language switching UI styles for introduction page
+ */
+
+/* 言語選択コンテナ */
+.language-selector-container {
+  position: relative;
+  display: inline-block;
+  margin-left: auto;
+}
+
+/* 言語選択ボタン */
+.language-selector {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid #4A90E2;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.language-selector:hover {
+  background: #4A90E2;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(74, 144, 226, 0.3);
+}
+
+.language-selector:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+/* 言語選択オプション */
+.language-selector option {
+  background: white;
+  color: #333;
+  padding: 8px;
+}
+
+/* ヘッダー内での言語選択器の配置 */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.header-main {
+  flex: 1;
+}
+
+.header-language {
+  flex-shrink: 0;
+  margin-left: 20px;
+}
+
+/* ダークモード対応 */
+@media (prefers-color-scheme: dark) {
+  .language-selector {
+    background: rgba(40, 44, 52, 0.9);
+    border-color: #61AFEF;
+    color: #E6E6E6;
+  }
+  
+  .language-selector:hover {
+    background: #61AFEF;
+    color: #282C34;
+  }
+  
+  .language-selector option {
+    background: #282C34;
+    color: #E6E6E6;
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .header-language {
+    margin-left: 0;
+    order: -1;
+    align-self: flex-end;
+  }
+  
+  .language-selector {
+    min-width: 100px;
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+/* 言語切り替え中のローディング表示 */
+.language-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.language-loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  border: 2px solid #4A90E2;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translateY(-50%) rotate(0deg); }
+  100% { transform: translateY(-50%) rotate(360deg); }
+}
+
+/* フォーカス可能な要素のスタイル改善 */
+.language-selector:focus-visible {
+  outline: 2px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+/* ハイコントラストモード対応 */
+@media (prefers-contrast: high) {
+  .language-selector {
+    border-width: 3px;
+    font-weight: 600;
+  }
+}
+
+/* 動作軽減モード対応 */
+@media (prefers-reduced-motion: reduce) {
+  .language-selector {
+    transition: none;
+  }
+  
+  .language-selector:hover {
+    transform: none;
+  }
+  
+  .language-loading::after {
+    animation: none;
+  }
+}

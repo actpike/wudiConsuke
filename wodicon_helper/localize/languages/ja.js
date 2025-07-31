@@ -533,6 +533,87 @@ const jaResources = {
     jsonImportConfirm: 'JSONファイルをインポートします。\n\n⚠️ 既存の全データが上書きされます。\n現在のデータは完全に置き換わりますがよろしいですか？',
     csvImportConfirm: '【{year}年】のデータが更新されます。\n該当年の既存のデータは上書きされ、復元できません。\n\n続行しますか？',
     confirmDeleteYearData: '{yearDisplay}のデータを完全に削除しますか？\n\nこの操作は取り消せません。'
+  },
+
+  // オプション画面のステータスメッセージ
+  optionsStatus: {
+    // 成功メッセージ
+    urlSaved: 'ウディコンページURLを保存しました',
+    exportComplete: '✅ エクスポート完了',
+    importComplete: '✅ インポート完了',  
+    allDataDeleted: '✅ 全データを削除しました',
+    settingsReset: '✅ 設定をリセットしました',
+    settingsSaved: '✅ 設定を保存しました',
+    monitorComplete: '✅ 監視完了: {message}',
+    testNotificationSent: '✅ テスト通知を送信しました',
+    historyCleared: '✅ 自動監視履歴をクリアしました',
+    
+    // エラーメッセージ
+    noFileSelected: '❌ ファイルが選択されていません',
+    unsupportedFormat: '❌ サポートされていないファイル形式です（JSON、CSVのみ対応）',
+    exportFailed: '❌ エクスポート失敗: {error}',
+    importFailed: '❌ インポート失敗: {error}',
+    deleteFailed: '❌ 削除失敗: {error}',
+    resetFailed: '❌ 設定リセット失敗: {error}',
+    monitorFailed: '❌ 監視失敗: {error}',
+    notificationFailed: '❌ 通知送信失敗: {error}',
+    historyClearFailed: '❌ 履歴クリアに失敗しました',
+    exportError: '❌ エクスポートに失敗しました: {error}',
+    urlSaveError: 'URL保存エラー: {error}',
+    
+    // 年度管理メッセージ
+    yearInitFailed: '年度管理の初期化に失敗しました: {error}',
+    yearChangeInProgress: '年度を{yearDisplay}に変更中...',
+    yearChangeComplete: '年度を{yearDisplay}に変更しました',
+    yearChangeFailed: '年度変更に失敗しました: {error}',
+    yearInitInProgress: '{yearDisplay}のデータを初期化中...',
+    yearInitComplete: '{yearDisplay}を追加しました',
+    yearAddFailed: '新年度追加に失敗しました: {error}',
+    yearDeleteInProgress: '{yearDisplay}のデータを削除中...',
+    yearDeleteComplete: '{yearDisplay}のデータを削除し、{newYearDisplay}に切り替えました',
+    yearDeleteFailed: '年度データ削除に失敗しました: {error}',
+    lastYearCannotDelete: '最後の年度データは削除できません',
+    
+    // その他
+    validYearRange: '有効な年度を入力してください (2009-2050)',
+    yearPrompt: '追加する年度を入力してください (例: 2026)',
+    monitorSystemCheck: '監視システム確認: 基本機能は正常に動作しています',
+    checkComplete: 'チェック正常完了',
+    unknownError: '不明なエラー',
+    monitoringInProgress: '監視実行中...',
+    manualMonitorButton: '今すぐ監視実行'
+  },
+
+  // テスト通知
+  testNotification: {
+    title: '🔔 テスト通知',
+    message: 'Web監視の通知設定が正常に動作しています。\n新規：1件、更新：1件（No.02_謎解きカフェ事件簿 他）\n時刻: {time}'
+  },
+
+  // ファイル検証エラー
+  fileValidation: {
+    // JSON関連エラー
+    jsonSyntaxError: '❌ JSON構文エラー: {error}',
+    jsonSyntaxSuggestion: '💡 修正提案: JSONファイルの構文を確認してください。オンラインJSONバリデーターでの確認をお勧めします。',
+    invalidDataType: '❌ 無効なデータ型: オブジェクトである必要があります',
+    oldFormatDetected: '❌ 古いフォーマットファイル: このファイルは古いバージョンのフォーマットです',
+    oldFormatSuggestion: '💡 修正提案: 新しいフォーマットでエクスポートしたファイルを使用してください',
+    newFormatInfo: '🔄 新フォーマットでは "games" キーを使用し、"wodicon_games" は使用しません',
+    invalidDataFormat: '❌ 無効なデータ形式: "games"配列または"years"オブジェクトが必要です',
+    invalidDataFormatSuggestion: '💡 修正提案: ウディこん助から正常にエクスポートされたJSONファイルを使用してください',
+    
+    // CSV関連エラー
+    csvMinimumLines: '❌ CSVファイルにはヘッダー行とデータ行が必要です',
+    csvMinimumLinesSuggestion: '💡 修正提案: ヘッダー行と最低1行のデータを含むCSVファイルを作成してください',
+    missingHeaders: '❌ 必須ヘッダー不足: {headers}',
+    missingHeadersSuggestion: '💡 修正提案: CSVファイルの1行目に以下のヘッダーを正確に含めてください:',
+    
+    // 検証結果メッセージ
+    validationSuccess: '✅ ファイル検証成功: {count}件のデータが有効です',
+    validationFailure: '❌ ファイル検証失敗: {count}個のエラーが見つかりました',
+    
+    // 詳細セクション
+    detailsHeader: '詳細:'
   }
 };
 
