@@ -156,6 +156,12 @@ function initContentScript() {
     } catch (e) {
       console.error('❌ startPageMonitoring failed:', e);
     }
+    try {
+      // デバッグパネル初期化
+      initDebugPanel();
+    } catch (e) {
+      console.error('❌ initDebugPanel failed:', e);
+    }
   }
 }
 
@@ -212,8 +218,10 @@ async function performAutoMonitoring() {
           }
         }).catch(error => {
           console.log('Background script通信エラー:', error);
-          // Background script通信失敗時は従来通りの表示
-          showAutoMonitorFeedback(works.length);
+          // Background script通信失敗時も新しい通知システムを使用
+          // ただし差分情報がないため、検出した作品数を新規として扱う
+          console.log('🔄 Background script通信失敗のため、検出作品を新規として通知表示');
+          showAutoMonitorNoticeWithChanges(works.length, 0);
         });
         
       } else {
@@ -881,6 +889,318 @@ function showAutoMonitorNoticeWithChanges(newCount, updatedCount) {
     
   } catch (error) {
     console.error('❌ 自動監視通知表示エラー:', error);
+  }
+}
+
+// デバッグパネル初期化
+function initDebugPanel() {
+  // デバッグパネルは常に非表示（ローカル開発時のみ手動で有効化）
+  // リリース版（開発版・本番版問わず）では表示しない
+  const manifest = chrome.runtime.getManifest();
+  const isLocalDev = manifest.name.includes('(LocalDev)');
+  
+  if (!isLocalDev) {
+    console.log('🔧 リリース版のためデバッグパネルをスキップ');
+    return;
+  }
+  
+  console.log('🔧 デバッグパネル初期化開始（ローカル開発モード）');
+  
+  // 既存のパネルがあれば削除
+  const existingPanel = document.getElementById('wodicon-debug-panel');
+  if (existingPanel) {
+    existingPanel.remove();
+  }
+  
+  // デバッグパネルのHTML構造を作成
+  const debugPanel = document.createElement('div');
+  debugPanel.id = 'wodicon-debug-panel';
+  debugPanel.innerHTML = `
+    <div id="debug-header">
+      🌊 ウディこん助 デバッグ
+      <button id="debug-toggle">▼</button>
+    </div>
+    <div id="debug-content" style="display: none;">
+      <div class="debug-section">
+        <h4>クールタイム管理</h4>
+        <button id="debug-clear-cooltime" class="debug-btn">クールタイム削除</button>
+        <div id="cooltime-status"></div>
+      </div>
+      <div class="debug-section">
+        <h4>通知テスト</h4>
+        <button id="debug-test-new" class="debug-btn">新規2件</button>
+        <button id="debug-test-updated" class="debug-btn">更新1件</button>
+        <button id="debug-test-mixed" class="debug-btn">新規3件+更新2件</button>
+      </div>
+      <div class="debug-section">
+        <h4>監視状態</h4>
+        <button id="debug-check-status" class="debug-btn">状態確認</button>
+        <button id="debug-test-background" class="debug-btn">Background通信テスト</button>
+        <div id="monitor-status"></div>
+      </div>
+      <div id="debug-log"></div>
+    </div>
+  `;
+  
+  // CSSスタイルを追加
+  const debugStyles = document.createElement('style');
+  debugStyles.id = 'wodicon-debug-styles';
+  debugStyles.textContent = `
+    #wodicon-debug-panel {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.9);
+      color: white;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      z-index: 10000;
+      min-width: 280px;
+      max-width: 400px;
+    }
+    
+    #debug-header {
+      background: #667eea;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    #debug-toggle {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 0;
+    }
+    
+    #debug-content {
+      padding: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .debug-section {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #444;
+    }
+    
+    .debug-section:last-child {
+      border-bottom: none;
+    }
+    
+    .debug-section h4 {
+      margin: 0 0 8px 0;
+      color: #90CAF9;
+      font-size: 13px;
+    }
+    
+    .debug-btn {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      margin: 2px 4px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      transition: background 0.2s;
+    }
+    
+    .debug-btn:hover {
+      background: #45a049;
+    }
+    
+    .debug-btn.danger {
+      background: #f44336;
+    }
+    
+    .debug-btn.danger:hover {
+      background: #da190b;
+    }
+    
+    #debug-log {
+      margin-top: 10px;
+      background: #1e1e1e;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      max-height: 120px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    #cooltime-status, #monitor-status {
+      margin-top: 8px;
+      padding: 6px 8px;
+      background: #2e2e2e;
+      border-radius: 4px;
+      font-size: 10px;
+      color: #bbb;
+    }
+  `;
+  
+  // スタイルとパネルを追加
+  if (!document.getElementById('wodicon-debug-styles')) {
+    document.head.appendChild(debugStyles);
+  }
+  document.body.appendChild(debugPanel);
+  
+  // イベントリスナーを設定
+  setupDebugPanelEvents();
+  
+  // 初期状態更新
+  updateDebugStatus();
+  
+  console.log('✅ デバッグパネル初期化完了');
+}
+
+// デバッグパネルのイベントリスナー設定
+function setupDebugPanelEvents() {
+  // パネルの展開/折りたたみ
+  const header = document.getElementById('debug-header');
+  const toggle = document.getElementById('debug-toggle');
+  const content = document.getElementById('debug-content');
+  
+  header.addEventListener('click', () => {
+    const isExpanded = content.style.display !== 'none';
+    content.style.display = isExpanded ? 'none' : 'block';
+    toggle.textContent = isExpanded ? '▼' : '▲';
+  });
+  
+  // クールタイムクリア
+  document.getElementById('debug-clear-cooltime').addEventListener('click', async () => {
+    debugLog('🧹 クールタイムクリア実行...');
+    try {
+      await chrome.storage.local.remove('last_auto_monitor_time');
+      debugLog('✅ クールタイムクリア完了');
+      updateDebugStatus();
+    } catch (error) {
+      debugLog(`❌ クールタイムクリアエラー: ${error.message}`);
+    }
+  });
+  
+  // 新規作品テスト
+  document.getElementById('debug-test-new').addEventListener('click', () => {
+    debugLog('🧪 新規2件テスト実行...');
+    showAutoMonitorNoticeWithChanges(2, 0);
+    debugLog('✅ 新規2件通知表示完了');
+  });
+  
+  // 更新作品テスト
+  document.getElementById('debug-test-updated').addEventListener('click', () => {
+    debugLog('🧪 更新1件テスト実行...');
+    showAutoMonitorNoticeWithChanges(0, 1);
+    debugLog('✅ 更新1件通知表示完了');
+  });
+  
+  // 混合テスト
+  document.getElementById('debug-test-mixed').addEventListener('click', () => {
+    debugLog('🧪 新規3件+更新2件テスト実行...');
+    showAutoMonitorNoticeWithChanges(3, 2);
+    debugLog('✅ 混合通知表示完了');
+  });
+  
+  // 状態確認
+  document.getElementById('debug-check-status').addEventListener('click', () => {
+    debugLog('🔍 監視状態確認...');
+    updateDebugStatus();
+  });
+  
+  // Background Script通信テスト
+  document.getElementById('debug-test-background').addEventListener('click', async () => {
+    debugLog('📡 Background Script通信テスト...');
+    try {
+      const testData = {
+        action: 'auto_monitor_detected',
+        source: 'debug_test',
+        data: {
+          works: [
+            { no: '1', title: 'テスト作品1', lastUpdate: '[6/24]', author: 'テスト作者1' },
+            { no: '2', title: 'テスト作品2', lastUpdate: '[6/25]', author: 'テスト作者2' }
+          ],
+          url: window.location.href,
+          timestamp: new Date().toISOString(),
+          detectedCount: 2
+        }
+      };
+      
+      const response = await chrome.runtime.sendMessage(testData);
+      debugLog(`✅ Background通信成功: ${JSON.stringify(response)}`);
+      
+      // 実際の通知も表示されるはず
+      if (response && response.result) {
+        const { newCount, updatedCount } = response.result;
+        debugLog(`📊 差分結果: 新規${newCount}件、更新${updatedCount}件`);
+      }
+      
+    } catch (error) {
+      debugLog(`❌ Background通信失敗: ${error.message}`);
+      debugLog('🔄 フォールバック通知を表示します');
+      showAutoMonitorNoticeWithChanges(2, 0); // フォールバック動作をテスト
+    }
+  });
+}
+
+// デバッグログ表示
+function debugLog(message) {
+  const logDiv = document.getElementById('debug-log');
+  const timestamp = new Date().toLocaleTimeString();
+  
+  logDiv.style.display = 'block';
+  logDiv.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+  logDiv.scrollTop = logDiv.scrollHeight;
+  
+  // ログが多くなったら古いものを削除
+  const logs = logDiv.children;
+  if (logs.length > 20) {
+    logDiv.removeChild(logs[0]);
+  }
+}
+
+// デバッグ状態更新
+async function updateDebugStatus() {
+  try {
+    // クールタイム状態チェック
+    const result = await chrome.storage.local.get('last_auto_monitor_time');
+    const lastTime = result.last_auto_monitor_time;
+    const cooltimeStatus = document.getElementById('cooltime-status');
+    
+    if (lastTime) {
+      const lastDate = new Date(lastTime);
+      const now = new Date();
+      const diff = Math.floor((now - lastDate) / 1000 / 60); // 分
+      const remainingCooltime = Math.max(0, 30 - diff);
+      
+      cooltimeStatus.innerHTML = `
+        最終実行: ${lastDate.toLocaleTimeString()}<br>
+        経過時間: ${diff}分<br>
+        残りクールタイム: ${remainingCooltime}分
+      `;
+    } else {
+      cooltimeStatus.innerHTML = 'クールタイムなし（実行可能）';
+    }
+    
+    // 監視状態チェック
+    const monitorStatus = document.getElementById('monitor-status');
+    const isWodicon = isWodiconPage();
+    const works = extractWorksList();
+    
+    monitorStatus.innerHTML = `
+      ウディコンページ: ${isWodicon ? '✅' : '❌'}<br>
+      検出作品数: ${works.length}件<br>
+      URL: ${window.location.pathname}
+    `;
+    
+  } catch (error) {
+    debugLog(`❌ 状態更新エラー: ${error.message}`);
   }
 }
 

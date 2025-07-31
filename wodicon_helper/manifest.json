@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ウディこん助 (WodiConsuke)",
+  "name": "ウディこん助 (WodiConsuke) (LocalDev)",
   "version": "1.0.2",
   "description": "ウディコン作品の評価・感想をサポートするChrome拡張機能",
   

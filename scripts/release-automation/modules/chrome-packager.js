@@ -48,6 +48,9 @@ class ChromePackager {
     
     await fs.copy(EXTENSION_DIR, targetDir, copyOptions);
     
+    // manifest.jsonを調整（デバッグモード制御）
+    await this.adjustManifest(targetDir, mode);
+    
     // リリース時（開発・本番共通）、メインアイコンを適用
     await this.applyMainIcon(targetDir);
     
@@ -220,6 +223,35 @@ class ChromePackager {
       // エラー時クリーンアップ
       await fs.remove(this.tempDir);
       throw new Error(`パッケージングエラー: ${error.message}`);
+    }
+  }
+
+  // manifest.json調整（デバッグモード制御）
+  async adjustManifest(targetDir, mode) {
+    try {
+      const manifestPath = path.join(targetDir, 'manifest.json');
+      const manifest = await fs.readJson(manifestPath);
+      
+      // 開発版・本番版ともにローカル開発用の表示を削除
+      if (manifest.name.includes('(LocalDev)')) {
+        manifest.name = manifest.name.replace(' (LocalDev)', '');
+      }
+      
+      if (mode === 'production') {
+        console.log('🚀 本番版: デバッグパネル無効化');
+      } else {
+        console.log('🛠️ 開発版: デバッグパネル無効化（リリース用）');
+      }
+      
+      await fs.writeJson(manifestPath, manifest, { spaces: 2 });
+      
+      if (LOG_CONFIG.VERBOSE) {
+        console.log(`✅ manifest.json調整完了: ${manifest.name} v${manifest.version}`);
+      }
+      
+    } catch (error) {
+      console.warn(`⚠️ manifest.json調整でエラー: ${error.message}`);
+      // 致命的でないため処理続行
     }
   }
 }
