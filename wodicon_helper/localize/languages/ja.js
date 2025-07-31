@@ -296,25 +296,129 @@ const jaResources = {
   // 設定画面
   settings: {
     title: '設定',
+    pageTitle: 'ウディこん助 - 設定',
+    subtitle: 'Chrome拡張機能の設定とデータ管理',
     language: {
       title: '言語設定',
       japanese: '日本語',
       english: 'English',
-      description: '表示言語を選択してください'
+      description: '表示言語を選択してください。初回起動時はブラウザの言語設定から自動判定されます。',
+      displayLanguage: '表示言語',
+      statusChanged: '言語設定を変更しました'
     },
-    monitor: {
-      title: 'Web監視設定',
-      enabled: '監視を有効にする',
-      interval: '監視間隔',
-      description: 'ウディコンサイトの自動監視設定'
+    yearSelection: {
+      title: '年度選択',
+      targetYear: '対象年度',
+      loading: '読み込み中...',
+      description: '年度を変更すると、該当年度のデータのみが表示されます。各年度のデータは独立して管理されます。',
+      currentYear: '現在の年度',
+      availableYears: '利用可能な年度',
+      storageUsage: 'ストレージ使用量',
+      addNewYear: '新年度を追加',
+      deleteYearData: '年度データ削除'
     },
-    data: {
+    dataManagement: {
       title: 'データ管理',
-      export: 'データエクスポート',
-      import: 'データインポート',
-      reset: 'データリセット',
-      description: '作品データの管理操作'
-    }
+      export: {
+        title: 'エクスポート',
+        description: '全ての作品データと設定を指定した形式で保存できます。',
+        format: '形式',
+        jsonOption: 'JSON (全データ)',
+        csvOption: 'CSV（年度別評価データ）',
+        button: '📤 データエクスポート'
+      },
+      import: {
+        title: 'インポート',
+        description: 'エクスポートしたデータファイル（JSON/CSV）を読み込むことができます。',
+        button: '📥 データインポート',
+        warning: '⚠️ 注意:',
+        jsonWarning: '• JSON: 全データが上書きされます',
+        csvWarning: '• CSV: 既存データに追加されます（重複回避のため該当年度データ削除後を推奨）'
+      }
+    },
+    monitoring: {
+      title: '手動監視・履歴',
+      contestUrl: 'ウディコンページURL',
+      contestUrlPlaceholder: 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml',
+      contestUrlDescription: '監視対象となるウディコンページのURLを設定します',
+      lastMonitorTime: '最終更新チェック日時',
+      notExecuted: '未実行',
+      manualMonitorButton: '今すぐ監視実行',
+      manualMonitorDescription: '手動での新規・更新チェックを実行します',
+      recentHistory: '最近の監視履歴',
+      noHistory: '監視履歴がありません',
+      loadError: 'データ読み込みエラーが発生しました',
+      statistics: {
+        totalChecks: '総チェック回数: {count}回',
+        totalFound: '発見: 新規{new}件, 更新{updated}件',
+        successRate: '成功率: {rate}%'
+      },
+      historyItem: {
+        newWorks: '新規{count}件',
+        updatedWorks: '更新{count}件',
+        error: '(エラー)'
+      }
+    },
+    autoMonitoring: {
+      title: '新規・更新チェック設定',
+      enableAutoMonitoring: '新規・更新チェックを有効にする',
+      enableAutoMonitoringDescription: 'ウディコンサイト訪問時やポップアップ開時の自動チェック機能です',
+      enableContentAutoMonitoring: 'ウディコンサイト訪問時の自動チェック',
+      enableContentAutoMonitoringDescription: 'ウディコンページを開いた際に自動的に新規・更新をチェックします（30分間隔制限）',
+      clearHistory: '履歴クリア',
+      nextCheck: '次回自動チェック: ウディコンサイト訪問時またはポップアップ開時',
+      statusTitle: '📊 自動チェック状況',
+      statusDescription: '現在の自動チェック設定と次回実行予定を表示します',
+      history: {
+        statisticsTitle: '監視統計',
+        recentHistoryTitle: '最近の履歴',
+        totalChecks: '総監視回数',
+        newGames: '新規',
+        updatedGames: '更新',
+        errors: 'エラー',
+        times: '回',
+        items: '件',
+        newItemsCount: '新規{count}件',
+        updatedItemsCount: '更新{count}件',
+        errorOccurred: '(エラー)',
+        noHistory: '監視履歴がありません',
+        dataLoadError: 'データ読み込みエラーが発生しました'
+      },
+      status: {
+        disabled: '❌ 実用的自動監視は無効です',
+        enabled: '✅ 有効',
+        contentMonitoring: 'ウディコンサイト訪問時',
+        popupMonitoring: 'ポップアップ開時（{interval}時間間隔）',
+        nextPopupCheck: '次回ポップアップ自動監視まで: {minutes}分',
+        nextPopupScheduled: '次回ポップアップ開時に自動監視実行予定',
+        notExecuted: '未実行'
+      }
+    },
+    notifications: {
+      title: '通知設定',
+      enableNotifications: 'Chrome通知を有効にする',
+      notifyNewWorks: '新規作品を通知',
+      notifyUpdatedWorks: '更新作品を通知',
+      testNotification: '🔔 テスト通知送信',
+      testNotificationDescription: '設定確認用のテスト通知を送信します'
+    },
+    dataDeletion: {
+      title: 'データ削除',
+      warning: '注意: この操作は元に戻すことができません。',
+      clearAllData: '🗑️ 全データ削除',
+      resetSettings: '🔄 設定リセット'
+    },
+    information: {
+      title: '情報',
+      version: 'バージョン',
+      externalLinks: '🔗 外部リンク',
+      officialContest: '🏆 ウディコン公式',
+      introductionPage: '📖 『ウディこん助』紹介ページ'
+    },
+    common: {
+      loading: '読み込み中...'
+    },
+    yearFormat: '第{number}回 ({year}年)'
   },
 
   // Web監視機能
@@ -419,6 +523,16 @@ const jaResources = {
       title: '【詳細情報】',
       officialPage: '公式紹介ページ: https://wudi-consuke.vercel.app/website/release/index.html'
     }
+  },
+
+  // アラートメッセージ
+  alerts: {
+    initializationError: 'オプションページ初期化エラー: {error}',
+    confirmDeleteAllData: '本当に全てのデータを削除しますか？この操作は元に戻せません。',
+    confirmResetSettings: '設定を初期値にリセットしますか？この操作は元に戻せません。',
+    jsonImportConfirm: 'JSONファイルをインポートします。\n\n⚠️ 既存の全データが上書きされます。\n現在のデータは完全に置き換わりますがよろしいですか？',
+    csvImportConfirm: '【{year}年】のデータが更新されます。\n該当年の既存のデータは上書きされ、復元できません。\n\n続行しますか？',
+    confirmDeleteYearData: '{yearDisplay}のデータを完全に削除しますか？\n\nこの操作は取り消せません。'
   }
 };
 

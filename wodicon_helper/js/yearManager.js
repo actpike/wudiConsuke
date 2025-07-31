@@ -332,6 +332,14 @@ class YearManager {
   // 年度表示用文字列を生成
   formatYearDisplay(year) {
     const contestNumber = year - 2008; // 2009年が第1回
+    
+    // 多言語対応
+    if (window.localizer && window.localizer.getText) {
+      const template = window.localizer.getText('settings.yearFormat');
+      return template.replace('{number}', contestNumber).replace('{year}', year);
+    }
+    
+    // フォールバック
     return `第${contestNumber}回 (${year}年)`;
   }
 

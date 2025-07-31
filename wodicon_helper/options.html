@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ウディこん助 - 設定</title>
+  <title data-i18n="settings.pageTitle">ウディこん助 - 設定</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -158,24 +158,24 @@
 </head>
 <body>
   <div class="header">
-    <h1><img src="icons/icon16.png" alt="ウディこん助" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"><span data-i18n="ui.header.title">ウディこん助</span> - <span data-i18n="ui.buttons.settings">設定</span></h1>
-    <p data-i18n="ui.header.subtitle">Chrome拡張機能の設定とデータ管理</p>
+    <h1><img src="icons/icon16.png" alt="ウディこん助" style="width: 16px; height: 16px; margin-right: 8px; vertical-align: middle;"><span data-i18n="ui.header.title">ウディこん助</span> - <span data-i18n="settings.title">設定</span></h1>
+    <p data-i18n="settings.subtitle">Chrome拡張機能の設定とデータ管理</p>
   </div>
 
   <!-- 言語設定セクション -->
   <div class="section" id="language-settings">
-    <h2>🌐 言語設定 / Language Settings</h2>
+    <h2>🌐 <span data-i18n="settings.language.title">言語設定</span> / Language Settings</h2>
     <div class="setting-item">
-      <label for="language-selector">表示言語 / Display Language:</label>
+      <label for="language-selector"><span data-i18n="settings.language.displayLanguage">表示言語</span> / Display Language:</label>
       <select id="language-selector">
-        <option value="ja">日本語</option>
-        <option value="en">English</option>
+        <option value="ja" data-i18n="settings.language.japanese">日本語</option>
+        <option value="en" data-i18n="settings.language.english">English</option>
       </select>
       <p class="help-text" data-i18n="settings.language.description">
         表示言語を選択してください。初回起動時はブラウザの言語設定から自動判定されます。
       </p>
       <div id="language-status" class="status info" style="display: none;">
-        <span id="language-status-text">言語設定を変更しました</span>
+        <span id="language-status-text" data-i18n="settings.language.statusChanged">言語設定を変更しました</span>
         <button class="error-close-btn" onclick="document.getElementById('language-status').style.display='none'">×</button>
       </div>
     </div>
@@ -183,55 +183,55 @@
 
   <!-- 年度選択セクション -->
   <div class="section" id="year-selection">
-    <h2>📅 <span data-i18n="ui.sections.yearSelection">年度選択</span></h2>
+    <h2>📅 <span data-i18n="settings.yearSelection.title">年度選択</span></h2>
     <div class="setting-item">
-      <label for="year-selector">対象年度:</label>
+      <label for="year-selector" data-i18n="settings.yearSelection.targetYear">対象年度:</label>
       <select id="year-selector">
-        <option value="">読み込み中...</option>
+        <option value="" data-i18n="settings.yearSelection.loading">読み込み中...</option>
       </select>
-      <p class="help-text">
+      <p class="help-text" data-i18n="settings.yearSelection.description">
         年度を変更すると、該当年度のデータのみが表示されます。各年度のデータは独立して管理されます。
       </p>
       <div id="year-info" class="year-info" style="margin-top: 15px;">
-        <p><strong>現在の年度:</strong> <span id="current-year-display">-</span></p>
-        <p><strong>利用可能な年度:</strong> <span id="available-years-display">-</span></p>
-        <p><strong>ストレージ使用量:</strong> <span id="storage-usage-display">-</span></p>
+        <p><strong data-i18n="settings.yearSelection.currentYear">現在の年度:</strong> <span id="current-year-display">-</span></p>
+        <p><strong data-i18n="settings.yearSelection.availableYears">利用可能な年度:</strong> <span id="available-years-display">-</span></p>
+        <p><strong data-i18n="settings.yearSelection.storageUsage">ストレージ使用量:</strong> <span id="storage-usage-display">-</span></p>
       </div>
       <div class="year-actions" style="margin-top: 15px; display: flex; gap: 10px; align-items: center;">
-        <button id="add-new-year-btn" class="secondary">新年度を追加</button>
+        <button id="add-new-year-btn" class="secondary" data-i18n="settings.yearSelection.addNewYear">新年度を追加</button>
         <div style="margin-left: auto;">
-          <button id="delete-year-data-btn" class="danger">年度データ削除</button>
+          <button id="delete-year-data-btn" class="danger" data-i18n="settings.yearSelection.deleteYearData">年度データ削除</button>
         </div>
       </div>
     </div>
   </div>
 
   <div class="section">
-    <h2>💾 <span data-i18n="ui.sections.dataManagement">データ管理</span></h2>
+    <h2>💾 <span data-i18n="settings.dataManagement.title">データ管理</span></h2>
     <div class="setting-item">
-      <h3 data-i18n="ui.buttons.export">エクスポート</h3>
-      <p>全ての作品データと設定を指定した形式で保存できます。</p>
+      <h3 data-i18n="settings.dataManagement.export.title">エクスポート</h3>
+      <p data-i18n="settings.dataManagement.export.description">全ての作品データと設定を指定した形式で保存できます。</p>
       <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 10px;">
-        <label for="export-format">形式:</label>
+        <label for="export-format" data-i18n="settings.dataManagement.export.format">形式:</label>
         <select id="export-format" style="width: auto; min-width: 180px;">
-          <option value="json">JSON (全データ)</option>
-          <option value="csv">CSV（年度別評価データ）</option>
+          <option value="json" data-i18n="settings.dataManagement.export.jsonOption">JSON (全データ)</option>
+          <option value="csv" data-i18n="settings.dataManagement.export.csvOption">CSV（年度別評価データ）</option>
         </select>
-        <button id="export-btn" data-i18n="ui.buttons.export">📤 データエクスポート</button>
+        <button id="export-btn" data-i18n="settings.dataManagement.export.button">📤 データエクスポート</button>
       </div>
     </div>
     
     <div class="setting-item">
-      <h3 data-i18n="ui.buttons.import">インポート</h3>
-      <p>エクスポートしたデータファイル（JSON/CSV）を読み込むことができます。</p>
+      <h3 data-i18n="settings.dataManagement.import.title">インポート</h3>
+      <p data-i18n="settings.dataManagement.import.description">エクスポートしたデータファイル（JSON/CSV）を読み込むことができます。</p>
       <div class="file-input">
         <input type="file" id="import-file" accept=".json,.csv">
-        <button id="import-btn" data-i18n="ui.buttons.import">📥 データインポート</button>
+        <button id="import-btn" data-i18n="settings.dataManagement.import.button">📥 データインポート</button>
       </div>
       <div style="font-size: 12px; color: #666; margin-top: 8px; line-height: 1.4;">
-        <strong>⚠️ 注意:</strong><br>
-        • <strong>JSON</strong>: 全データが上書きされます<br>
-        • <strong>CSV</strong>: 既存データに追加されます（重複回避のため該当年度データ削除後を推奨）
+        <strong data-i18n="settings.dataManagement.import.warning">⚠️ 注意:</strong><br>
+        <span data-i18n="settings.dataManagement.import.jsonWarning">• JSON: 全データが上書きされます</span><br>
+        <span data-i18n="settings.dataManagement.import.csvWarning">• CSV: 既存データに追加されます（重複回避のため該当年度データ削除後を推奨）</span>
       </div>
     </div>
     
@@ -239,109 +239,109 @@
   </div>
 
   <div class="section">
-    <h2>📡 手動監視・履歴</h2>
+    <h2>📡 <span data-i18n="settings.monitoring.title">手動監視・履歴</span></h2>
     <div class="setting-item">
-      <label for="contest-url">ウディコンページURL:</label>
-      <input type="url" id="contest-url" placeholder="https://silversecond.com/WolfRPGEditor/Contest/entry.shtml">
-      <small>監視対象となるウディコンページのURLを設定します</small>
+      <label for="contest-url" data-i18n="settings.monitoring.contestUrl">ウディコンページURL:</label>
+      <input type="url" id="contest-url" data-i18n-placeholder="settings.monitoring.contestUrlPlaceholder" placeholder="https://silversecond.com/WolfRPGEditor/Contest/entry.shtml">
+      <small data-i18n="settings.monitoring.contestUrlDescription">監視対象となるウディコンページのURLを設定します</small>
     </div>
     
     <div class="setting-item">
-      <label>最終更新チェック日時:</label>
-      <span id="last-monitor-time">未実行</span>
-      <button id="manual-monitor-now" class="secondary" data-i18n="ui.buttons.monitor">今すぐ監視実行</button>
-      <small>手動での新規・更新チェックを実行します</small>
+      <label data-i18n="settings.monitoring.lastMonitorTime">最終更新チェック日時:</label>
+      <span id="last-monitor-time" data-i18n="settings.monitoring.notExecuted">未実行</span>
+      <button id="manual-monitor-now" class="secondary" data-i18n="settings.monitoring.manualMonitorButton">今すぐ監視実行</button>
+      <small data-i18n="settings.monitoring.manualMonitorDescription">手動での新規・更新チェックを実行します</small>
     </div>
     
     <div class="setting-item">
-      <h3>最近の監視履歴</h3>
+      <h3 data-i18n="settings.monitoring.recentHistory">最近の監視履歴</h3>
       <div id="monitor-history">
-        <p>読み込み中...</p>
+        <p data-i18n="settings.common.loading">読み込み中...</p>
       </div>
     </div>
   </div>
 
   <div class="section">
-    <h2>🔄 新規・更新チェック設定</h2>
+    <h2>🔄 <span data-i18n="settings.autoMonitoring.title">新規・更新チェック設定</span></h2>
     <div class="setting-item">
       <label>
         <input type="checkbox" id="enable-auto-monitoring" checked> 
-        新規・更新チェックを有効にする
+        <span data-i18n="settings.autoMonitoring.enableAutoMonitoring">新規・更新チェックを有効にする</span>
       </label>
-      <small>ウディコンサイト訪問時やポップアップ開時の自動チェック機能です</small>
+      <small data-i18n="settings.autoMonitoring.enableAutoMonitoringDescription">ウディコンサイト訪問時やポップアップ開時の自動チェック機能です</small>
     </div>
     
     <div class="setting-item">
       <label>
         <input type="checkbox" id="enable-content-auto-monitoring" checked> 
-        ウディコンサイト訪問時の自動チェック
+        <span data-i18n="settings.autoMonitoring.enableContentAutoMonitoring">ウディコンサイト訪問時の自動チェック</span>
       </label>
-      <small>ウディコンページを開いた際に自動的に新規・更新をチェックします（30分間隔制限）</small>
+      <small data-i18n="settings.autoMonitoring.enableContentAutoMonitoringDescription">ウディコンページを開いた際に自動的に新規・更新をチェックします（30分間隔制限）</small>
     </div>
     
     <div class="setting-item">
-      <label>最終更新チェック日時:</label>
-      <span id="last-auto-monitor-time">未実行</span>
-      <button id="clear-auto-monitor-time" class="secondary">履歴クリア</button>
-      <small>次回自動チェック: ウディコンサイト訪問時またはポップアップ開時</small>
+      <label data-i18n="settings.monitoring.lastMonitorTime">最終更新チェック日時:</label>
+      <span id="last-auto-monitor-time" data-i18n="settings.monitoring.notExecuted">未実行</span>
+      <button id="clear-auto-monitor-time" class="secondary" data-i18n="settings.autoMonitoring.clearHistory">履歴クリア</button>
+      <small data-i18n="settings.autoMonitoring.nextCheck">次回自動チェック: ウディコンサイト訪問時またはポップアップ開時</small>
     </div>
     
     <div class="setting-item">
-      <h4>📊 自動チェック状況</h4>
+      <h4 data-i18n="settings.autoMonitoring.statusTitle">📊 自動チェック状況</h4>
       <div id="auto-monitor-status">
-        <p>読み込み中...</p>
+        <p data-i18n="settings.common.loading">読み込み中...</p>
       </div>
-      <small>現在の自動チェック設定と次回実行予定を表示します</small>
+      <small data-i18n="settings.autoMonitoring.statusDescription">現在の自動チェック設定と次回実行予定を表示します</small>
     </div>
   </div>
 
   <div class="section">
-    <h2>🔔 通知設定</h2>
+    <h2>🔔 <span data-i18n="settings.notifications.title">通知設定</span></h2>
     <div class="setting-item">
       <label>
         <input type="checkbox" id="enable-notifications" checked> 
-        Chrome通知を有効にする
+        <span data-i18n="settings.notifications.enableNotifications">Chrome通知を有効にする</span>
       </label>
     </div>
     
     <div class="setting-item">
       <label>
         <input type="checkbox" id="notify-new-works"> 
-        新規作品を通知
+        <span data-i18n="settings.notifications.notifyNewWorks">新規作品を通知</span>
       </label>
     </div>
     
     <div class="setting-item">
       <label>
         <input type="checkbox" id="notify-updated-works"> 
-        更新作品を通知
+        <span data-i18n="settings.notifications.notifyUpdatedWorks">更新作品を通知</span>
       </label>
     </div>
     
     
     <div class="setting-item">
-      <button id="test-notification" class="secondary">🔔 テスト通知送信</button>
-      <small>設定確認用のテスト通知を送信します</small>
+      <button id="test-notification" class="secondary" data-i18n="settings.notifications.testNotification">🔔 テスト通知送信</button>
+      <small data-i18n="settings.notifications.testNotificationDescription">設定確認用のテスト通知を送信します</small>
     </div>
   </div>
 
 
   <div class="section">
-    <h2>⚠️ データ削除</h2>
-    <p><strong>注意:</strong> この操作は元に戻すことができません。</p>
-    <button id="clear-data-btn" class="danger" data-i18n="ui.buttons.delete">🗑️ 全データ削除</button>
-    <button id="reset-settings-btn" class="secondary" data-i18n="ui.buttons.reset">🔄 設定リセット</button>
+    <h2>⚠️ <span data-i18n="settings.dataDeletion.title">データ削除</span></h2>
+    <p><strong data-i18n="settings.dataDeletion.warning">注意: この操作は元に戻すことができません。</strong></p>
+    <button id="clear-data-btn" class="danger" data-i18n="settings.dataDeletion.clearAllData">🗑️ 全データ削除</button>
+    <button id="reset-settings-btn" class="secondary" data-i18n="settings.dataDeletion.resetSettings">🔄 設定リセット</button>
   </div>
 
   <div class="section">
-    <h2>ℹ️ 情報</h2>
-    <p><strong>バージョン:</strong> <span id="version">読み込み中...</span></p>
+    <h2>ℹ️ <span data-i18n="settings.information.title">情報</span></h2>
+    <p><strong data-i18n="settings.information.version">バージョン:</strong> <span id="version" data-i18n="settings.common.loading">読み込み中...</span></p>
     
     <div class="setting-item">
-      <h4>🔗 外部リンク</h4>
+      <h4 data-i18n="settings.information.externalLinks">🔗 外部リンク</h4>
       <div style="margin-top: 10px;">
-        <p><a href="https://silversecond.com/WolfRPGEditor/Contest/" target="_blank" class="external-link">🏆 ウディコン公式</a></p>
-        <p><a href="https://wudi-consuke.vercel.app/website/release/index.html" target="_blank" class="external-link">📖 『ウディこん助』紹介ページ</a></p>
+        <p><a href="https://silversecond.com/WolfRPGEditor/Contest/" target="_blank" class="external-link" data-i18n="settings.information.officialContest">🏆 ウディコン公式</a></p>
+        <p><a href="https://wudi-consuke.vercel.app/website/release/index.html" target="_blank" class="external-link" data-i18n="settings.information.introductionPage">📖 『ウディこん助』紹介ページ</a></p>
       </div>
     </div>
   </div>

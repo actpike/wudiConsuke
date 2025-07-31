@@ -296,25 +296,117 @@ const enResources = {
   // Settings Screen
   settings: {
     title: 'Settings',
+    pageTitle: 'WudiConsuke - Settings',
+    subtitle: 'Chrome Extension Settings and Data Management',
     language: {
       title: 'Language Settings',
       japanese: '日本語',
       english: 'English',
-      description: 'Select display language'
+      description: 'Select display language. Auto-detected from browser settings on first launch.',
+      displayLanguage: 'Display Language',
+      statusChanged: 'Language setting changed'
     },
-    monitor: {
-      title: 'Web Monitor Settings',
-      enabled: 'Enable monitoring',
-      interval: 'Monitor interval',
-      description: 'Auto-monitoring settings for Wodicon site'
+    yearSelection: {
+      title: 'Year Selection',
+      targetYear: 'Target Year',
+      loading: 'Loading...',
+      description: 'Changing the year will display only data for that year. Each year\'s data is managed independently.',
+      currentYear: 'Current Year',
+      availableYears: 'Available Years',
+      storageUsage: 'Storage Usage',
+      addNewYear: 'Add New Year',
+      deleteYearData: 'Delete Year Data'
     },
-    data: {
+    dataManagement: {
       title: 'Data Management',
-      export: 'Data Export',
-      import: 'Data Import',
-      reset: 'Data Reset',
-      description: 'Game data management operations'
-    }
+      export: {
+        title: 'Export',
+        description: 'Save all game data and settings in the specified format.',
+        format: 'Format',
+        jsonOption: 'JSON (All Data)',
+        csvOption: 'CSV (Yearly Rating Data)',
+        button: '📤 Export Data'
+      },
+      import: {
+        title: 'Import',
+        description: 'Load exported data files (JSON/CSV).',
+        button: '📥 Import Data',
+        warning: '⚠️ Warning:',
+        jsonWarning: '• JSON: All data will be overwritten',
+        csvWarning: '• CSV: Added to existing data (recommended to delete target year data first to avoid duplicates)'
+      }
+    },
+    monitoring: {
+      title: 'Manual Monitoring & History',
+      contestUrl: 'Wodicon Page URL',
+      contestUrlPlaceholder: 'https://silversecond.com/WolfRPGEditor/Contest/entry.shtml',
+      contestUrlDescription: 'Set the Wodicon page URL to be monitored',
+      lastMonitorTime: 'Last Update Check Time',
+      notExecuted: 'Not executed',
+      manualMonitorButton: 'Monitor Now',
+      manualMonitorDescription: 'Execute manual new/update check',
+      recentHistory: 'Recent Monitoring History'
+    },
+    autoMonitoring: {
+      title: 'New/Update Check Settings',
+      enableAutoMonitoring: 'Enable new/update checking',
+      enableAutoMonitoringDescription: 'Auto-check function when visiting Wodicon site or opening popup',
+      enableContentAutoMonitoring: 'Auto-check when visiting Wodicon site',
+      enableContentAutoMonitoringDescription: 'Automatically check for new/updates when opening Wodicon pages (30-minute interval limit)',
+      clearHistory: 'Clear History',
+      nextCheck: 'Next auto-check: When visiting Wodicon site or opening popup',
+      statusTitle: '📊 Auto-Check Status',
+      statusDescription: 'Display current auto-check settings and next execution schedule',
+      history: {
+        statisticsTitle: 'Monitoring Statistics',
+        recentHistoryTitle: 'Recent History',
+        totalChecks: 'Total Checks',
+        newGames: 'New Games',
+        updatedGames: 'Updated Games',
+        errors: 'Errors',
+        times: 'times',
+        items: 'items',
+        newItemsCount: 'new {count} items',
+        updatedItemsCount: 'updated {count} items',
+        errorOccurred: '(error)',
+        noHistory: 'No monitoring history available',
+        dataLoadError: 'Error occurred while loading data'
+      },
+      status: {
+        disabled: '❌ Practical auto-monitoring is disabled',
+        enabled: '✅ Enabled',
+        contentMonitoring: 'When visiting Wodicon site',
+        popupMonitoring: 'When opening popup ({interval}-hour interval)',
+        nextPopupCheck: 'Next popup auto-check in: {minutes} minutes',
+        nextPopupScheduled: 'Auto-check scheduled for next popup opening',
+        notExecuted: 'Not executed'
+      }
+    },
+    notifications: {
+      title: 'Notification Settings',
+      enableNotifications: 'Enable Chrome notifications',
+      notifyNewWorks: 'Notify new games',
+      notifyUpdatedWorks: 'Notify updated games',
+      testNotification: '🔔 Send Test Notification',
+      testNotificationDescription: 'Send test notification for settings confirmation'
+    },
+    dataDeletion: {
+      title: 'Data Deletion',
+      warning: 'Warning: This operation cannot be undone.',
+      clearAllData: '🗑️ Delete All Data',
+      resetSettings: '🔄 Reset Settings'
+    },
+    information: {
+      title: 'Information',
+      version: 'Version',
+      externalLinks: '🔗 External Links',
+      officialContest: '🏆 Official Wodicon',
+      introductionPage: '📖 WudiConsuke Introduction Page'
+    },
+    common: {
+      loading: 'Loading...'
+    },
+    yearFormat: '{number}th Contest ({year})'
   },
 
   // Web Monitor
@@ -419,6 +511,16 @@ const enResources = {
       title: '【Detailed Information】',
       officialPage: 'Official page: https://wudi-consuke.vercel.app/website/release/index.html'
     }
+  },
+
+  // Alert Messages
+  alerts: {
+    initializationError: 'Options page initialization error: {error}',
+    confirmDeleteAllData: 'Are you sure you want to delete all data? This action cannot be undone.',
+    confirmResetSettings: 'Are you sure you want to reset settings to default? This action cannot be undone.',
+    jsonImportConfirm: 'Importing JSON file.\n\n⚠️ All existing data will be overwritten.\nAll current data will be completely replaced. Continue?',
+    csvImportConfirm: 'Data for 【{year}】 will be updated.\nExisting data for this year will be overwritten and cannot be restored.\n\nContinue?',
+    confirmDeleteYearData: 'Are you sure you want to completely delete data for {yearDisplay}?\n\nThis operation cannot be undone.'
   }
 };
 

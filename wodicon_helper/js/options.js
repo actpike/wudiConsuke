@@ -10,39 +10,43 @@ window.addEventListener('error', (e) => {
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('🚀 Options page DOMContentLoaded');
   try {
-    // 1. 最優先: ボタンイベントリスナー設定
-    setupEventListeners();
-    console.log('✅ Event listeners setup complete');
-    
-    // 2. 基本情報設定
-    setVersionInfo();
-    console.log('✅ Version info set');
-    
-    // 3. 年度管理初期化
-    await initializeYearManager();
-    console.log('✅ Year manager initialized');
-    
-    // 4. 軽い処理: 設定読み込み
-    await loadBasicSettings();
-    console.log('✅ Basic settings loaded');
-    
-    // 5. 言語設定初期化
+    // 1. 最優先: 言語設定初期化（UIの多言語化のため最初に実行）
     await initializeLanguageSettings();
     console.log('✅ Language settings initialized');
     
-    // 4. 軽い処理のみ非同期で実行
+    // 2. ボタンイベントリスナー設定
+    setupEventListeners();
+    console.log('✅ Event listeners setup complete');
+    
+    // 3. 基本情報設定
+    setVersionInfo();
+    console.log('✅ Version info set');
+    
+    // 4. 年度管理初期化
+    await initializeYearManager();
+    console.log('✅ Year manager initialized');
+    
+    // 5. 軽い処理: 設定読み込み
+    await loadBasicSettings();
+    console.log('✅ Basic settings loaded');
+    
+    // 6. 軽い処理のみ非同期で実行（言語初期化完了後）
     setTimeout(async () => {
       try {
+        // ローカライザーが完全に初期化されてから実行
         await loadMonitoringData();
         console.log('✅ Monitoring data loaded');
       } catch (asyncError) {
         console.warn('非同期データ読み込みエラー:', asyncError);
       }
-    }, 100);
+    }, 200);
     
   } catch (error) {
     console.error('❌ Options page initialization error:', error);
-    alert('オプションページ初期化エラー: ' + error.message);
+    const errorMessage = window.localizer ? 
+      window.localizer.getText('alerts.initializationError').replace('{error}', error.message) : 
+      'オプションページ初期化エラー: ' + error.message;
+    alert(errorMessage);
   }
 });
 
@@ -193,11 +197,15 @@ function setupEventListeners() {
     let confirmMessage = '';
     
     if (fileExtension === 'json') {
-      confirmMessage = 'JSONファイルをインポートします。\n\n⚠️ 既存の全データが上書きされます。\n現在のデータは完全に置き換わりますがよろしいですか？';
+      confirmMessage = window.localizer ? 
+        window.localizer.getText('alerts.jsonImportConfirm') : 
+        'JSONファイルをインポートします。\n\n⚠️ 既存の全データが上書きされます。\n現在のデータは完全に置き換わりますがよろしいですか？';
     } else if (fileExtension === 'csv') {
       // 年度別確認メッセージ（getCurrentYear()はPromiseを返すためawait必要）
       const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
-      confirmMessage = `【${currentYear}年】のデータが更新されます。\n該当年の既存のデータは上書きされ、復元できません。\n\n続行しますか？`;
+      confirmMessage = window.localizer ? 
+        window.localizer.getText('alerts.csvImportConfirm').replace('{year}', currentYear) : 
+        `【${currentYear}年】のデータが更新されます。\n該当年の既存のデータは上書きされ、復元できません。\n\n続行しますか？`;
     } else {
       showStatus('error', '❌ サポートされていないファイル形式です（JSON、CSVのみ対応）');
       return;
@@ -227,7 +235,10 @@ function setupEventListeners() {
 
   // 全データ削除
   document.getElementById('clear-data-btn').addEventListener('click', async () => {
-    if (confirm('本当に全てのデータを削除しますか？この操作は元に戻せません。')) {
+    const confirmMessage = window.localizer ? 
+      window.localizer.getText('alerts.confirmDeleteAllData') : 
+      '本当に全てのデータを削除しますか？この操作は元に戻せません。';
+    if (confirm(confirmMessage)) {
       try {
         await chrome.storage.local.clear();
         showStatus('success', '✅ 全データを削除しました');
@@ -240,7 +251,10 @@ function setupEventListeners() {
 
   // 設定リセット
   document.getElementById('reset-settings-btn').addEventListener('click', async () => {
-    if (confirm('設定を初期値にリセットしますか？この操作は元に戻せません。')) {
+    const confirmMessage = window.localizer ? 
+      window.localizer.getText('alerts.confirmResetSettings') : 
+      '設定を初期値にリセットしますか？この操作は元に戻せません。';
+    if (confirm(confirmMessage)) {
       try {
         console.log('🔄 設定リセット開始');
         
@@ -510,7 +524,9 @@ async function handleDeleteYearData() {
     
     // 確認ダイアログ
     const yearDisplay = window.yearManager.formatYearDisplay(currentYear);
-    const confirmMessage = `${yearDisplay}のデータを完全に削除しますか？\n\nこの操作は取り消せません。`;
+    const confirmMessage = window.localizer ? 
+      window.localizer.getText('alerts.confirmDeleteYearData').replace('{yearDisplay}', yearDisplay) : 
+      `${yearDisplay}のデータを完全に削除しますか？\n\nこの操作は取り消せません。`;
     
     if (!confirm(confirmMessage)) {
       return;
@@ -727,7 +743,11 @@ async function loadMonitoringData() {
     
     const historyDiv = document.getElementById('monitor-history');
     if (history.length === 0) {
-      historyDiv.innerHTML = '<p>監視履歴がありません</p>';
+      // ローカライザーが利用可能な場合は多言語対応
+      const noHistoryText = window.localizer ? 
+        window.localizer.getText('settings.autoMonitoring.history.noHistory') : 
+        '監視履歴がありません';
+      historyDiv.innerHTML = `<p>${noHistoryText}</p>`;
     } else {
       // 統計情報も含めて表示
       const totalChecks = history.length;
@@ -735,20 +755,44 @@ async function loadMonitoringData() {
       const totalUpdated = history.reduce((sum, h) => sum + (h.updatedWorks || 0), 0);
       const errorCount = history.filter(h => h.error).length;
       
+      // 多言語対応のテキスト取得
+      const getLocalizedText = (key, fallback) => {
+        return window.localizer ? window.localizer.getText(key) : fallback;
+      };
+      
+      const getLocalizedTemplate = (key, params, fallback) => {
+        if (!window.localizer) return fallback;
+        const template = window.localizer.getText(key);
+        return template.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] || match);
+      };
+      
+      const statisticsTitle = getLocalizedText('settings.autoMonitoring.history.statisticsTitle', '監視統計');
+      const recentHistoryTitle = getLocalizedText('settings.autoMonitoring.history.recentHistoryTitle', '最近の履歴');
+      const totalChecksLabel = getLocalizedText('settings.autoMonitoring.history.totalChecks', '総監視回数');
+      const newGamesLabel = getLocalizedText('settings.autoMonitoring.history.newGames', '新規');
+      const updatedGamesLabel = getLocalizedText('settings.autoMonitoring.history.updatedGames', '更新');
+      const errorsLabel = getLocalizedText('settings.autoMonitoring.history.errors', 'エラー');
+      const timesUnit = getLocalizedText('settings.autoMonitoring.history.times', '回');
+      const itemsUnit = getLocalizedText('settings.autoMonitoring.history.items', '件');
+      const errorText = getLocalizedText('settings.autoMonitoring.history.errorOccurred', '(エラー)');
+      
       historyDiv.innerHTML = `
         <div class="monitoring-summary">
-          <h4>監視統計</h4>
-          <p><strong>総監視回数:</strong> ${totalChecks}回 | <strong>新規:</strong> ${totalNew}件 | <strong>更新:</strong> ${totalUpdated}件 | <strong>エラー:</strong> ${errorCount}回</p>
+          <h4>${statisticsTitle}</h4>
+          <p><strong>${totalChecksLabel}:</strong> ${totalChecks}${timesUnit} | <strong>${newGamesLabel}:</strong> ${totalNew}${itemsUnit} | <strong>${updatedGamesLabel}:</strong> ${totalUpdated}${itemsUnit} | <strong>${errorsLabel}:</strong> ${errorCount}${timesUnit}</p>
         </div>
         <div class="history-list">
-          <h4>最近の履歴</h4>
-          ${history.slice(0, 5).map(h => 
-            `<div class="history-item">
+          <h4>${recentHistoryTitle}</h4>
+          ${history.slice(0, 5).map(h => {
+            const newWorksText = getLocalizedTemplate('settings.autoMonitoring.history.newItemsCount', { count: h.newWorks || 0 }, `新規${h.newWorks || 0}件`);
+            const updatedWorksText = getLocalizedTemplate('settings.autoMonitoring.history.updatedItemsCount', { count: h.updatedWorks || 0 }, `更新${h.updatedWorks || 0}件`);
+            
+            return `<div class="history-item">
               <strong>${new Date(h.timestamp).toLocaleString()}</strong>: 
-              新規${h.newWorks || 0}件, 更新${h.updatedWorks || 0}件
-              ${h.error ? ` <span style="color: red;">(エラー)</span>` : ''}
-            </div>`
-          ).join('')}
+              ${newWorksText}, ${updatedWorksText}
+              ${h.error ? ` <span style="color: red;">${errorText}</span>` : ''}
+            </div>`;
+          }).join('')}
         </div>
       `;
     }
@@ -756,7 +800,10 @@ async function loadMonitoringData() {
   } catch (error) {
     console.error('監視データ読み込みエラー:', error);
     const historyDiv = document.getElementById('monitor-history');
-    historyDiv.innerHTML = '<p style="color: red;">データ読み込みエラーが発生しました</p>';
+    const errorText = window.localizer ? 
+      window.localizer.getText('settings.autoMonitoring.history.dataLoadError') : 
+      'データ読み込みエラーが発生しました';
+    historyDiv.innerHTML = `<p style="color: red;">${errorText}</p>`;
   }
 }
 
@@ -768,7 +815,10 @@ function updateLastAutoMonitorTime(timestamp) {
     if (timestamp) {
       timeSpan.textContent = new Date(timestamp).toLocaleString();
     } else {
-      timeSpan.textContent = '未実行';
+      const notExecutedText = window.localizer ? 
+        window.localizer.getText('settings.autoMonitoring.status.notExecuted') : 
+        '未実行';
+      timeSpan.textContent = notExecutedText;
     }
   }
 }
@@ -782,18 +832,32 @@ function updateAutoMonitorStatus(settings, lastTime) {
   const contentEnabled = settings.contentEnabled !== false;
   const popupInterval = settings.popupInterval || 1;
 
+  // 多言語対応のテキスト取得
+  const getLocalizedText = (key, fallback) => {
+    return window.localizer ? window.localizer.getText(key) : fallback;
+  };
+  
+  const getLocalizedTemplate = (key, params, fallback) => {
+    if (!window.localizer) return fallback;
+    const template = window.localizer.getText(key);
+    return template.replace(/\{(\w+)\}/g, (match, paramName) => params[paramName] || match);
+  };
+
   let statusText = '';
   
   if (!enabled) {
-    statusText = '❌ 実用的自動監視は無効です';
+    statusText = getLocalizedText('settings.autoMonitoring.status.disabled', '❌ 実用的自動監視は無効です');
   } else {
     const enabledFeatures = [];
     if (contentEnabled) {
-      enabledFeatures.push('ウディコンサイト訪問時');
+      enabledFeatures.push(getLocalizedText('settings.autoMonitoring.status.contentMonitoring', 'ウディコンサイト訪問時'));
     }
-    enabledFeatures.push(`ポップアップ開時（${popupInterval}時間間隔）`);
+    const popupMonitoringText = getLocalizedTemplate('settings.autoMonitoring.status.popupMonitoring', { interval: popupInterval }, `ポップアップ開時（${popupInterval}時間間隔）`);
+    enabledFeatures.push(popupMonitoringText);
     
-    statusText = `✅ 有効 - ${enabledFeatures.join('、')}`;
+    const enabledText = getLocalizedText('settings.autoMonitoring.status.enabled', '✅ 有効');
+    const separator = window.localizer && window.localizer.getCurrentLanguage() === 'en' ? ', ' : '、';
+    statusText = `${enabledText} - ${enabledFeatures.join(separator)}`;
     
     if (lastTime) {
       const nextPopupCheck = new Date(new Date(lastTime).getTime() + popupInterval * 60 * 60 * 1000);
@@ -801,9 +865,11 @@ function updateAutoMonitorStatus(settings, lastTime) {
       
       if (nextPopupCheck > now) {
         const minutesUntilNext = Math.ceil((nextPopupCheck - now) / (1000 * 60));
-        statusText += `<br><small>次回ポップアップ自動監視まで: ${minutesUntilNext}分</small>`;
+        const nextCheckText = getLocalizedTemplate('settings.autoMonitoring.status.nextPopupCheck', { minutes: minutesUntilNext }, `次回ポップアップ自動監視まで: ${minutesUntilNext}分`);
+        statusText += `<br><small>${nextCheckText}</small>`;
       } else {
-        statusText += '<br><small>次回ポップアップ開時に自動監視実行予定</small>';
+        const nextScheduledText = getLocalizedText('settings.autoMonitoring.status.nextPopupScheduled', '次回ポップアップ開時に自動監視実行予定');
+        statusText += `<br><small>${nextScheduledText}</small>`;
       }
     }
   }
@@ -1116,6 +1182,9 @@ async function initializeLanguageSettings() {
     // ローカライザーを初期化
     await window.localizer.initialize();
     
+    // DOM要素を多言語化（data-i18n属性を適用）
+    window.localizer.updateDOM();
+    
     // 現在の言語設定をUIに反映
     const currentLanguage = window.localizer.getCurrentLanguage();
     const languageSelector = document.getElementById('language-selector');
@@ -1143,6 +1212,9 @@ async function handleLanguageChange(event) {
 
     // 言語を変更（手動設定）
     await window.localizer.setLanguage(selectedLanguage, true);
+
+    // DOM要素を多言語化（言語変更後に再適用）
+    window.localizer.updateDOM();
 
     // ステータスメッセージを表示
     const statusDiv = document.getElementById('language-status');
