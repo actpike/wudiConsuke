@@ -200,8 +200,34 @@ async function performAutoMonitoring() {
         last_auto_monitor_time: new Date().toISOString()
       });
       
-      // ページから作品リスト抽出
-      const works = extractWorksList();
+      // ページから作品リスト抽出（webMonitor.jsのロジックを使用）
+      console.log('🔄 webMonitor.jsの抽出ロジックを使用');
+      let works = [];
+      
+      try {
+        // webMonitor.jsのインスタンスを作成して監視実行
+        if (typeof WebMonitor !== 'undefined') {
+          const webMonitor = new WebMonitor();
+          const monitorResult = await webMonitor.performMonitoring();
+          
+          if (monitorResult && monitorResult.works) {
+            works = monitorResult.works;
+            console.log(`✅ webMonitor経由で${works.length}件の作品を検出`);
+          } else {
+            console.log('⚠️ webMonitor結果が空でした');
+          }
+        } else {
+          console.log('⚠️ WebMonitorクラスが利用できません、フォールバック使用');
+        }
+      } catch (webMonitorError) {
+        console.log('⚠️ webMonitor実行エラー:', webMonitorError);
+      }
+      
+      // webMonitorで取得できなかった場合のフォールバック
+      if (works.length === 0) {
+        console.log('🔄 フォールバック: 従来のextractWorksListを使用');
+        works = extractWorksList();
+      }
       
       if (works.length > 0) {
         console.log(`✅ ${works.length}件の作品を検出、背景スクリプトに通知`);
@@ -209,7 +235,7 @@ async function performAutoMonitoring() {
         // 背景スクリプトに監視データを送信
         chrome.runtime.sendMessage({
           action: 'auto_monitor_detected',
-          source: 'content_script',
+          source: 'content_script_via_webmonitor',
           data: {
             works: works,
             url: window.location.href,
@@ -347,6 +373,11 @@ function analyzeWodiconPage() {
     });
     
   } catch (error) {
+    // Extension context invalidated は無視（拡張機能リロード時の正常な動作）
+    if (error.message && error.message.includes('Extension context invalidated')) {
+      console.log('🔄 拡張機能がリロードされました（正常）');
+      return;
+    }
     console.error('ページ解析中にエラーが発生しました:', error);
   }
 }
@@ -387,13 +418,23 @@ function extractWorksList() {
         
         const workData = extractWorkFromElement(row, index);
         if (workData) {
-          console.log(`抽出データ:`, workData);
-          
-          if (workData.title && workData.title !== '不明') {
-            console.log(`✅ 作品抽出成功: No.${workData.no} ${workData.title}`);
-            works.push(workData);
+          // 配列（複数作品）か単一作品かを判定
+          if (Array.isArray(workData)) {
+            console.log(`抽出データ（複数）: ${workData.length}件`);
+            workData.forEach(work => {
+              if (work.title && work.title !== '不明') {
+                console.log(`✅ 作品抽出成功: No.${work.no} ${work.title}`);
+                works.push(work);
+              }
+            });
           } else {
-            console.log(`❌ タイトル無効: "${workData.title}"`);
+            console.log(`抽出データ（単一）:`, workData);
+            if (workData.title && workData.title !== '不明') {
+              console.log(`✅ 作品抽出成功: No.${workData.no} ${workData.title}`);
+              works.push(workData);
+            } else {
+              console.log(`❌ タイトル無効: "${workData.title}"`);
+            }
           }
         } else {
           console.log(`❌ データ抽出失敗`);
@@ -470,8 +511,53 @@ function extractWorkFromElement(element, index) {
     let version = '';
     let lastUpdate = '';
     
-    // パターン1: "No.2 1.片道勇者（ｴﾝﾄﾘｰ見本）" 形式
-    console.log(`パターン1解析: "${fullText}"`);
+    // パターン1: 改行区切りの作品リストを個別処理
+    console.log(`パターン1解析開始`);
+    
+    // 作品リストが改行区切りで含まれている場合の処理
+    if (fullText.includes('\n') && /\d+\./.test(fullText)) {
+      console.log('📝 改行区切り作品リストを検出');
+      console.log(`全文長: ${fullText.length}文字, 改行数: ${(fullText.match(/\n/g) || []).length}`);
+      const lines = fullText.split('\n').filter(line => line.trim());
+      const extractedWorks = [];
+      
+      for (const line of lines) {
+        const trimmedLine = line.trim();
+        console.log(`行解析: "${trimmedLine}"`);
+        
+        // 作品エントリーのパターンマッチ（タイトル部分を正確に抽出）
+        const workPattern = /^(\d+)\.([^[\]]+?)(?:\[(.+?)\])?$/;
+        const match = trimmedLine.match(workPattern);
+        
+        if (match) {
+          const workNo = match[1];
+          const workTitle = match[2]?.trim();
+          const workUpdate = match[3]?.trim() || '';
+          
+          console.log(`✅ 作品発見: No.${workNo} "${workTitle}" [${workUpdate}]`);
+          
+          const workData = {
+            no: workNo,
+            title: workTitle,
+            author: '不明',
+            version: workUpdate,
+            lastUpdate: workUpdate,
+            url: window.location.href,
+            extractedAt: new Date().toISOString()
+          };
+          
+          extractedWorks.push(workData);
+        }
+      }
+      
+      if (extractedWorks.length > 0) {
+        console.log(`🎉 改行区切り処理で${extractedWorks.length}件抽出成功`);
+        return extractedWorks; // 複数の作品を返す
+      }
+    }
+    
+    // フォールバック: 従来の単一マッチ処理
+    console.log(`単一マッチ処理にフォールバック`);
     
     // 複数のパターンを試行
     const patterns = [
@@ -938,6 +1024,12 @@ function initDebugPanel() {
         <button id="debug-test-background" class="debug-btn">Background通信テスト</button>
         <div id="monitor-status"></div>
       </div>
+      <div class="debug-section">
+        <h4>ページ構造解析</h4>
+        <button id="debug-scan-dom" class="debug-btn">DOM構造スキャン</button>
+        <button id="debug-extract-works" class="debug-btn">作品データ抽出テスト</button>
+        <div id="page-analysis"></div>
+      </div>
       <div id="debug-log"></div>
     </div>
   `;
@@ -1037,13 +1129,14 @@ function initDebugPanel() {
       display: none;
     }
     
-    #cooltime-status, #monitor-status {
+    #cooltime-status, #monitor-status, #page-analysis {
       margin-top: 8px;
       padding: 6px 8px;
       background: #2e2e2e;
       border-radius: 4px;
       font-size: 10px;
       color: #bbb;
+      line-height: 1.4;
     }
   `;
   
@@ -1145,6 +1238,65 @@ function setupDebugPanelEvents() {
       debugLog(`❌ Background通信失敗: ${error.message}`);
       debugLog('🔄 フォールバック通知を表示します');
       showAutoMonitorNoticeWithChanges(2, 0); // フォールバック動作をテスト
+    }
+  });
+  
+  // DOM構造スキャン
+  document.getElementById('debug-scan-dom').addEventListener('click', () => {
+    debugLog('🔍 DOM構造スキャン開始...');
+    const pageAnalysis = document.getElementById('page-analysis');
+    
+    const tables = document.querySelectorAll('table');
+    const divs = document.querySelectorAll('div');
+    const paragraphs = document.querySelectorAll('p');
+    
+    const analysis = `
+      <strong>基本情報:</strong><br>
+      URL: ${window.location.href}<br>
+      Title: ${document.title}<br>
+      <br>
+      <strong>DOM要素数:</strong><br>
+      テーブル: ${tables.length}個<br>
+      div要素: ${divs.length}個<br>
+      p要素: ${paragraphs.length}個<br>
+      <br>
+      <strong>テーブル詳細:</strong><br>
+      ${Array.from(tables).map((table, i) => {
+        const rows = table.querySelectorAll('tr');
+        return `テーブル${i+1}: ${rows.length}行`;
+      }).join('<br>')}
+    `;
+    
+    pageAnalysis.innerHTML = analysis;
+    debugLog('✅ DOM構造スキャン完了');
+  });
+  
+  // 作品データ抽出テスト
+  document.getElementById('debug-extract-works').addEventListener('click', () => {
+    debugLog('🎯 作品データ抽出テスト開始...');
+    const works = extractWorksList();
+    debugLog(`📊 抽出結果: ${works.length}件`);
+    
+    const pageAnalysis = document.getElementById('page-analysis');
+    if (works.length > 0) {
+      const worksList = works.slice(0, 5).map(work => 
+        `No.${work.no} ${work.title} (${work.author})`
+      ).join('<br>');
+      
+      pageAnalysis.innerHTML = `
+        <strong>抽出成功:</strong><br>
+        総件数: ${works.length}件<br>
+        <br>
+        <strong>サンプル（最初の5件）:</strong><br>
+        ${worksList}
+        ${works.length > 5 ? '<br>...' : ''}
+      `;
+    } else {
+      pageAnalysis.innerHTML = `
+        <strong style="color: #ff6b6b;">抽出失敗</strong><br>
+        作品データが見つかりませんでした。<br>
+        コンソールで詳細ログを確認してください。
+      `;
     }
   });
 }
