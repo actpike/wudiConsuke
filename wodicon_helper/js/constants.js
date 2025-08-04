@@ -120,7 +120,7 @@ const SUCCESS_MESSAGES = {
 
 // バージョン情報
 const VERSION_INFO = {
-  CURRENT: '1.0.2', // 最新バージョンに統一
+  CURRENT: '1.0.3', // 最新バージョンに統一
   MANIFEST_VERSION: 3
 };
 

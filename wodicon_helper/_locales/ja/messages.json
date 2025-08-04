@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "ウディこん助 (WodiConsuke)",
+    "description": "Chrome拡張機能の名前"
+  },
+  "appDesc": {
+    "message": "ウディコン作品の評価・感想をサポートするChrome拡張機能",
+    "description": "Chrome拡張機能の説明文"
+  },
+  "appTitle": {
+    "message": "ウディこん助",
+    "description": "拡張機能のポップアップタイトル"
+  }
+}

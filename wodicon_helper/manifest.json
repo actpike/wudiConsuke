@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "ウディこん助 (WodiConsuke) (LocalDev)",
-  "version": "1.0.2",
-  "description": "ウディコン作品の評価・感想をサポートするChrome拡張機能",
+  "name": "__MSG_appName__",
+  "version": "1.0.3",
+  "description": "__MSG_appDesc__",
+  "default_locale": "ja",
   
   "permissions": [
     "storage",
@@ -29,7 +30,7 @@
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "ウディこん助",
+    "default_title": "__MSG_appTitle__",
     "default_icon": {
       "16": "icons/icon16.png",
       "32": "icons/icon32.png",

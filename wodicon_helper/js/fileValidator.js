@@ -3,7 +3,7 @@
 
 class FileValidator {
   constructor() {
-    this.supportedVersion = '1.0.2';
+    this.supportedVersion = '1.0.3';
     this.requiredJsonFields = ['games']; // games は必須、settings/metadata は任意
     this.requiredGameFields = ['id', 'title', 'rating', 'is_played', 'created_at', 'updated_at'];
     this.requiredCsvHeaders = ['作品No', '作品名', '熱中度', '斬新さ', '物語性', '画像音声', '遊びやすさ', 'その他'];

@@ -1,0 +1,14 @@
+{
+  "appName": {
+    "message": "WodiConsuke",
+    "description": "Chrome extension name"
+  },
+  "appDesc": {
+    "message": "Chrome extension to support evaluation and reviews of Wodicon games",
+    "description": "Chrome extension description"
+  },
+  "appTitle": {
+    "message": "WodiConsuke",
+    "description": "Extension popup title"
+  }
+}

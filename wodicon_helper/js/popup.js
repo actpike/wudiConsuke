@@ -249,28 +249,8 @@ class GameListManager {
         return;
       }
 
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      const currentTab = tabs[0];
-
-      if (!currentTab || !currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') || !currentTab.url.includes('contestVote.cgi')) {
-        const errorMsg = (window.localizer && window.localizer.getText) ? 
-          window.localizer.getText('ui.status.votePageRequired') : '投票ページで実行してください。';
-        this.showError(errorMsg);
-        return;
-      }
-
-      this.updateStatusBar('📋 投票フォームに入力中...', 'processing', 0);
-
-      const response = await chrome.tabs.sendMessage(currentTab.id, {
-        action: 'fillVoteForm',
-        data: editingGame
-      });
-
-      if (response && response.success) {
-        this.updateStatusBar('✅ フォームへの入力が完了しました。', 'success', 3000);
-      } else {
-        throw new Error(response?.error || 'フォームの入力に失敗しました。');
-      }
+      // 個別作品を配列に入れて共通処理を呼び出し
+      await this.handleVoteFormInput([editingGame], false);
 
     } catch (error) {
       console.error('❌ 投票フォーム入力エラー:', error);
@@ -287,37 +267,7 @@ class GameListManager {
         return;
       }
 
-      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-      const currentTab = tabs[0];
-      const isVotePage = currentTab && currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') && currentTab.url.includes('contestVote.cgi');
-
-      if (!isVotePage) {
-        const confirmMsg = (window.localizer && window.localizer.getText) ? 
-          window.localizer.getText('ui.status.confirmOpenVotePage') : '投票ページを開きます。その後、再度このボタンを押してください。';
-        if (confirm(confirmMsg)) {
-          // 年度別投票URL取得
-          const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
-          const votePageUrl = (window.constants?.URLS?.getVoteUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi') + '?action=load';
-          const newTab = await chrome.tabs.create({ url: votePageUrl, active: true });
-          
-          // 新しいタブでコンテンツスクリプトが実行されるのを待つ
-          setTimeout(async () => {
-            this.updateStatusBar(`🗳️ ${playedGames.length}件の作品を一括入力中...`, 'processing', 0);
-            const response = await chrome.tabs.sendMessage(newTab.id, {
-              action: 'fillAllVoteForms',
-              data: playedGames
-            });
-
-            if (response && response.success) {
-              this.updateStatusBar(`✅ 一括入力完了: 成功 ${response.successCount}件, スキップ ${response.skippedCount}件`, 'success', 5000);
-            } else {
-              throw new Error(response?.error || '一括入力に失敗しました。');
-            }
-          }, 2000); // 2秒待機
-        }
-        return;
-      }
-
+      // 一括入力の確認
       const confirmTemplate = (window.localizer && window.localizer.getText) ? 
         window.localizer.getText('ui.status.confirmBulkInput') : 
         '{count}件の評価済み作品のデータをフォームに一括入力しますか？';
@@ -326,21 +276,82 @@ class GameListManager {
         return;
       }
 
-      this.updateStatusBar(`🗳️ ${playedGames.length}件の作品を一括入力中...`, 'processing', 0);
+      // 共通処理を呼び出し
+      await this.handleVoteFormInput(playedGames, true);
 
-      const response = await chrome.tabs.sendMessage(currentTab.id, {
-        action: 'fillAllVoteForms',
-        data: playedGames
-      });
-
-      if (response && response.success) {
-        this.updateStatusBar(`✅ 一括入力完了: 成功 ${response.successCount}件, スキップ ${response.skippedCount}件`, 'success', 5000);
-      } else {
-        throw new Error(response?.error || '一括入力に失敗しました。');
-      }
     } catch (error) {
       console.error('❌ 一括入力エラー:', error);
       this.showError(error.message);
+    }
+  }
+
+  // 投票フォーム入力共通処理（投票ページ自動オープン対応）
+  async handleVoteFormInput(games, isBulkMode = false) {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const currentTab = tabs[0];
+    const isVotePage = currentTab && currentTab.url.includes('silversecond.com/WolfRPGEditor/Contest/') && currentTab.url.includes('contestVote.cgi');
+
+    if (!isVotePage) {
+      // 投票ページが開いていない場合の処理
+      const confirmMsg = (window.localizer && window.localizer.getText) ? 
+        window.localizer.getText('ui.status.confirmOpenVotePage') : '投票ページを開きます。その後、再度このボタンを押してください。';
+      if (confirm(confirmMsg)) {
+        // 年度別投票URL取得
+        const currentYear = window.yearManager ? await window.yearManager.getCurrentYear() : 2025;
+        const votePageUrl = (window.constants?.URLS?.getVoteUrl?.(currentYear) || 'https://silversecond.com/WolfRPGEditor/Contest/cgi/contestVote.cgi') + '?action=load';
+        const newTab = await chrome.tabs.create({ url: votePageUrl, active: true });
+        
+        // 新しいタブでコンテンツスクリプトが実行されるのを待つ
+        setTimeout(async () => {
+          const action = isBulkMode ? 'fillAllVoteForms' : 'fillVoteForm';
+          const data = isBulkMode ? games : games[0];
+          const statusMsg = isBulkMode ? 
+            `🗳️ ${games.length}件の作品を一括入力中...` : 
+            '📋 投票フォームに入力中...';
+          
+          this.updateStatusBar(statusMsg, 'processing', 0);
+          
+          const response = await chrome.tabs.sendMessage(newTab.id, {
+            action: action,
+            data: data
+          });
+
+          if (response && response.success) {
+            const successMsg = isBulkMode ? 
+              `✅ 一括入力完了: 成功 ${response.successCount}件, スキップ ${response.skippedCount}件` :
+              '✅ フォームへの入力が完了しました。';
+            this.updateStatusBar(successMsg, 'success', isBulkMode ? 5000 : 3000);
+          } else {
+            const errorMsg = isBulkMode ? '一括入力に失敗しました。' : 'フォームの入力に失敗しました。';
+            throw new Error(response?.error || errorMsg);
+          }
+        }, 2000); // 2秒待機
+      }
+      return;
+    }
+
+    // 投票ページが既に開いている場合の処理
+    const action = isBulkMode ? 'fillAllVoteForms' : 'fillVoteForm';
+    const data = isBulkMode ? games : games[0];
+    const statusMsg = isBulkMode ? 
+      `🗳️ ${games.length}件の作品を一括入力中...` : 
+      '📋 投票フォームに入力中...';
+    
+    this.updateStatusBar(statusMsg, 'processing', 0);
+
+    const response = await chrome.tabs.sendMessage(currentTab.id, {
+      action: action,
+      data: data
+    });
+
+    if (response && response.success) {
+      const successMsg = isBulkMode ? 
+        `✅ 一括入力完了: 成功 ${response.successCount}件, スキップ ${response.skippedCount}件` :
+        '✅ フォームへの入力が完了しました。';
+      this.updateStatusBar(successMsg, 'success', isBulkMode ? 5000 : 3000);
+    } else {
+      const errorMsg = isBulkMode ? '一括入力に失敗しました。' : 'フォームの入力に失敗しました。';
+      throw new Error(response?.error || errorMsg);
     }
   }
 
