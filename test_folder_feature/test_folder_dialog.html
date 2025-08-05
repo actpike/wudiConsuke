@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フォルダ選択テスト</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .path-display {
+            background: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        #folder-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗂️ フォルダ選択 & クリップボードコピー テスト</h1>
+        
+        <div class="step">
+            <h3>ステップ1: フォルダを選択</h3>
+            <input type="file" id="folder-input" webkitdirectory multiple>
+            <button id="select-folder-btn">📁 フォルダを選択</button>
+            <div class="path-display" id="selected-path">フォルダが選択されていません</div>
+        </div>
+        
+        <div class="step">
+            <h3>ステップ2: パスを調整してコピー</h3>
+            <label for="path-input">フルパス（必要に応じて修正してください）:</label>
+            <input type="text" id="path-input" placeholder="C:\Users\YourUserName\Desktop\FolderName" style="width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+            <button id="copy-path-btn" disabled>📋 パスをコピー</button>
+            <div class="status" id="copy-status"></div>
+        </div>
+        
+        <div class="step">
+            <h3>ステップ3: 動作確認</h3>
+            <p>コピー後、メモ帳などに貼り付けて確認してください。</p>
+            <textarea id="test-paste" placeholder="ここに貼り付けて確認..." style="width: 100%; height: 60px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+        </div>
+    </div>
+
+    <script src="test_folder_dialog.js"></script>
+</body>
+</html>

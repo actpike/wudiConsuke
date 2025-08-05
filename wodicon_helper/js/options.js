@@ -347,6 +347,9 @@ function setupEventListeners() {
     // 自動監視履歴クリアボタン
     addButtonListener('clear-auto-monitor-time', clearAutoMonitorTime, 'Clear auto monitor time');
     
+    // ゲームフォルダ管理ページボタン
+    addButtonListener('open-folder-management-btn', openGameFolderManagement, 'Open game folder management');
+    
     
     // 年度管理関連
     // 年度選択セレクターのイベントリスナー（専用処理）
@@ -1283,6 +1286,29 @@ async function handleLanguageChange(event) {
       statusText.textContent = 'Failed to change language: ' + error.message;
       statusDiv.style.display = 'block';
     }
+  }
+}
+
+// ゲームフォルダ管理ページを開く
+function openGameFolderManagement() {
+  try {
+    console.log('🗂️ Opening game folder management page...');
+    
+    // 新しいタブでゲームフォルダ管理ページを開く
+    chrome.tabs.create({
+      url: chrome.runtime.getURL('game_folder_management.html')
+    });
+    
+    console.log('✅ Game folder management page opened');
+    
+  } catch (error) {
+    console.error('❌ Failed to open game folder management page:', error);
+    
+    const errorMessage = window.localizer ? 
+      window.localizer.getText('alerts.gameFolderManagementOpenError').replace('{error}', error.message) : 
+      'ゲームフォルダ管理ページを開けませんでした: ' + error.message;
+    
+    alert(errorMessage);
   }
 }
 

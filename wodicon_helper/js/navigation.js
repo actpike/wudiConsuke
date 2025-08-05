@@ -52,9 +52,9 @@ class NavigationController {
       this.showMainView();
     });
 
-    // 閉じるボタン
-    document.getElementById('close-btn').addEventListener('click', () => {
-      this.showMainView();
+    // フォルダボタン
+    document.getElementById('folder-btn').addEventListener('click', () => {
+      this.handleFolderButtonClick();
     });
 
     // マウスの戻るボタン
@@ -1231,6 +1231,237 @@ class NavigationController {
     } catch (error) {
       console.error('感想入力促進ハイライト更新エラー:', error);
     }
+  }
+
+  // フォルダボタンクリック処理
+  async handleFolderButtonClick() {
+    try {
+      if (!this.editingGameId) {
+        console.error('編集中のゲームIDが設定されていません');
+        return;
+      }
+
+      // ゲームフォルダ管理システムの初期化を確認
+      await this.initializeGameFolderSystem();
+
+      // フォルダ設定状態をチェック
+      const isConfigured = await this.checkFolderConfiguration(this.editingGameId);
+
+      if (!isConfigured) {
+        // 未設定の場合：確認メッセージ → ゲームフォルダ管理ページを開く
+        const confirmMessage = 'ローカルフォルダが設定されていません。\nゲームフォルダ管理ページを開いて設定しますか？';
+        
+        if (confirm(confirmMessage)) {
+          chrome.tabs.create({
+            url: chrome.runtime.getURL('game_folder_management.html')
+          });
+        }
+      } else {
+        // 設定済みの場合：フルパスをクリップボードにコピー
+        await this.copyGameFolderPath(this.editingGameId);
+      }
+
+    } catch (error) {
+      console.error('❌ フォルダボタンクリック処理エラー:', error);
+      // 統一エラーハンドリング
+      if (window.errorHandler) {
+        window.errorHandler.handleError(error, 'folder-button-click');
+      }
+    }
+  }
+
+  // ゲームフォルダシステム初期化
+  async initializeGameFolderSystem() {
+    // GameFolderManagerのインスタンスが存在しない場合は作成
+    if (!window.gameFolderManager) {
+      // GameFolderManagerクラスを動的に読み込み（必要に応じて）
+      // 通常はgameFolderManager.jsが既に読み込まれている前提
+      
+      // 基本的なフォルダデータ管理機能のみ実装
+      window.gameFolderManager = {
+        isGameFolderConfigured: async (gameId) => {
+          return await this.checkFolderConfigurationDirect(gameId);
+        },
+        getGameFullPath: async (gameId) => {
+          return await this.getGameFullPathDirect(gameId);
+        }
+      };
+    }
+  }
+
+  // フォルダ設定状態の直接チェック
+  async checkFolderConfiguration(gameId) {
+    try {
+      // 現在の年度を取得
+      let currentYear;
+      if (window.yearManager) {
+        currentYear = await window.yearManager.getCurrentYear();
+      } else {
+        currentYear = new Date().getFullYear().toString();
+      }
+
+      console.log('🔍 フォルダ設定チェック開始:', { gameId, currentYear });
+
+      // ルートパスとフォルダデータを取得
+      const rootPathKey = `wodicon_root_path_${currentYear}`;
+      const folderDataKey = `wodicon_folder_data_${currentYear}`;
+      
+      console.log('🔍 Storage keys:', { rootPathKey, folderDataKey });
+      
+      const result = await chrome.storage.local.get([rootPathKey, folderDataKey]);
+      
+      console.log('🔍 Storage result:', result);
+      
+      const rootPath = result[rootPathKey];
+      const folderData = result[folderDataKey] || {};
+      const gameFolder = folderData[gameId];
+
+      console.log('🔍 Data extraction:', { rootPath, folderData, gameFolder });
+
+      // ルートパスとフォルダ名の両方が設定されている場合のみtrue
+      const isConfigured = !!(rootPath && gameFolder);
+      console.log('🔍 Configuration status:', isConfigured);
+      
+      return isConfigured;
+
+    } catch (error) {
+      console.error('フォルダ設定状態チェックエラー:', error);
+      return false;
+    }
+  }
+
+  // フォルダ設定状態の直接チェック（バックアップ用）
+  async checkFolderConfigurationDirect(gameId) {
+    return await this.checkFolderConfiguration(gameId);
+  }
+
+  // ゲームフォルダパスをクリップボードにコピー
+  async copyGameFolderPath(gameId) {
+    try {
+      const fullPath = await this.getGameFullPathDirect(gameId);
+      
+      if (!fullPath) {
+        this.showTemporaryMessage('❌ フォルダパスが設定されていません', 'error');
+        return;
+      }
+
+      // クリップボードにコピー（アラートなし）
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(fullPath);
+        console.log('✅ フォルダパスコピー成功:', fullPath);
+      } else {
+        // フォールバック
+        const textarea = document.createElement('textarea');
+        textarea.value = fullPath;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        console.log('✅ フォルダパスコピー成功（フォールバック方式):', fullPath);
+      }
+      
+      // 成功時は控えめな通知（アラートではなく一時メッセージ）
+      this.showTemporaryMessage(`📁 ${fullPath}`, 'success');
+
+    } catch (error) {
+      console.error('❌ フォルダパスコピーエラー:', error);
+      this.showTemporaryMessage(`❌ コピー失敗: ${error.message}`, 'error');
+    }
+  }
+
+  // ゲームフルパス直接取得
+  async getGameFullPathDirect(gameId) {
+    try {
+      // 現在の年度を取得
+      let currentYear;
+      if (window.yearManager) {
+        currentYear = await window.yearManager.getCurrentYear();
+      } else {
+        currentYear = new Date().getFullYear().toString();
+      }
+
+      console.log('🔍 フルパス取得開始:', { gameId, currentYear });
+
+      // ルートパスとフォルダデータを取得
+      const rootPathKey = `wodicon_root_path_${currentYear}`;
+      const folderDataKey = `wodicon_folder_data_${currentYear}`;
+      
+      console.log('🔍 Path keys:', { rootPathKey, folderDataKey });
+      
+      const result = await chrome.storage.local.get([rootPathKey, folderDataKey]);
+      
+      console.log('🔍 Path storage result:', result);
+      
+      const rootPath = result[rootPathKey];
+      const folderData = result[folderDataKey] || {};
+      const gameFolder = folderData[gameId];
+
+      console.log('🔍 Path data:', { rootPath, folderData, gameFolder });
+
+      if (!rootPath || !gameFolder) {
+        console.log('🔍 Missing data - rootPath:', !!rootPath, 'gameFolder:', !!gameFolder);
+        return null;
+      }
+
+      const fullPath = `${rootPath}\\${gameFolder}`;
+      console.log('🔍 Generated full path:', fullPath);
+      return fullPath;
+
+    } catch (error) {
+      console.error('ゲームフルパス取得エラー:', error);
+      return null;
+    }
+  }
+
+  // 一時メッセージ表示
+  showTemporaryMessage(message, type = 'info') {
+    // 詳細画面にメッセージ表示領域を追加する場合
+    let messageContainer = document.getElementById('temp-message-container');
+    
+    if (!messageContainer) {
+      messageContainer = document.createElement('div');
+      messageContainer.id = 'temp-message-container';
+      messageContainer.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        max-width: 300px;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-size: 14px;
+        line-height: 1.4;
+        word-break: break-all;
+      `;
+      document.body.appendChild(messageContainer);
+    }
+
+    // タイプに応じてスタイル設定
+    if (type === 'success') {
+      messageContainer.style.backgroundColor = '#d4edda';
+      messageContainer.style.color = '#155724';
+      messageContainer.style.border = '1px solid #c3e6cb';
+    } else if (type === 'error') {
+      messageContainer.style.backgroundColor = '#f8d7da';
+      messageContainer.style.color = '#721c24';
+      messageContainer.style.border = '1px solid #f5c6cb';
+    } else {
+      messageContainer.style.backgroundColor = '#d1ecf1';
+      messageContainer.style.color = '#0c5460';
+      messageContainer.style.border = '1px solid #bee5eb';
+    }
+
+    messageContainer.textContent = message;
+    messageContainer.style.display = 'block';
+
+    // 4秒後に自動で非表示
+    setTimeout(() => {
+      if (messageContainer) {
+        messageContainer.style.display = 'none';
+      }
+    }, 4000);
   }
 }
 

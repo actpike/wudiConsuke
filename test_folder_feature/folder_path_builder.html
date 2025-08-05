@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フォルダパス構築テスト</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 700px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #667eea;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5a6fd8;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .secondary {
+            background: #6c757d !important;
+        }
+        .secondary:hover {
+            background: #5a6268 !important;
+        }
+        .success {
+            background: #28a745 !important;
+        }
+        .success:hover {
+            background: #218838 !important;
+        }
+        .path-display {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+            min-height: 20px;
+            border-left: 4px solid #667eea;
+        }
+        .full-path-display {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+            font-weight: bold;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            display: none;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .hidden-input {
+            display: none;
+        }
+        .example-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗂️ フォルダパス構築システム</h1>
+        
+        <div class="step">
+            <h3>ステップ1: Rootフォルダパスを入力</h3>
+            <p>ベースとなるルートフォルダのフルパスを入力してください</p>
+            <input type="text" id="root-path-input" placeholder="C:\Users\YourName\Documents\Projects" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">
+            <div class="example-text">例: C:\Users\YourName\Documents\Projects</div>
+        </div>
+        
+        <div class="step">
+            <h3>ステップ2: 個別フォルダ名を入力</h3>
+            <p>個別の作品フォルダ名を直接入力してください（確実・シンプル・アラートなし）</p>
+            <input type="text" id="individual-folder-input" placeholder="MyGame2025" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 16px;">
+            <div class="path-display" id="individual-path-display">フォルダ名が入力されていません</div>
+            <div class="example-text">例: MyGame2025, ProjectABC2024, TestFolder など</div>
+            <div class="help-text" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; border-left: 4px solid #28a745;">
+                <strong>✅ 利点:</strong> アラートなし、全ブラウザ対応、確実な動作<br>
+                <strong>📝 使い方:</strong> エクスプローラーでフォルダ名を確認してから入力
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>ステップ3: フルパスを構築・コピー</h3>
+            <p>Root + 個別フォルダの組み合わせフルパス</p>
+            <div class="full-path-display" id="full-path-display">フルパスがまだ構築されていません</div>
+            <button id="build-path-btn" disabled>🔧 フルパス構築</button>
+            <button id="copy-full-path-btn" class="success" disabled>📋 フルパスをコピー</button>
+            <div class="status" id="path-status"></div>
+        </div>
+        
+        <div class="step">
+            <h3>ステップ4: 動作確認</h3>
+            <p>コピーしたパスを貼り付けて確認</p>
+            <textarea id="test-paste" placeholder="ここに貼り付けて確認..." style="width: 100%; height: 60px; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;"></textarea>
+        </div>
+    </div>
+
+    <script src="folder_path_builder.js"></script>
+</body>
+</html>
