@@ -288,7 +288,6 @@ class UpdateManager {
       // ローカライズされたタイトル（既存のローカライザーシステム使用）
       const currentLanguage = window.localizer ? window.localizer.getCurrentLanguage() : 'ja';
       const isEnglish = currentLanguage === 'en';
-      console.log(`🔍 Debug - Current Language: ${currentLanguage}, isEnglish: ${isEnglish}`);
       let title;
       
       if (actualCount === 1) {

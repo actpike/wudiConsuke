@@ -276,7 +276,9 @@ class GameListManager {
     try {
       const playedGames = await window.gameDataManager.filterGames('played');
       if (playedGames.length === 0) {
-        this.showMessage('評価済みの作品がありません。', 'info');
+        const noPlayedGamesMessage = (window.localizer && window.localizer.getText) ? 
+          window.localizer.getText('ui.status.noPlayedGames') : '評価済みの作品がありません。';
+        this.showMessage(noPlayedGamesMessage, 'info');
         return;
       }
 

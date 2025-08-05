@@ -187,7 +187,8 @@ const enResources = {
       confirmBulkInput: 'Input data for {count} rated games into the form?',
       autoMonitorComplete: '🔔 Auto monitor completed: {newCount} new, {updateCount} updated',
       autoMonitorNoUpdates: '✅ Auto monitor completed: No updates',
-      manualUpdateComplete: '📊 Update completed: Found {newCount} new, {updateCount} updated out of {totalCount} total games'
+      manualUpdateComplete: '📊 Update completed: Found {newCount} new, {updateCount} updated out of {totalCount} total games',
+      noPlayedGames: 'No rated games found.'
     },
 
 

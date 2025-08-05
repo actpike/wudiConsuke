@@ -719,12 +719,23 @@ class WebMonitor {
   // システム不安定通知
   async notifySystemInstability() {
     try {
-      // 重要なエラーの場合は通知
+      // ローカライズされた通知
+      const currentLanguage = window.localizer ? window.localizer.getCurrentLanguage() : 'ja';
+      const isEnglish = currentLanguage === 'en';
+      
+      const title = isEnglish ? 
+        '⚠️ Web Monitor System Warning' : 
+        '⚠️ Web監視システム警告';
+      
+      const message = isEnglish ? 
+        `Monitor system has encountered consecutive errors (${this.consecutiveErrors} times)\nPlease check the settings page for details` :
+        `監視システムでエラーが続いています (連続${this.consecutiveErrors}回)\n詳細は設定画面でご確認ください`;
+      
       await chrome.notifications.create(`system_error_${Date.now()}`, {
         type: 'basic',
         iconUrl: '../icons/icon48.png',
-        title: '⚠️ Web監視システム警告',
-        message: `監視システムでエラーが続いています (連続${this.consecutiveErrors}回)\n詳細は設定画面でご確認ください`,
+        title: title,
+        message: message,
         priority: 2
       });
     } catch (notificationError) {

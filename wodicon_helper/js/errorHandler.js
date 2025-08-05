@@ -127,12 +127,19 @@ class ErrorHandler {
    */
   async createErrorNotification(errorRecord) {
     try {
+      // ローカライズされた通知
+      const currentLanguage = window.localizer ? window.localizer.getCurrentLanguage() : 'ja';
+      const isEnglish = currentLanguage === 'en';
+      
+      const title = isEnglish ? 'WodiConsuke - Error' : 'ウディこん助 - エラー';
+      const confirmText = isEnglish ? 'Confirm' : '確認';
+      
       await chrome.notifications.create({
         type: 'basic',
         iconUrl: 'icons/icon128.png',
-        title: chrome.i18n.getMessage('errorNotificationTitle') || 'ウディこん助 - エラー',
+        title: title,
         message: this.getNotificationMessage(errorRecord),
-        buttons: [{ title: chrome.i18n.getMessage('confirm') || '確認' }]
+        buttons: [{ title: confirmText }]
       });
     } catch (notificationError) {
       console.error('通知作成エラー:', notificationError);

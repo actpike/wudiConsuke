@@ -187,7 +187,8 @@ const jaResources = {
       confirmBulkInput: '{count}件の評価済み作品のデータをフォームに一括入力しますか？',
       autoMonitorComplete: '🔔 自動監視完了: 新規{newCount}件、更新{updateCount}件',
       autoMonitorNoUpdates: '✅ 自動監視完了: 更新なし',
-      manualUpdateComplete: '📊 更新完了: 全{totalCount}作品中、新規{newCount}件・更新{updateCount}件を検出'
+      manualUpdateComplete: '📊 更新完了: 全{totalCount}作品中、新規{newCount}件・更新{updateCount}件を検出',
+      noPlayedGames: '評価済みの作品がありません。'
     },
 
 
