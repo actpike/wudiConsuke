@@ -20,11 +20,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - リリース自動化: `scripts/README.md` - 自動化システムの詳細仕様
 - 配布指南書: `documents/chromeStore/releaseReference(配布指南書).md`
 - 紹介ページ更新: `website/release/index.html` - バージョンアップ時は必ず更新
+- **ローカライズガイド**: `documents/localization-guide.md` - 多言語対応の開発ルールと実装方法
 
 ## プロジェクト構造
 
 ### ドキュメント管理
 - `documents/wodicon_helper_requirements.md` - メイン要件定義書
+- `documents/localization-guide.md` - ローカライズガイド（多言語対応の開発ルール）
+- `documents/architecture/` - アーキテクチャドキュメント
 - `documents/SOW/` - SOW管理フォルダ
   - `SOW_Reference.md` - SOWテンプレートとガイドライン
   - `backlog/` - 新規作成SOW（未着手）
