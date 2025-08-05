@@ -48,66 +48,52 @@ const enWebsiteResources = {
 
   // Features Section
   features: {
-    sectionTitle: 'Key Features',
-    sectionSubtitle: 'All the features you need for Wodicon game management',
+    title: 'Key Features',
     
-    autoMonitoring: {
-      title: '🔍 Automatic Site Monitoring',
-      description: 'Automatically checks for new games and updates when you visit the Wodicon site. Desktop notifications keep you informed of new content.'
+    rating: {
+      title: 'Rating & Review Management',
+      description: 'Compatible with Wodicon\'s official 6-category rating system. Centralized management of ratings and reviews for played games. Average value display helps you understand your rating tendencies.'
     },
     
-    ratingSystem: {
-      title: '📊 6-Category Rating System',
-      description: 'Official Wodicon-compliant 6-category rating system (Engagement, Novelty, Story, Graphics/Audio, Usability, Other) with 10-point scale.'
+    memo: {
+      title: 'Review Memo Function',
+      description: 'Record detailed reviews for each game. Character count function included, perfect for reference when posting comments. Never forget your impressions of precious games.'
     },
     
-    reviewMemo: {
-      title: '📝 Review Memo Function',
-      description: 'Detailed review recording within 2000 characters. Character count function included to record your memories in detail.'
+    monitoring: {
+      title: 'Auto Monitoring & Notifications', 
+      description: 'Automatically checks for new games and updates when you open the Wodicon site. Never miss version updates or new submissions with desktop notifications.'
     },
     
-    dataManagement: {
-      title: '💾 Data Management',
-      description: 'Data export/import in JSON/CSV format. Data protection is assured even when browser cache is cleared.'
+    data: {
+      title: 'Data Management',
+      description: 'Export/import function for rating and review data. Keep your precious data safe and secure.'
+    }
+  },
+
+  // Screenshots Section
+  screenshots: {
+    title: 'Screenshots',
+    
+    main: {
+      title: 'Main Screen',
+      description: 'View game list and rating status at a glance'
     },
     
-    votingSupport: {
-      title: '🗳️ Voting Support Function',
-      description: 'Bulk input function for rated games into voting forms. Streamlines the voting process.'
-    },
-    
-    localStorage: {
-      title: '🔒 Fully Local Operation',
-      description: 'All data is stored in browser local storage. No external servers are used, protecting your privacy.'
+    detail: {
+      title: 'Detail Screen', 
+      description: '6-category rating and review input'
     }
   },
 
   // Installation Section
   installation: {
-    sectionTitle: 'Installation Guide',
-    sectionSubtitle: 'Get started in 3 easy steps',
+    title: 'Installation',
+    description: 'Available on Chrome Web Store! Choose easy installation or manual installation.',
     
-    step1: {
-      title: 'Step 1: Download',
-      description: 'Download the latest zip file using the download button above.'
-    },
-    
-    step2: {
-      title: 'Step 2: Extract',
-      description: 'Extract the downloaded zip file to any location of your choice.'
-    },
-    
-    step3: {
-      title: 'Step 3: Load as Chrome Extension',
-      description: 'On Chrome\'s "Extensions" page, select "Load unpacked" and specify the extracted folder.'
-    },
-    
-    browserCompatibility: {
-      title: 'Browser Compatibility',
-      chrome: 'Google Chrome (Recommended)',
-      edge: 'Microsoft Edge',
-      brave: 'Brave Browser',
-      note: 'Developed as a Chrome extension and works on Chromium-based browsers.'
+    tabs: {
+      webstore: 'Chrome Web Store',
+      manual: 'Manual Installation'
     }
   },
 

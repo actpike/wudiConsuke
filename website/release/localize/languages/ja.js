@@ -48,66 +48,52 @@ const jaWebsiteResources = {
 
   // 機能セクション
   features: {
-    sectionTitle: '主な機能',
-    sectionSubtitle: 'ウディコン作品管理に必要な機能を全て搭載',
+    title: '主な機能',
     
-    autoMonitoring: {
-      title: '🔍 サイト訪問時自動監視',
-      description: 'ウディコンサイトを訪問した際に自動的に新規作品・更新をチェック。デスクトップ通知で新着情報をお知らせします。'
+    rating: {
+      title: '評価・感想管理',
+      description: 'ウディコン公式の6カテゴリ評価システムに対応。プレイした作品の評価と感想を一元管理。各評価の平均値表示で、あなたの評価傾向も把握できます。'
     },
     
-    ratingSystem: {
-      title: '📊 6カテゴリ評価システム',
-      description: 'ウディコン公式準拠の6カテゴリ（熱中度・斬新さ・物語性・画像音声・遊びやすさ・その他）×10点制評価システム。'
+    memo: {
+      title: '感想メモ機能',
+      description: '作品ごとに詳細な感想を記録。文字数カウント機能付きで、コメント投稿時の参考にも最適。大切な作品の印象を忘れずに保存できます。'
     },
     
-    reviewMemo: {
-      title: '📝 感想メモ機能',
-      description: '2000字以内の詳細感想記録。文字数カウント機能付きで、思い出を詳細に記録できます。'
+    monitoring: {
+      title: '自動監視・通知',
+      description: 'ウディコンサイトを開いた時に自動で新規作品・更新をチェック。バージョン更新や新規投稿を見逃すことなく、デスクトップ通知でお知らせします。'
     },
     
-    dataManagement: {
-      title: '💾 データ管理',
-      description: 'JSON/CSV形式でのデータエクスポート・インポート機能。ブラウザキャッシュクリア時のデータ保護も安心。'
+    data: {
+      title: 'データ管理',
+      description: '評価・感想データのエクスポート・インポート機能。大切なデータを安全に保護します。'
+    }
+  },
+
+  // スクリーンショットセクション
+  screenshots: {
+    title: 'スクリーンショット',
+    
+    main: {
+      title: 'メイン画面',
+      description: '作品一覧と評価状況を一目で確認'
     },
     
-    votingSupport: {
-      title: '🗳️ 投票支援機能',
-      description: '評価済み作品の投票フォームへの一括入力機能。投票作業を効率化できます。'
-    },
-    
-    localStorage: {
-      title: '🔒 完全ローカル動作',
-      description: '全てのデータはブラウザのローカルストレージに保存。外部サーバーを一切使用せず、プライバシーを守ります。'
+    detail: {
+      title: '詳細画面',
+      description: '6カテゴリ評価と感想入力'
     }
   },
 
   // インストールセクション
   installation: {
-    sectionTitle: 'インストール方法',
-    sectionSubtitle: '簡単3ステップでご利用開始',
+    title: '導入方法',
+    description: 'Chrome Web Storeで公開中！簡単インストールまたは手動インストールをお選びください。',
     
-    step1: {
-      title: 'ステップ1: ダウンロード',
-      description: '上記のダウンロードボタンから最新版のzipファイルをダウンロードしてください。'
-    },
-    
-    step2: {
-      title: 'ステップ2: 解凍',
-      description: 'ダウンロードしたzipファイルを任意の場所に解凍してください。'
-    },
-    
-    step3: {
-      title: 'ステップ3: Chrome拡張機能として読み込み',
-      description: 'Chromeの「拡張機能」ページで「パッケージ化されていない拡張機能を読み込む」を選択し、解凍したフォルダを指定してください。'
-    },
-    
-    browserCompatibility: {
-      title: 'ブラウザ対応状況',
-      chrome: 'Google Chrome（推奨）',
-      edge: 'Microsoft Edge',
-      brave: 'Brave Browser',
-      note: 'Chrome拡張機能として開発されており、Chromiumベースのブラウザで動作します。'
+    tabs: {
+      webstore: 'Chrome Web Store',
+      manual: '手動インストール'
     }
   },
 
