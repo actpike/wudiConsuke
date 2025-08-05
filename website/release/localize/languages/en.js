@@ -94,7 +94,48 @@ const enWebsiteResources = {
     tabs: {
       webstore: 'Chrome Web Store',
       manual: 'Manual Installation'
+    },
+    
+    webstore: {
+      title: 'Easy Installation from Chrome Web Store',
+      description: 'One-click installation from the official Chrome Web Store.',
+      button: 'Get from Chrome Web Store',
+      stepsTitle: 'Installation Steps',
+      step1: 'Click the button above to open Chrome Web Store',
+      step2: 'Click "Add to Chrome" button',
+      step3: 'Click "Add extension" in the confirmation dialog',
+      step4: 'Complete when the icon appears in your browser toolbar!'
+    },
+    
+    manual: {
+      title: 'Manual Installation (zip version)',
+      description: 'If you want to try the development version or latest version, you can install it manually from here.'
     }
+  },
+  
+  banner: {
+    title: 'WOLF RPG Editor Contest in Progress',
+    description: 'Join Wodicon and discover amazing games!'
+  },
+  
+  specification: {
+    title: 'Specifications and Responsibility',
+    purpose: 'This tool (extension) is an unofficial tool created as a personal hobby with the thought "This might be convenient!"<br>It is not intended for profit or personal information collection.',
+    privacy: 'Input data is generally not transmitted externally.<br>All data is stored locally (in the browser cache area).',
+    dataDeleted: {
+      title: 'Saved data will be deleted if you perform the following operations:',
+      item1: 'Uninstalling the extension',
+      item2: 'Pressing the "Delete All Data" button on the options screen',
+      item3: 'Pressing the "Delete" button on each game page',
+      item4: 'Clearing browser cache (depends on environment)'
+    },
+    dataPreserved: {
+      title: 'Data will NOT be deleted for the following operations:',
+      item1: 'Turning the extension ON/OFF',
+      item2: 'Moving or overwriting extension folder (zip reinstallation, etc.)'
+    },
+    backup: 'If you want to carefully preserve your input ratings and reviews, we recommend performing "Data Export" from the settings screen.',
+    disclaimer: 'The creator accepts no responsibility for any troubles or damages that may occur from using this tool.<br>Please understand this.'
   },
 
   // Usage Section
@@ -159,7 +200,11 @@ const enWebsiteResources = {
 
   // Footer
   footer: {
-    copyright: '© 2024 Pike (actpike). All rights reserved.',
+    copyright: '© 2025 WodiConsuke',
+    description: 'WOLF RPG Editor Contest Game Management Tool',
+    contact: 'Developer Contact:',
+    twitter: '@act_pike',
+    portfolio: 'Developer Portfolio',
     madeWith: 'Made with ❤️',
     version: 'Version',
     lastUpdated: 'Last Updated',

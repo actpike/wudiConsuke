@@ -94,7 +94,48 @@ const jaWebsiteResources = {
     tabs: {
       webstore: 'Chrome Web Store',
       manual: '手動インストール'
+    },
+    
+    webstore: {
+      title: 'Chrome Web Store から簡単インストール',
+      description: '公式のChrome Web Storeからワンクリックでインストールできます。',
+      button: 'Chrome Web Store で入手',
+      stepsTitle: 'インストール手順',
+      step1: '上記ボタンをクリックしてChrome Web Storeを開く',
+      step2: '「Chromeに追加」ボタンをクリック',
+      step3: '確認ダイアログで「拡張機能を追加」をクリック',
+      step4: 'ブラウザのツールバーにアイコンが表示されたら完了！'
+    },
+    
+    manual: {
+      title: '手動インストール（zip版）',
+      description: '開発版や最新版を試したい場合は、こちらから手動でインストールできます。'
     }
+  },
+  
+  banner: {
+    title: 'WOLF RPGエディターコンテスト開催中',
+    description: 'ウディコンに参加して、素晴らしい作品を発見しよう！'
+  },
+  
+  specification: {
+    title: '仕様と責任について',
+    purpose: '本ツール（拡張機能）は「あったら便利かも！」と個人の趣味で制作した非公式のツールです。<br>利益の獲得や個人情報の収集を目的としたものではありません。',
+    privacy: '入力されたデータは原則として外部に送信されません。<br>すべてのデータはローカル（ブラウザのキャッシュ領域）に保存されます。',
+    dataDeleted: {
+      title: '下記の操作を行った場合、保存されたデータは削除されます：',
+      item1: '拡張機能の削除',
+      item2: 'オプション画面の「全データ削除」ボタンを押す',
+      item3: '各作品ページで「削除」ボタンを押す',
+      item4: 'ブラウザのキャッシュをクリアする（※環境によります）'
+    },
+    dataPreserved: {
+      title: 'なお、以下の操作ではデータは削除されません：',
+      item1: '拡張機能のON/OFFの切り替え',
+      item2: '拡張フォルダの再配置・上書き（zip再インストールなど）'
+    },
+    backup: '入力した評価・感想などを大切に保存しておきたい場合は、設定画面から「データエクスポート」を行っておくことをおすすめします。',
+    disclaimer: '本ツールの使用により発生したいかなるトラブル・損害についても、制作者は一切の責任を負いません。<br>ご了承ください。'
   },
 
   // 使い方セクション
@@ -159,7 +200,11 @@ const jaWebsiteResources = {
 
   // フッター
   footer: {
-    copyright: '© 2024 ぴけ (actpike). All rights reserved.',
+    copyright: '© 2025 ウディこん助 (WodiConsuke)',
+    description: 'WOLF RPGエディターコンテスト作品管理ツール',
+    contact: '開発者連絡先:',
+    twitter: '@act_pike',
+    portfolio: 'Developer Portfolio',
     madeWith: '❤️ を込めて制作',
     version: 'バージョン',
     lastUpdated: '最終更新',

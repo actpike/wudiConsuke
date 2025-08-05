@@ -198,8 +198,8 @@
                         <!-- Chrome Web Store タブ -->
                         <div class="tab-content active" id="webstore-tab">
                             <div class="webstore-content">
-                                <h3>Chrome Web Store から簡単インストール</h3>
-                                <p class="webstore-description">
+                                <h3 data-i18n="installation.webstore.title">Chrome Web Store から簡単インストール</h3>
+                                <p class="webstore-description" data-i18n="installation.webstore.description">
                                     公式のChrome Web Storeからワンクリックでインストールできます。
                                 </p>
                                 <div class="webstore-button">
@@ -209,7 +209,7 @@
                                        class="btn btn-secondary btn-large"
                                        id="webstore-btn">
                                         <span class="btn-icon">🏪</span>
-                                        Chrome Web Store で入手
+                                        <span data-i18n="installation.webstore.button">Chrome Web Store で入手</span>
                                     </a>
                                     <p id="webstore-warning" class="browser-warning" style="display: none;">
                                         ⚠️ この拡張機能はPC版Chromeブラウザでのみ動作します
@@ -217,12 +217,12 @@
                                 </div>
                                 
                                 <div class="webstore-steps">
-                                    <h4>インストール手順</h4>
+                                    <h4 data-i18n="installation.webstore.stepsTitle">インストール手順</h4>
                                     <ol>
-                                        <li>上記ボタンをクリックしてChrome Web Storeを開く</li>
-                                        <li>「Chromeに追加」ボタンをクリック</li>
-                                        <li>確認ダイアログで「拡張機能を追加」をクリック</li>
-                                        <li>ブラウザのツールバーにアイコンが表示されたら完了！</li>
+                                        <li data-i18n="installation.webstore.step1">上記ボタンをクリックしてChrome Web Storeを開く</li>
+                                        <li data-i18n="installation.webstore.step2">「Chromeに追加」ボタンをクリック</li>
+                                        <li data-i18n="installation.webstore.step3">確認ダイアログで「拡張機能を追加」をクリック</li>
+                                        <li data-i18n="installation.webstore.step4">ブラウザのツールバーにアイコンが表示されたら完了！</li>
                                     </ol>
                                 </div>
                             </div>
@@ -231,8 +231,8 @@
                         <!-- 手動インストール タブ -->
                         <div class="tab-content" id="manual-tab">
                             <div class="manual-content">
-                                <h3>手動インストール（zip版）</h3>
-                                <p class="manual-description">
+                                <h3 data-i18n="installation.manual.title">手動インストール（zip版）</h3>
+                                <p class="manual-description" data-i18n="installation.manual.description">
                                     開発版や最新版を試したい場合は、こちらから手動でインストールできます。
                                 </p>
                                 
@@ -294,8 +294,8 @@
         <section class="banner">
             <div class="container">
                 <div class="banner-content">
-                    <h3>WOLF RPGエディターコンテスト開催中</h3>
-                    <p>ウディコンに参加して、素晴らしい作品を発見しよう！</p>
+                    <h3 data-i18n="banner.title">WOLF RPGエディターコンテスト開催中</h3>
+                    <p data-i18n="banner.description">ウディコンに参加して、素晴らしい作品を発見しよう！</p>
                     <a href="https://www.silversecond.com/WolfRPGEditor/Contest/" 
                        target="_blank" 
                        rel="noopener noreferrer" 
@@ -315,7 +315,7 @@
                 <div class="update-list">
                     <div class="update-item">
                         <div class="update-version">v1.0.3</div>
-                        <div class="update-date">2025年8月4日</div>
+                        <div class="update-date">2025年8月5日</div>
                         <div class="update-content">
                             <h4>主な改善点</h4>
                             <ul>
@@ -395,42 +395,42 @@
         <!-- Specification and Responsibility Section -->
         <section id="specification" class="specification">
             <div class="container">
-                <h2 class="section-title">仕様と責任について</h2>
+                <h2 class="section-title" data-i18n="specification.title">仕様と責任について</h2>
                 <div class="specification-content">
                     <div class="spec-item">
-                        <p>本ツール（拡張機能）は「あったら便利かも！」と個人の趣味で制作した非公式のツールです。<br>
+                        <p data-i18n-html="specification.purpose">本ツール（拡張機能）は「あったら便利かも！」と個人の趣味で制作した非公式のツールです。<br>
                         利益の獲得や個人情報の収集を目的としたものではありません。</p>
                     </div>
                     
                     <div class="spec-item">
-                        <p>入力されたデータは原則として外部に送信されません。<br>
+                        <p data-i18n-html="specification.privacy">入力されたデータは原則として外部に送信されません。<br>
                         すべてのデータはローカル（ブラウザのキャッシュ領域）に保存されます。</p>
                     </div>
                     
                     <div class="spec-item">
-                        <h4>下記の操作を行った場合、保存されたデータは削除されます：</h4>
+                        <h4 data-i18n="specification.dataDeleted.title">下記の操作を行った場合、保存されたデータは削除されます：</h4>
                         <ul>
-                            <li>拡張機能の削除</li>
-                            <li>オプション画面の「全データ削除」ボタンを押す</li>
-                            <li>各作品ページで「削除」ボタンを押す</li>
-                            <li>ブラウザのキャッシュをクリアする（※環境によります）</li>
+                            <li data-i18n="specification.dataDeleted.item1">拡張機能の削除</li>
+                            <li data-i18n="specification.dataDeleted.item2">オプション画面の「全データ削除」ボタンを押す</li>
+                            <li data-i18n="specification.dataDeleted.item3">各作品ページで「削除」ボタンを押す</li>
+                            <li data-i18n="specification.dataDeleted.item4">ブラウザのキャッシュをクリアする（※環境によります）</li>
                         </ul>
                     </div>
                     
                     <div class="spec-item">
-                        <h4>なお、以下の操作ではデータは削除されません：</h4>
+                        <h4 data-i18n="specification.dataPreserved.title">なお、以下の操作ではデータは削除されません：</h4>
                         <ul>
-                            <li>拡張機能のON/OFFの切り替え</li>
-                            <li>拡張フォルダの再配置・上書き（zip再インストールなど）</li>
+                            <li data-i18n="specification.dataPreserved.item1">拡張機能のON/OFFの切り替え</li>
+                            <li data-i18n="specification.dataPreserved.item2">拡張フォルダの再配置・上書き（zip再インストールなど）</li>
                         </ul>
                     </div>
                     
                     <div class="spec-item">
-                        <p>入力した評価・感想などを大切に保存しておきたい場合は、設定画面から「データエクスポート」を行っておくことをおすすめします。</p>
+                        <p data-i18n="specification.backup">入力した評価・感想などを大切に保存しておきたい場合は、設定画面から「データエクスポート」を行っておくことをおすすめします。</p>
                     </div>
                     
                     <div class="spec-item">
-                        <p>本ツールの使用により発生したいかなるトラブル・損害についても、制作者は一切の責任を負いません。<br>ご了承ください。</p>
+                        <p data-i18n-html="specification.disclaimer">本ツールの使用により発生したいかなるトラブル・損害についても、制作者は一切の責任を負いません。<br>ご了承ください。</p>
                     </div>
                 </div>
             </div>
@@ -442,24 +442,25 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <p>&copy; 2025 ウディこん助 (WodiConsuke)</p>
-                    <p>WOLF RPGエディターコンテスト作品管理ツール</p>
+                    <p data-i18n="footer.copyright">&copy; 2025 ウディこん助 (WodiConsuke)</p>
+                    <p data-i18n="footer.description">WOLF RPGエディターコンテスト作品管理ツール</p>
                 </div>
                 <div class="footer-links">
                     <div class="footer-contact">
-                        <p class="contact-label">開発者連絡先:</p>
+                        <p class="contact-label" data-i18n="footer.contact">開発者連絡先:</p>
                         <a href="https://x.com/act_pike" 
                            target="_blank" 
                            rel="noopener noreferrer" 
                            class="footer-link contact-link">
                             <span class="contact-icon x-icon">𝕏</span>
-                            @act_pike
+                            <span data-i18n="footer.twitter">@act_pike</span>
                         </a>
                     </div>
                     <a href="https://portfolio-works-one.vercel.app/" 
                        target="_blank" 
                        rel="noopener noreferrer" 
-                       class="footer-link">
+                       class="footer-link"
+                       data-i18n="footer.portfolio">
                         Developer Portfolio
                     </a>
                 </div>
@@ -487,6 +488,10 @@
                 if (languageSelector) {
                     // 現在の言語をUIに反映
                     languageSelector.value = window.websiteLocalizer.getCurrentLanguage();
+                    
+                    // 初期表示を現在の言語に更新
+                    window.websiteLocalizer.updateDOM();
+                    window.websiteLocalizer.updateMetaInfo();
                     
                     // 言語変更イベント
                     languageSelector.addEventListener('change', async (event) => {

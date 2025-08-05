@@ -104,10 +104,10 @@ For bug reports or feature requests, please contact @act_pike on X (formerly Twi
 
 **Developer**: Pike
 **Version**: 1.0.3
-**Last Updated**: 2025-08-04
+**Last Updated**: 2025-08-05
 
 
-### v1.0.3 (2025/08/04)
+### v1.0.3 (2025/08/05)
 - Localization support (Japanese/English)
 - Evaluation indicator display
 
