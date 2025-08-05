@@ -137,6 +137,12 @@ const jaResources = {
       confirmDelete: '本当に削除しますか？この操作は取り消せません。',
       confirmReset: '本当にリセットしますか？すべてのデータが失われます。',
       confirmImport: 'データをインポートしますか？既存のデータは上書きされます。',
+      confirmClearUpdates: '{count}件の作品の「新着・更新」マークをすべてクリアしますか？',
+      
+      // 更新クリアメッセージ
+      noClearTargets: 'クリア対象の作品がありません。',
+      updatesClearSuccess: '✅ 更新情報をクリアしました。',
+      updatesClearError: '更新情報のクリアに失敗しました。',
       
       // 情報メッセージ
       noData: 'データがありません',

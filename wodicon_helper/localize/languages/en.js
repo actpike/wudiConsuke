@@ -137,6 +137,12 @@ const enResources = {
       confirmDelete: 'Are you sure you want to delete? This action cannot be undone.',
       confirmReset: 'Are you sure you want to reset? All data will be lost.',
       confirmImport: 'Import data? Existing data will be overwritten.',
+      confirmClearUpdates: 'Clear "new/update" marks for {count} games?',
+      
+      // Update Clear Messages
+      noClearTargets: 'No games to clear.',
+      updatesClearSuccess: '✅ Update information cleared.',
+      updatesClearError: 'Failed to clear update information.',
       
       // Information Messages
       noData: 'No data available',

@@ -395,21 +395,60 @@ class GameListManager {
 
   // 更新クリア処理
   async clearAllUpdates() {
+    // 言語検出（メソッド全体で使用）
+    const currentLanguage = window.localizer ? window.localizer.getCurrentLanguage() : 'ja';
+    const isEnglish = currentLanguage === 'en';
+    
     const newGames = await window.gameDataManager.filterGames('new');
     if (newGames.length === 0) {
-      this.showMessage('クリア対象の作品がありません。', 'info');
+      // ローカライズされたメッセージ
+      const message = isEnglish ? 
+        window.localizer.getText('ui.messages.noClearTargets') || 'No games to clear.' :
+        window.localizer.getText('ui.messages.noClearTargets') || 'クリア対象の作品がありません。';
+      this.showMessage(message, 'info');
       return;
     }
 
-    if (confirm(`${newGames.length}件の作品の「新着・更新」マークをすべてクリアしますか？`)) {
+    // ローカライズされた確認ダイアログ
+    
+    let confirmMessage;
+    if (isEnglish) {
+      const template = (window.localizer && window.localizer.getText) ?
+        window.localizer.getText('ui.messages.confirmClearUpdates') :
+        'Clear "new/update" marks for {count} games?';
+      confirmMessage = template.replace('{count}', newGames.length);
+    } else {
+      const template = (window.localizer && window.localizer.getText) ?
+        window.localizer.getText('ui.messages.confirmClearUpdates') :
+        '{count}件の作品の「新着・更新」マークをすべてクリアしますか？';
+      confirmMessage = template.replace('{count}', newGames.length);
+    }
+    
+    if (confirm(confirmMessage)) {
       try {
         this.showLoading(true);
         await window.gameDataManager.clearAllVersionStatus();
         await this.refreshList();
-        this.showMessage('✅ 更新情報をクリアしました。', 'success');
+        // ローカライズされた成功メッセージ
+        const successMessage = isEnglish ?
+          (window.localizer && window.localizer.getText) ?
+            window.localizer.getText('ui.messages.updatesClearSuccess') :
+            '✅ Update information cleared.' :
+          (window.localizer && window.localizer.getText) ?
+            window.localizer.getText('ui.messages.updatesClearSuccess') :
+            '✅ 更新情報をクリアしました。';
+        this.showMessage(successMessage, 'success');
       } catch (error) {
         console.error('❌ 更新クリアエラー:', error);
-        this.showError('更新情報のクリアに失敗しました。');
+        // ローカライズされたエラーメッセージ
+        const errorMessage = isEnglish ?
+          (window.localizer && window.localizer.getText) ?
+            window.localizer.getText('ui.messages.updatesClearError') :
+            'Failed to clear update information.' :
+          (window.localizer && window.localizer.getText) ?
+            window.localizer.getText('ui.messages.updatesClearError') :
+            '更新情報のクリアに失敗しました。';
+        this.showError(errorMessage);
       } finally {
         this.showLoading(false);
       }
