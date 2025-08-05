@@ -10,5 +10,89 @@
   "appTitle": {
     "message": "WodiConsuke",
     "description": "Extension popup title"
+  },
+  "noGamesRegistered": {
+    "message": "No games registered",
+    "description": "Message when game list is empty"
+  },
+  "noSearchResults": {
+    "message": "No search results",
+    "description": "Message when search results are not found"
+  },
+  "newWorksNotificationTitle": {
+    "message": "🆕 New games found",
+    "description": "Title for new games notification"
+  },
+  "updatedWorksNotificationTitle": {
+    "message": "🔄 Games updated",
+    "description": "Title for updated games notification"
+  },
+  "autoMonitorNotificationTitle": {
+    "message": "WodiConsuke Auto Monitor",
+    "description": "Title for auto monitor notification"
+  },
+  "systemErrorNotificationTitle": {
+    "message": "⚠️ Web Monitor System Warning",
+    "description": "Title for system error notification"
+  },
+  "errorNotificationTitle": {
+    "message": "WodiConsuke - Error",
+    "description": "Title for error notification"
+  },
+  "confirm": {
+    "message": "Confirm",
+    "description": "Confirm button text"
+  },
+  "newWorksNotificationTitleSingle": {
+    "message": "🎮 New game found: {title}",
+    "description": "New works notification title (single)"
+  },
+  "newWorksNotificationTitleMultiple": {
+    "message": "🎮 {count} new games found",
+    "description": "New works notification title (multiple)"
+  },
+  "newWorksNotificationMessageSingle": {
+    "message": "Author: {author}",
+    "description": "New works notification message (single)"
+  },
+  "newWorksNotificationMore": {
+    "message": "...and {count} more",
+    "description": "New works notification 'and X more' text"
+  },
+  "updatedWorksNotificationTitleSingle": {
+    "message": "🔄 Game updated: {title}",
+    "description": "Updated works notification title (single)"
+  },
+  "updatedWorksNotificationTitleMultiple": {
+    "message": "🔄 {count} games updated",
+    "description": "Updated works notification title (multiple)"
+  },
+  "updatedWorksNotificationMessageSingle": {
+    "message": "Changes: {changes}",
+    "description": "Updated works notification message (single)"
+  },
+  "updatedWorksNotificationMore": {
+    "message": "...and {count} more",
+    "description": "Updated works notification 'and X more' text"
+  },
+  "unknown": {
+    "message": "Unknown",
+    "description": "Unknown value display"
+  },
+  "contentNotificationBoth": {
+    "message": "{newCount} new, {updatedCount} updated",
+    "description": "Content notification (both new and updated)"
+  },
+  "contentNotificationNew": {
+    "message": "{count} new",
+    "description": "Content notification (new only)"
+  },
+  "contentNotificationUpdated": {
+    "message": "{count} updated",
+    "description": "Content notification (updated only)"
+  },
+  "contentNotificationTitle": {
+    "message": "🌊 WudiConsuke: Found {changes}",
+    "description": "Content notification title"
   }
 }

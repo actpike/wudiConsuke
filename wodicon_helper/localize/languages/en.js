@@ -184,7 +184,10 @@ const enResources = {
       appReady: 'WudiConsuke Ready',
       confirmOpenVotePage: 'Opening vote page. Please press this button again after the page loads.',
       votePageRequired: 'Please run this on the vote page.',
-      confirmBulkInput: 'Input data for {count} rated games into the form?'
+      confirmBulkInput: 'Input data for {count} rated games into the form?',
+      autoMonitorComplete: '🔔 Auto monitor completed: {newCount} new, {updateCount} updated',
+      autoMonitorNoUpdates: '✅ Auto monitor completed: No updates',
+      manualUpdateComplete: '📊 Update completed: Found {newCount} new, {updateCount} updated out of {totalCount} total games'
     },
 
 
@@ -404,7 +407,9 @@ const enResources = {
       introductionPage: '📖 WudiConsuke Introduction Page'
     },
     common: {
-      loading: 'Loading...'
+      loading: 'Loading...',
+      noGamesRegistered: 'No games registered',
+      noSearchResults: 'No search results'
     },
     yearFormat: '{number}th Contest ({year})'
   },
@@ -433,7 +438,26 @@ const enResources = {
     updatedGame: 'Game updated: {title}',
     monitorComplete: 'Web monitoring completed',
     dataExported: 'Data export completed',
-    dataImported: 'Data import completed'
+    dataImported: 'Data import completed',
+    newWorks: {
+      title: '🆕 New games found',
+      message: 'New games: {count}\n{list}'
+    },
+    updatedWorks: {
+      title: '🔄 Games updated',
+      message: 'Updated games: {count}\n{list}'
+    },
+    autoMonitor: {
+      title: 'WudiConsuke Auto Monitor',
+      message: 'Found {newCount} new and {updateCount} updated games'
+    },
+    systemError: {
+      title: '⚠️ Web Monitor System Warning',
+      message: 'System is in an unstable state. Temporarily stopping web monitoring.'
+    },
+    error: {
+      title: 'WudiConsuke - Error'
+    }
   },
 
   // Time & Date

@@ -285,14 +285,46 @@ class UpdateManager {
   // 新規作品通知
   async sendNewWorksNotification(newWorks, actualCount) {
     try {
-      const title = actualCount === 1 
-        ? `🎮 新作品発見: ${newWorks[0].title}`
-        : `🎮 新作品 ${actualCount}件を発見`;
+      // ローカライズされたタイトル（既存のローカライザーシステム使用）
+      const currentLanguage = window.localizer ? window.localizer.getCurrentLanguage() : 'ja';
+      const isEnglish = currentLanguage === 'en';
+      console.log(`🔍 Debug - Current Language: ${currentLanguage}, isEnglish: ${isEnglish}`);
+      let title;
+      
+      if (actualCount === 1) {
+        if (isEnglish) {
+          title = `🎮 New game found: ${newWorks[0].title}`;
+        } else {
+          title = `🎮 新作品発見: ${newWorks[0].title}`;
+        }
+      } else {
+        if (isEnglish) {
+          title = `🎮 ${actualCount} new games found`;
+        } else {
+          title = `🎮 新作品 ${actualCount}件を発見`;
+        }
+      }
 
-      const message = actualCount === 1
-        ? `作者: ${newWorks[0].author || '不明'}`
-        : newWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n') +
-          (actualCount > 3 ? `\n...他${actualCount - 3}件` : '');
+      // ローカライズされたメッセージ（言語検出ベース）
+      let message;
+      if (actualCount === 1) {
+        const authorText = newWorks[0].author || (isEnglish ? 'Unknown' : '不明');
+        if (isEnglish) {
+          message = `Author: ${authorText}`;
+        } else {
+          message = `作者: ${authorText}`;
+        }
+      } else {
+        const worksList = newWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n');
+        if (actualCount > 3) {
+          const moreText = isEnglish ? 
+            `\n...and ${actualCount - 3} more` : 
+            `\n...他${actualCount - 3}件`;
+          message = worksList + moreText;
+        } else {
+          message = worksList;
+        }
+      }
 
       await chrome.notifications.create(`new_works_${Date.now()}`, {
         type: 'basic',
@@ -302,7 +334,7 @@ class UpdateManager {
         priority: 1
       });
 
-      console.log(`🔔 新規作品通知送信: ${actualCount}件`);
+      console.log(`🔔 新規作品通知送信: ${actualCount}件 [Language: ${isEnglish ? 'EN' : 'JA'}] [Title: ${title}]`);
 
     } catch (error) {
       console.error('❌ 新規作品通知エラー:', error);
@@ -313,14 +345,45 @@ class UpdateManager {
   // 更新作品通知
   async sendUpdatedWorksNotification(updatedWorks, actualCount) {
     try {
-      const title = actualCount === 1
-        ? `🔄 作品更新: ${updatedWorks[0].title}`
-        : `🔄 作品更新 ${actualCount}件を検出`;
+      // ローカライズされたタイトル（既存のローカライザーシステム使用）
+      const currentLanguage = window.localizer ? window.localizer.getCurrentLanguage() : 'ja';
+      const isEnglish = currentLanguage === 'en';
+      let title;
+      
+      if (actualCount === 1) {
+        if (isEnglish) {
+          title = `🔄 Game updated: ${updatedWorks[0].title}`;
+        } else {
+          title = `🔄 作品更新: ${updatedWorks[0].title}`;
+        }
+      } else {
+        if (isEnglish) {
+          title = `🔄 ${actualCount} games updated`;
+        } else {
+          title = `🔄 作品更新 ${actualCount}件を検出`;
+        }
+      }
 
-      const message = actualCount === 1
-        ? `変更内容: ${this.formatChangeType(updatedWorks[0].changeType)}`
-        : updatedWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n') +
-          (actualCount > 3 ? `\n...他${actualCount - 3}件` : '');
+      // ローカライズされたメッセージ（言語検出ベース）
+      let message;
+      if (actualCount === 1) {
+        const changes = this.formatChangeType(updatedWorks[0].changeType);
+        if (isEnglish) {
+          message = `Changes: ${changes}`;
+        } else {
+          message = `変更内容: ${changes}`;
+        }
+      } else {
+        const worksList = updatedWorks.slice(0, 3).map(work => `• No.${work.no}_${work.title}`).join('\n');
+        if (actualCount > 3) {
+          const moreText = isEnglish ? 
+            `\n...and ${actualCount - 3} more` : 
+            `\n...他${actualCount - 3}件`;
+          message = worksList + moreText;
+        } else {
+          message = worksList;
+        }
+      }
 
       await chrome.notifications.create(`updated_works_${Date.now()}`, {
         type: 'basic',

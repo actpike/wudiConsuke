@@ -886,14 +886,17 @@ function showAutoMonitorNoticeWithChanges(newCount, updatedCount) {
       console.log('🗑️ 既存通知削除完了');
     }
     
-    // 変更内容のメッセージを作成
+    // 変更内容のメッセージを作成（ローカライズ対応）
     let changeMessage = '';
     if (newCount > 0 && updatedCount > 0) {
-      changeMessage = `新規${newCount}件、更新${updatedCount}件`;
+      const template = chrome.i18n.getMessage('contentNotificationBoth') || '新規{newCount}件、更新{updatedCount}件';
+      changeMessage = template.replace('{newCount}', newCount).replace('{updatedCount}', updatedCount);
     } else if (newCount > 0) {
-      changeMessage = `新規${newCount}件`;
+      const template = chrome.i18n.getMessage('contentNotificationNew') || '新規{count}件';
+      changeMessage = template.replace('{count}', newCount);
     } else if (updatedCount > 0) {
-      changeMessage = `更新${updatedCount}件`;
+      const template = chrome.i18n.getMessage('contentNotificationUpdated') || '更新{count}件';
+      changeMessage = template.replace('{count}', updatedCount);
     }
     
     console.log(`📝 作成予定メッセージ: "${changeMessage}"`);
@@ -923,7 +926,8 @@ function showAutoMonitorNoticeWithChanges(newCount, updatedCount) {
       border: 1px solid rgba(255,255,255,0.2);
     `;
     
-    const finalMessage = `🌊 ウディこん助: ${changeMessage}を検出しました`;
+    const titleTemplate = chrome.i18n.getMessage('contentNotificationTitle') || '🌊 ウディこん助: {changes}を検出しました';
+    const finalMessage = titleTemplate.replace('{changes}', changeMessage);
     notice.innerHTML = finalMessage;
     
     console.log(`🎯 最終表示メッセージ: "${finalMessage}"`);

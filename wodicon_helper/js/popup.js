@@ -112,19 +112,32 @@ class GameListManager {
           const updateCount = result.updatedWorks?.length || 0;
           
           if (newCount > 0 || updateCount > 0) {
-            this.updateStatusBar(`🔔 自動監視完了: 新規${newCount}件、更新${updateCount}件`, 'success', 5000);
+            // ローカライズされたステータスメッセージ
+            const statusTemplate = (window.localizer && window.localizer.getText) ?
+              window.localizer.getText('ui.status.autoMonitorComplete') : '🔔 自動監視完了: 新規{newCount}件、更新{updateCount}件';
+            const statusMessage = statusTemplate.replace('{newCount}', newCount).replace('{updateCount}', updateCount);
+            this.updateStatusBar(statusMessage, 'success', 5000);
             
             // 通知表示
             if (chrome.notifications) {
+              const notificationTitle = (window.localizer && window.localizer.getText) ?
+                window.localizer.getText('notifications.autoMonitor.title') : 'ウディこん助 自動監視';
+              const notificationTemplate = (window.localizer && window.localizer.getText) ?
+                window.localizer.getText('notifications.autoMonitor.message') : '新規{newCount}件、更新{updateCount}件の作品を検出しました';
+              const notificationMessage = notificationTemplate.replace('{newCount}', newCount).replace('{updateCount}', updateCount);
+              
               chrome.notifications.create('popup-auto-monitor', {
                 type: 'basic',
                 iconUrl: 'images/WudiConsuke_top.png',
-                title: 'ウディこん助 自動監視',
-                message: `新規${newCount}件、更新${updateCount}件の作品を検出しました`
+                title: notificationTitle,
+                message: notificationMessage
               });
             }
           } else {
-            this.updateStatusBar('✅ 自動監視完了: 更新なし', 'info', 3000);
+            // ローカライズされた更新なしメッセージ
+            const noUpdatesMessage = (window.localizer && window.localizer.getText) ?
+              window.localizer.getText('ui.status.autoMonitorNoUpdates') : '✅ 自動監視完了: 更新なし';
+            this.updateStatusBar(noUpdatesMessage, 'info', 3000);
           }
           
           console.log('✅ ポップアップ自動監視完了:', result);
@@ -540,13 +553,27 @@ class GameListManager {
     const tbody = document.getElementById('game-list-body');
     
     if (games.length === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="5" style="text-align: center; padding: 20px; color: #666;">
-            ${this.currentSearch ? '検索結果がありません' : 'ゲームが登録されていません'}
-          </td>
-        </tr>
-      `;
+      tbody.innerHTML = '';
+      const row = document.createElement('tr');
+      const cell = document.createElement('td');
+      cell.setAttribute('colspan', '10');
+      cell.style.textAlign = 'center';
+      cell.style.padding = '20px';
+      cell.style.color = '#666';
+      
+      // ローカライザーを使用してメッセージを取得
+      let message;
+      if (this.currentSearch) {
+        message = (window.localizer && window.localizer.getText) ?
+          window.localizer.getText('settings.common.noSearchResults') : '検索結果がありません';
+      } else {
+        message = (window.localizer && window.localizer.getText) ?
+          window.localizer.getText('settings.common.noGamesRegistered') : 'ゲームが登録されていません';
+      }
+      
+      cell.textContent = message;
+      row.appendChild(cell);
+      tbody.appendChild(row);
       return;
     }
 
@@ -971,7 +998,14 @@ class GameListManager {
         const updatedWorksCount = result.updatedWorks?.length || 0;
         const totalWorksCount = result.totalWorks || 0;
 
-        this.updateStatusBar(`📊 更新完了: 全${totalWorksCount}作品中、新規${newWorksCount}件・更新${updatedWorksCount}件を検出`, 'success');
+        // ローカライズされた更新完了メッセージ
+        const updateCompleteTemplate = (window.localizer && window.localizer.getText) ?
+          window.localizer.getText('ui.status.manualUpdateComplete') : '📊 更新完了: 全{totalCount}作品中、新規{newCount}件・更新{updateCount}件を検出';
+        const updateCompleteMessage = updateCompleteTemplate
+          .replace('{totalCount}', totalWorksCount)
+          .replace('{newCount}', newWorksCount)
+          .replace('{updateCount}', updatedWorksCount);
+        this.updateStatusBar(updateCompleteMessage, 'success');
 
         // リスト更新
         await this.refreshList();

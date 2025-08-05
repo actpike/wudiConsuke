@@ -130,9 +130,9 @@ class ErrorHandler {
       await chrome.notifications.create({
         type: 'basic',
         iconUrl: 'icons/icon128.png',
-        title: 'ウディこん助 - エラー',
+        title: chrome.i18n.getMessage('errorNotificationTitle') || 'ウディこん助 - エラー',
         message: this.getNotificationMessage(errorRecord),
-        buttons: [{ title: '確認' }]
+        buttons: [{ title: chrome.i18n.getMessage('confirm') || '確認' }]
       });
     } catch (notificationError) {
       console.error('通知作成エラー:', notificationError);

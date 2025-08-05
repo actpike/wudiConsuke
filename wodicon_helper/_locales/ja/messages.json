@@ -10,5 +10,89 @@
   "appTitle": {
     "message": "ウディこん助",
     "description": "拡張機能のポップアップタイトル"
+  },
+  "noGamesRegistered": {
+    "message": "ゲームが登録されていません",
+    "description": "ゲーム一覧が空の時のメッセージ"
+  },
+  "noSearchResults": {
+    "message": "検索結果がありません",
+    "description": "検索結果が見つからない時のメッセージ"
+  },
+  "newWorksNotificationTitle": {
+    "message": "🆕 新規作品が見つかりました",
+    "description": "新規作品通知のタイトル"
+  },
+  "updatedWorksNotificationTitle": {
+    "message": "🔄 作品が更新されました",
+    "description": "更新作品通知のタイトル"
+  },
+  "autoMonitorNotificationTitle": {
+    "message": "ウディこん助 自動監視",
+    "description": "自動監視通知のタイトル"
+  },
+  "systemErrorNotificationTitle": {
+    "message": "⚠️ Web監視システム警告",
+    "description": "システムエラー通知のタイトル"
+  },
+  "errorNotificationTitle": {
+    "message": "ウディこん助 - エラー",
+    "description": "エラー通知のタイトル"
+  },
+  "confirm": {
+    "message": "確認",
+    "description": "確認ボタンのテキスト"
+  },
+  "newWorksNotificationTitleSingle": {
+    "message": "🎮 新作品発見: {title}",
+    "description": "新規作品通知タイトル（単一）"
+  },
+  "newWorksNotificationTitleMultiple": {
+    "message": "🎮 新作品 {count}件を発見",
+    "description": "新規作品通知タイトル（複数）"
+  },
+  "newWorksNotificationMessageSingle": {
+    "message": "作者: {author}",
+    "description": "新規作品通知メッセージ（単一）"
+  },
+  "newWorksNotificationMore": {
+    "message": "...他{count}件",
+    "description": "新規作品通知「他○件」表示"
+  },
+  "updatedWorksNotificationTitleSingle": {
+    "message": "🔄 作品更新: {title}",
+    "description": "更新作品通知タイトル（単一）"
+  },
+  "updatedWorksNotificationTitleMultiple": {
+    "message": "🔄 作品更新 {count}件を検出",
+    "description": "更新作品通知タイトル（複数）"
+  },
+  "updatedWorksNotificationMessageSingle": {
+    "message": "変更内容: {changes}",
+    "description": "更新作品通知メッセージ（単一）"
+  },
+  "updatedWorksNotificationMore": {
+    "message": "...他{count}件",
+    "description": "更新作品通知「他○件」表示"
+  },
+  "unknown": {
+    "message": "不明",
+    "description": "不明な値の表示"
+  },
+  "contentNotificationBoth": {
+    "message": "新規{newCount}件、更新{updatedCount}件",
+    "description": "コンテンツ通知（新規・更新両方）"
+  },
+  "contentNotificationNew": {
+    "message": "新規{count}件",
+    "description": "コンテンツ通知（新規のみ）"
+  },
+  "contentNotificationUpdated": {
+    "message": "更新{count}件",
+    "description": "コンテンツ通知（更新のみ）"
+  },
+  "contentNotificationTitle": {
+    "message": "🌊 ウディこん助: {changes}を検出しました",
+    "description": "コンテンツ通知タイトル"
   }
 }

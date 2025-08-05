@@ -184,7 +184,10 @@ const jaResources = {
       appReady: 'ウディこん助 準備完了',
       confirmOpenVotePage: '投票ページを開きます。その後、再度このボタンを押してください。',
       votePageRequired: '投票ページで実行してください。',
-      confirmBulkInput: '{count}件の評価済み作品のデータをフォームに一括入力しますか？'
+      confirmBulkInput: '{count}件の評価済み作品のデータをフォームに一括入力しますか？',
+      autoMonitorComplete: '🔔 自動監視完了: 新規{newCount}件、更新{updateCount}件',
+      autoMonitorNoUpdates: '✅ 自動監視完了: 更新なし',
+      manualUpdateComplete: '📊 更新完了: 全{totalCount}作品中、新規{newCount}件・更新{updateCount}件を検出'
     },
 
 
@@ -416,7 +419,9 @@ const jaResources = {
       introductionPage: '📖 『ウディこん助』紹介ページ'
     },
     common: {
-      loading: '読み込み中...'
+      loading: '読み込み中...',
+      noGamesRegistered: 'ゲームが登録されていません',
+      noSearchResults: '検索結果がありません'
     },
     yearFormat: '第{number}回 ({year}年)'
   },
@@ -445,7 +450,26 @@ const jaResources = {
     updatedGame: '作品が更新されました: {title}',
     monitorComplete: 'Web監視が完了しました',
     dataExported: 'データのエクスポートが完了しました',
-    dataImported: 'データのインポートが完了しました'
+    dataImported: 'データのインポートが完了しました',
+    newWorks: {
+      title: '🆕 新規作品が見つかりました',
+      message: '新規作品: {count}件\n{list}'
+    },
+    updatedWorks: {
+      title: '🔄 作品が更新されました',
+      message: '更新作品: {count}件\n{list}'
+    },
+    autoMonitor: {
+      title: 'ウディこん助 自動監視',
+      message: '新規{newCount}件、更新{updateCount}件の作品を検出しました'
+    },
+    systemError: {
+      title: '⚠️ Web監視システム警告',
+      message: 'システムが不安定な状態です。一時的にWeb監視を停止します。'
+    },
+    error: {
+      title: 'ウディこん助 - エラー'
+    }
   },
 
   // 時間・日付
